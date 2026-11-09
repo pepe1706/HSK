@@ -1873,14 +1873,42 @@ function continueRoleplay(){if(!rolePlayPaused)return;rolePlayPaused=false;roleP
 
 // Ghi âm tạm trong phiên hiện tại, không ghi blob vào localStorage/backup.
 // Nhận dạng giọng nói zh-CN, so từng chữ với câu mẫu; kết quả chỉ giữ tạm trong phiên.
-function recognizeShadow(index){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR||!navigator.onLine){toast('Chấm thử cần trình duyệt hỗ trợ nhận dạng giọng nói và có Internet.');return}
-  const rec=new SR();rec.lang='zh-CN';rec.interimResults=false;rec.maxAlternatives=1;
-  const recKey=lessonId+':'+index,expected=String(rows(lessonId)[index]?.['Câu tiếng Trung']||'');shadowingRecognition[recKey]={status:'Đang nhận dạng…'};render();
-  rec.onresult=e=>{const heard=e.results?.[0]?.[0]?.transcript||'';shadowingRecognition[recKey]={status:'done',heard,expected,html:recognitionDiff(expected,heard)};render()};
-  rec.onerror=()=>{shadowingRecognition[recKey]={status:'error',message:'Không nhận dạng được. Hãy kiểm tra mạng và thử lại.'};render()};
-  rec.onend=()=>{if(shadowingRecognition[recKey]?.status==='Đang nhận dạng…'){shadowingRecognition[recKey]={status:'error',message:'Không nhận dạng được giọng nói.'};render()}};
-  try{rec.start()}catch(e){shadowingRecognition[recKey]={status:'error',message:'Không thể bắt đầu nhận dạng.'};render()}
+let hskSrLangTry=0;
+const HSK_SR_LANGS=['zh-CN','cmn-Hans-CN','zh'];
+function hskSrMessage(code){
+  const m={
+    'not-allowed':'Chrome chưa cho trang này dùng micro cho phần nhận dạng. Bấm biểu tượng ổ khóa cạnh địa chỉ → Quyền → Micro → Cho phép, rồi thử lại.',
+    'service-not-allowed':'Android/Chrome không cho dùng dịch vụ nhận dạng giọng nói. Thường do ứng dụng Google (Cài đặt → Ứng dụng → Google → Quyền → Micro) đang bị tắt, hoặc đang mở từ icon màn hình chính. Hãy thử mở trong tab Chrome thường.',
+    'network':'Không kết nối được dịch vụ nhận dạng của Google. Kiểm tra Internet (Wi‑Fi/4G) rồi thử lại.',
+    'no-speech':'Chưa nghe thấy giọng nói. Bấm nút rồi nói NGAY câu tiếng Trung, nói rõ và gần micro.',
+    'audio-capture':'Không lấy được âm thanh từ micro. Đóng ứng dụng khác đang dùng micro rồi thử lại.',
+    'language-not-supported':'Máy chưa hỗ trợ nhận dạng tiếng Trung.',
+    'aborted':'Nhận dạng bị hủy. Hãy thử lại.',
+    'bad-grammar':'Lỗi cấu hình nhận dạng.'};
+  return (m[code]||'Không nhận dạng được.')+' (mã lỗi: '+(code||'không rõ')+')';
+}
+function recognizeShadow(index,langIdx=0){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('Trình duyệt này không có nhận dạng giọng nói. Hãy dùng Chrome.');return}
+  if(!navigator.onLine){toast('Chấm thử cần Internet.');return}
+  const recKey=lessonId+':'+index,expected=String(rows(lessonId)[index]?.['Câu tiếng Trung']||'');
+  try{hskTtsStop&&hskTtsStop()}catch(e){}
+  if(shadowingRecorder&&shadowingRecorder.state==='recording'){toast('Hãy dừng ghi âm trước khi chấm thử.');return}
+  const rec=new SR();rec.lang=HSK_SR_LANGS[langIdx]||'zh-CN';rec.interimResults=true;rec.maxAlternatives=3;rec.continuous=false;
+  let got=false,partial='',finished=false;
+  shadowingRecognition[recKey]={status:'Đang nghe… hãy nói câu tiếng Trung ngay bây giờ'};render();
+  const fail=code=>{if(finished)return;finished=true;
+    if(code==='language-not-supported'&&langIdx<HSK_SR_LANGS.length-1){recognizeShadow(index,langIdx+1);return}
+    shadowingRecognition[recKey]={status:'error',message:hskSrMessage(code)};render()};
+  rec.onaudiostart=()=>{shadowingRecognition[recKey]={status:'Đang nghe… hãy nói câu tiếng Trung ngay bây giờ'};render()};
+  rec.onresult=e=>{let txt='',final=false;for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];txt+=r[0].transcript;if(r.isFinal)final=true}
+    if(txt)partial=txt;
+    if(final&&!finished){got=true;finished=true;shadowingRecognition[recKey]={status:'done',heard:partial,expected,html:recognitionDiff(expected,partial)};render()}};
+  rec.onerror=e=>fail(e.error||'');
+  rec.onend=()=>{if(finished)return;
+    if(partial){finished=true;shadowingRecognition[recKey]={status:'done',heard:partial,expected,html:recognitionDiff(expected,partial)};render()}
+    else fail('no-speech')};
+  try{rec.start()}catch(e){fail(e?.name==='InvalidStateError'?'aborted':(e?.name||''))}
 }
 function recognitionDiff(expected,heard){
  const strip=s=>Array.from(String(s||'').replace(/[\s，。！？、；：,.!?;:"“”'‘’（）()]/g,''));
