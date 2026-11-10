@@ -2033,9 +2033,9 @@ function hwPrepUser(strokes){
    Nét chuẩn không khớp được chỉ được bỏ qua nếu vẫn nằm trên mực của người viết (viết liền nét) và còn hạn mức. */
 const HW_K=14,HW_D=0.28;
 const HW_LEVEL={
-  easy:{tolS:0.14,tolM:0.065,merge:n=>Math.ceil(n/6),slack:1,miss:n=>n>=10?1:0},
-  normal:{tolS:0.125,tolM:0.06,merge:n=>(n>=6?1:0)+(n>=12?1:0),slack:0,miss:n=>n>=12?1:0},
-  strict:{tolS:0.095,tolM:0.05,merge:n=>0,slack:0,miss:n=>0}
+  easy:{tolS:0.21,tolM:0.095,merge:n=>Math.ceil(n/6),slack:1,miss:n=>n>=10?1:0},
+  normal:{tolS:0.17,tolM:0.08,merge:n=>(n>=6?1:0)+(n>=12?1:0),slack:0,miss:n=>n>=12?1:0},
+  strict:{tolS:0.125,tolM:0.06,merge:n=>0,slack:0,miss:n=>0}
 };
 function hwPoly(st,K){
   if(st.length===1)return Array.from({length:K},()=>st[0]);
