@@ -2003,12 +2003,12 @@ function hwRef(ch){
 }
 
 /* ---------- chấm một chữ ---------- */
-function hwMap(p,T){return{x:(p.x-0.5)*T.s+0.5+T.tx,y:(p.y-0.5)*T.s+0.5+T.ty}}
+function hwMap(p,T){const sx=T.sx||T.s,sy=T.sy||T.s;return{x:(p.x-0.5)*sx+0.5+T.tx,y:(p.y-0.5)*sy+0.5+T.ty}}
 function hwScore(ref,ud,uf,T,tol){
   const cov=ref.dense.map(st=>{let h=0;for(const p of st){const q=hwMap(p,T);if(hwDist(uf,q.x,q.y)<=tol)h++}return h/st.length});
   let rh=0,rt=0;ref.dense.forEach((st,i)=>{rh+=cov[i]*st.length;rt+=st.length});
   let ut=0,uh=0;
-  const prec=ud.map(st=>{let h=0;for(const p of st){const r={x:(p.x-0.5-T.tx)/T.s+0.5,y:(p.y-0.5-T.ty)/T.s+0.5};if(hwDist(ref.field,r.x,r.y)*T.s<=tol)h++}ut+=st.length;uh+=h;return st.length?h/st.length:1});
+  const prec=ud.map(st=>{let h=0;for(const p of st){const r={x:(p.x-0.5-T.tx)/(T.sx||T.s)+0.5,y:(p.y-0.5-T.ty)/(T.sy||T.s)+0.5};if(hwDist(ref.field,r.x,r.y)*Math.sqrt((T.sx||T.s)*(T.sy||T.s))<=tol)h++}ut+=st.length;uh+=h;return st.length?h/st.length:1});
   const covAll=rt?rh/rt:0,precAll=ut?uh/ut:0;
   return{cov,prec,covAll,precAll,J:0.55*covAll+0.45*precAll};
 }
@@ -2136,30 +2136,52 @@ function hwEvaluate(strokes,ch,level,withSuggest){
   }
   if(!res.ok&&!res.empty&&!res.small){
     const fb=hwFieldCheck(ref,u,b.T,level,tolP);
-    if(fb&&!hwRival(u,ch,b.T,tolP,fb.J)){res.ok=true;res.missing=[];res.extra=[];res.viaField=true}
+    if(fb&&!hwRival(u,ch,fb)){res.ok=true;res.missing=[];res.extra=[];res.viaField=true}
   }
   return res;
 }
 /* Lớp chấm theo hình dạng tổng thể (không phụ thuộc số nét / thứ tự / nét viết liền):
    mọi nét chuẩn phải được mực người viết phủ, mọi nét người viết (đủ dài) phải nằm trên chữ chuẩn. */
-const HW_FB={easy:{c:0.8,p:0.85},normal:{c:0.88,p:0.9},strict:null};
-function hwFieldCheck(ref,u,T,level,tolP){
+const HW_FB={easy:{c:0.82,p:0.85,k:0.9},normal:{c:0.9,p:0.88,k:0.95},strict:null};
+/* Tinh chỉnh phép biến đổi (co giãn ngang/dọc riêng + dịch) để chữ chuẩn khớp nhất với nét viết */
+function hwClimb(ref,u,T0,tol){
+  let T={sx:T0.sx||T0.s,sy:T0.sy||T0.s,tx:T0.tx,ty:T0.ty,pen:0},sc=hwScore(ref,u.ud,u.uf,T,tol);
+  for(const st of[[0.08,0.03],[0.04,0.015],[0.02,0.008]]){
+    for(let it=0;it<3;it++){
+      let bt=null,bs=sc;
+      for(const [a,b,c,d] of[[1,0,0,0],[-1,0,0,0],[0,1,0,0],[0,-1,0,0],[0,0,1,0],[0,0,-1,0],[0,0,0,1],[0,0,0,-1],[1,1,0,0],[-1,-1,0,0]]){
+        const T2={sx:Math.min(1.45,Math.max(0.7,T.sx+a*st[0])),sy:Math.min(1.45,Math.max(0.7,T.sy+b*st[0])),tx:Math.max(-0.2,Math.min(0.2,T.tx+c*st[1])),ty:Math.max(-0.2,Math.min(0.2,T.ty+d*st[1])),pen:0};
+        const r=hwScore(ref,u.ud,u.uf,T2,tol);
+        if(r.J>bs.J+1e-4){bs=r;bt=T2}
+      }
+      if(!bt)break;T=bt;sc=bs;
+    }
+  }
+  return{T,sc};
+}
+function hwFieldCheck(ref,u,T0,level,tolP){
   const f=HW_FB[level];if(!f)return null;
   if(u.n>ref.n+(level==='easy'?1:0))return null;
-  const sc=hwScore(ref,u.ud,u.uf,T,tolP*0.8);
+  const tol=tolP*f.k,cl=hwClimb(ref,u,T0,tol),sc=cl.sc;
   if(sc.cov.some(c=>c<f.c))return null;
   for(let i=0;i<sc.prec.length;i++)if(hwLen(u.norm[i])>=0.03&&sc.prec[i]<f.p)return null;
-  return sc;
+  return{J:sc.J,T:cl.T,sc,tol};
 }
-/* Có chữ khác giống nét viết hơn chữ mục tiêu không? (so bằng độ phủ hình dạng) */
-function hwRival(u,target,T,tolP,Jt){
-  let bt=Jt-T.pen;for(const T2 of HW_COARSE){const j=hwScore(hwRef(target),u.ud,u.uf,T2,tolP).J-T2.pen;if(j>bt)bt=j}
+/* Có chữ khác giống nét viết hơn chữ mục tiêu không? (so bằng độ phủ hình dạng, cả hai đều được căn chỉnh) */
+function hwRival(u,target,fb){
+  const Jt=fb.J,cand=[];
   for(const c in HW_STROKES){
     if(c===target)continue;
     const n=HW_STROKES[c].length;
     if(n<u.n-3||n>u.n+4)continue;
     const ref=hwRef(c);if(!ref)continue;
-    for(const T2 of HW_COARSE){if(hwScore(ref,u.ud,u.uf,T2,tolP).J-T2.pen>bt+0.012)return c}
+    let bj=-9,bT=null;for(const T2 of HW_COARSE){const j=hwScore(ref,u.ud,u.uf,T2,fb.tol).J;if(j>bj){bj=j;bT=T2}}
+    if(bj>Jt-0.15)cand.push({c,ref,bj,bT});
+  }
+  cand.sort((a,b)=>b.bj-a.bj);
+  for(const k of cand.slice(0,6)){
+    const r=hwClimb(k.ref,u,k.bT,fb.tol);
+    if(r.sc.J>Jt+0.012)return k.c;
   }
   return null;
 }
