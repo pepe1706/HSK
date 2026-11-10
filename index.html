@@ -2134,7 +2134,34 @@ function hwEvaluate(strokes,ch,level,withSuggest){
       else if(alt.cost<b.cost-0.025){res.ok=false;res.confused=alt.ch;res.suggest=alt.ch}
     }
   }
+  if(!res.ok&&!res.empty&&!res.small){
+    const fb=hwFieldCheck(ref,u,b.T,level,tolP);
+    if(fb&&!hwRival(u,ch,b.T,tolP,fb.J)){res.ok=true;res.missing=[];res.extra=[];res.viaField=true}
+  }
   return res;
+}
+/* Lớp chấm theo hình dạng tổng thể (không phụ thuộc số nét / thứ tự / nét viết liền):
+   mọi nét chuẩn phải được mực người viết phủ, mọi nét người viết (đủ dài) phải nằm trên chữ chuẩn. */
+const HW_FB={easy:{c:0.8,p:0.85},normal:{c:0.88,p:0.9},strict:null};
+function hwFieldCheck(ref,u,T,level,tolP){
+  const f=HW_FB[level];if(!f)return null;
+  if(u.n>ref.n+(level==='easy'?1:0))return null;
+  const sc=hwScore(ref,u.ud,u.uf,T,tolP*0.8);
+  if(sc.cov.some(c=>c<f.c))return null;
+  for(let i=0;i<sc.prec.length;i++)if(hwLen(u.norm[i])>=0.03&&sc.prec[i]<f.p)return null;
+  return sc;
+}
+/* Có chữ khác giống nét viết hơn chữ mục tiêu không? (so bằng độ phủ hình dạng) */
+function hwRival(u,target,T,tolP,Jt){
+  let bt=Jt-T.pen;for(const T2 of HW_COARSE){const j=hwScore(hwRef(target),u.ud,u.uf,T2,tolP).J-T2.pen;if(j>bt)bt=j}
+  for(const c in HW_STROKES){
+    if(c===target)continue;
+    const n=HW_STROKES[c].length;
+    if(n<u.n-3||n>u.n+4)continue;
+    const ref=hwRef(c);if(!ref)continue;
+    for(const T2 of HW_COARSE){if(hwScore(ref,u.ud,u.uf,T2,tolP).J-T2.pen>bt+0.012)return c}
+  }
+  return null;
 }
 /* Chữ khác trong app khớp tốt hơn chữ mục tiêu? (rút gọn bằng bản đồ khoảng cách rồi so khớp nét) */
 function hwSuggest(u,target,bt,level,tolP){
@@ -2378,6 +2405,22 @@ async function hwCheck(){
   const top=$('#view');if(top)top.scrollTop=0;window.scrollTo(0,0);
 }
 
+/* Người học tự xác nhận chữ mình viết đúng khi máy chấm hụt; lưu nét để tinh chỉnh thuật toán sau */
+function hwOverride(i){
+  const c=hw.cells[i];if(!c||c.status!=='bad'||!c.strokes.length)return;
+  try{
+    state.hwDisputes=Array.isArray(state.hwDisputes)?state.hwDisputes:[];
+    const r=c.res||{};
+    state.hwDisputes.push({ch:c.ch,lv:hwCfg.tol,nm:(r.missing||[]).length,ne:(r.extra||[]).length,st:c.strokes.map(st=>{const o=[];st.forEach(p=>{o.push(Math.round(p.x*1000)/1000,Math.round(p.y*1000)/1000)});return o})});
+    if(state.hwDisputes.length>40)state.hwDisputes.shift();
+    state.hwWrong=state.hwWrong&&typeof state.hwWrong==='object'?state.hwWrong:{};
+    if(state.hwWrong[c.ch]){state.hwWrong[c.ch]--;if(state.hwWrong[c.ch]<=0)delete state.hwWrong[c.ch]}
+    save();
+  }catch(e){}
+  c.status='ok';c.res=Object.assign({},c.res,{ok:true,manual:true,missing:[],extra:[]});
+  closeModal();render();
+}
+
 /* ---------- chi tiết chữ sai ---------- */
 function hwDetail(i){
   const c=hw.cells[i],r=c.res||{},ref=hwRef(c.ch);
@@ -2399,7 +2442,7 @@ function hwDetail(i){
     if(r.suggest)msg+=` Nét viết giống chữ <b class="zh">${esc(r.suggest)}</b> hơn.`;
   }
   const w=(DATA.vocab||[]).find(v=>String(v['Từ']||'').includes(c.ch));
-  $('#modalroot').innerHTML=`<div class="modalbg" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="row"><span class="badge">CHỮ CẦN SỬA</span><button class="modal-close" onclick="closeModal()">×</button></div><div class="hw-detail"><div class="hw-bigch zh">${esc(c.ch)}</div>${svg}</div><div class="hw-legend"><span class="lg u">nét bạn viết</span><span class="lg g">chữ chuẩn</span><span class="lg m">nét thiếu</span><span class="lg x">nét thừa</span></div><p>${msg}</p>${w?`<div class="muted small">Ví dụ từ: <b class="zh">${esc(w['Từ'])}</b> ${esc(w['Pinyin']||'')} – ${esc(w['Nghĩa tiếng Việt']||'')}</div>`:''}<div class="g2-action-row"><button class="btn secondary" onclick="speak(${ja(c.ch)})">▶ Nghe</button><button class="btn" onclick="closeModal()">Đóng</button></div></div></div>`;
+  $('#modalroot').innerHTML=`<div class="modalbg" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="row"><span class="badge">CHỮ CẦN SỬA</span><button class="modal-close" onclick="closeModal()">×</button></div><div class="hw-detail"><div class="hw-bigch zh">${esc(c.ch)}</div>${svg}</div><div class="hw-legend"><span class="lg u">nét bạn viết</span><span class="lg g">chữ chuẩn</span><span class="lg m">nét thiếu</span><span class="lg x">nét thừa</span></div><p>${msg}</p>${w?`<div class="muted small">Ví dụ từ: <b class="zh">${esc(w['Từ'])}</b> ${esc(w['Pinyin']||'')} – ${esc(w['Nghĩa tiếng Việt']||'')}</div>`:''}<div class="g2-action-row">${c.status==='bad'&&c.strokes.length?`<button class="btn secondary" onclick="hwOverride(${i})">✓ Tôi viết đúng</button>`:''}<button class="btn secondary" onclick="speak(${ja(c.ch)})">▶ Nghe</button><button class="btn" onclick="closeModal()">Đóng</button></div></div></div>`;
   markHan($('#modalroot'));
 }
 
