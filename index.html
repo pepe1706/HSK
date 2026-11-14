@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#F4EEDD"><title>HSK Study Lab</title>
-<script>(function(){try{var s=JSON.parse(localStorage.getItem('hsklab-state-v2')||'{}').settings||{},t=s.theme||'auto',h=new Date().getHours(),d=t==='dark'||(t==='auto'&&(h>=19||h<5));if(d)document.documentElement.className='dark'}catch(e){}})()</script>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('hsklab-state-v2')||'{}').settings||{},t=s.theme||'auto',h=new Date().getHours(),d=t==='dark'||(t==='auto'&&(h>=19||h<5));if(d)document.documentElement.className='dark';var k=s.skin||'default',m=new Date().getMonth()+1;if(k==='seasons')k=m>=3&&m<=4?'xuan':m>=5&&m<=8?'ha':m>=9&&m<=11?'thu':'dong';if(k!=='default')document.documentElement.setAttribute('data-skin',k)}catch(e){}})()</script>
 <style>#splash{position:fixed;inset:0;z-index:9999;background:#F4EEDD;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .25s}html.dark #splash{background:#0E1210}#splash.out{opacity:0;pointer-events:none}
 #splash .sp-s{width:78px;height:78px;border-radius:20px;background:#C0392B;color:#F4EEDD;font:700 46px/78px "Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;text-align:center;box-shadow:0 6px 18px #C0392B44}
 #splash .sp-t{font:800 18px/1.2 system-ui,sans-serif;color:#2F5E4E;letter-spacing:.5px}html.dark #splash .sp-t{color:#8CCDB4}
@@ -565,6 +565,27 @@ details.adv{margin:12px 0 10px}details.adv>summary{cursor:pointer;font-weight:90
 .xgauge::before{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--card)}.xgauge b,.xgauge small{position:relative;line-height:1.1}.xgauge b{font-size:15px}.xgauge small{font-size:9px;color:var(--muted)}
 .xmockres,.xsk{margin-top:8px;text-align:left}
 @media (prefers-reduced-motion:reduce){.xsbar i{transition:none}}
+/* ===== chủ đề trang trí (nhẹ: chỉ đổi biến màu + 1 lớp ánh sáng + vài biểu tượng) ===== */
+html[data-skin] #app::before{content:"";position:absolute;left:0;right:0;top:0;height:230px;background:var(--glow);pointer-events:none;z-index:0}
+html[data-skin] body{background:var(--line)}
+html[data-skin] .lh::after{content:var(--deco);position:absolute;z-index:3;right:52px;top:46px;font-size:20px;letter-spacing:5px;opacity:.95;pointer-events:none}
+html[data-skin=tet]{--paper:#FBF0DC;--card:#FFF9EC;--mint:#FBE3DA;--green:#B3261E;--green2:#8E1B15;--gold:#9A6B12;--goldp:#FBE6B8;--line:#EBCFA8;--soft:#F8E6CF;--wash:#A8826A;--deco:'🏮🌸';--glow:radial-gradient(ellipse at 50% 0,#F6C94B55,#0000 70%)}
+html[data-skin=xmas]{--paper:#F3F6F0;--card:#FBFDF9;--mint:#DCEBE0;--green:#1F6B45;--green2:#14502F;--seal:#C62828;--gold:#9A7B1E;--goldp:#F4EBC9;--line:#CFDDD0;--soft:#E6EEE6;--wash:#6E8A7B;--deco:'🎄⭐';--glow:radial-gradient(ellipse at 20% 0,#C6282822,#0000 60%),radial-gradient(ellipse at 85% 0,#FFFFFF,#0000 60%)}
+html[data-skin=val]{--paper:#FBEFF1;--card:#FFF8F9;--mint:#FADDE5;--green:#C2255C;--green2:#9C1A49;--seal:#C0254F;--gold:#A06A55;--goldp:#FBE3E8;--line:#EBC9D2;--soft:#F6E0E6;--wash:#A8707F;--deco:'💝';--glow:radial-gradient(ellipse at 50% 0,#F28DA655,#0000 70%)}
+html[data-skin=xuan]{--paper:#F3F6EA;--card:#FCFDF7;--mint:#E3F0E1;--green:#4F8A5B;--green2:#376B43;--goldp:#FBE8EE;--line:#D5DFC4;--soft:#E9EFDD;--deco:'🌸';--glow:radial-gradient(ellipse at 50% 0,#F2A3B844,#0000 70%)}
+html[data-skin=ha]{--paper:#EEF6F4;--card:#F9FDFC;--mint:#D8EEF0;--green:#1F7A8C;--green2:#14606F;--goldp:#FFF1C9;--line:#C5DCDD;--soft:#E1EFEE;--wash:#6F9096;--deco:'🪷☀️';--glow:radial-gradient(ellipse at 50% 0,#F6D36555,#0000 70%)}
+html[data-skin=thu]{--paper:#F6EBD8;--card:#FCF6EA;--mint:#F1E0C4;--green:#8A5A2B;--green2:#6B4220;--seal:#B5452A;--goldp:#F4DFB0;--line:#E2CBA1;--soft:#EEDDBF;--wash:#9C8467;--deco:'🍁';--glow:radial-gradient(ellipse at 50% 0,#C9A24B44,#0000 70%)}
+html[data-skin=dong]{--paper:#EEF2F6;--card:#F9FBFD;--mint:#DCE7F0;--green:#3E6A8A;--green2:#2B4F6B;--seal:#B4443F;--goldp:#E3EAF2;--line:#CAD5E0;--soft:#E2E9F0;--wash:#7B8EA0;--deco:'❄️';--glow:radial-gradient(ellipse at 50% 0,#FFFFFF,#0000 70%)}
+.xseason.s-xmas{background:#E4EFE6;border-color:#C0D6C5}.xseason.s-xmas>b{color:#B3261E}
+.xseason.s-val{background:#FBE1E8;border-color:#EDBDC9}.xseason.s-val>b{color:#C2255C}
+.xseason.s-thu{background:#F5E6CB;border-color:#E2CBA1}.xseason.s-thu>b{color:#9A5A25}
+html.dark[data-skin=tet]{--green:#C7473E;--green2:#F2A39C;--mint:#34231F;--gold:#E3B94C;--goldp:#33291A;--line:#4A3530;--soft:#2A201E;--wash:#B08A7A;--glow:radial-gradient(ellipse at 50% 0,#E3B94C22,#0000 70%)}
+html.dark[data-skin=xmas]{--green:#2F8A5A;--green2:#9ADBB6;--mint:#1F2E25;--seal:#E0574A;--gold:#E3B94C;--goldp:#2E2A1C;--line:#34463B;--soft:#232C26;--glow:radial-gradient(ellipse at 20% 0,#E0574A22,#0000 60%)}
+html.dark[data-skin=val]{--green:#C2255C;--green2:#F5A3BB;--mint:#341E27;--seal:#E0557C;--gold:#E8A3A0;--goldp:#33222A;--line:#4A2F3A;--soft:#2A1E24;--wash:#B08090;--glow:radial-gradient(ellipse at 50% 0,#F28DA622,#0000 70%)}
+html.dark[data-skin=xuan]{--green:#4F8A5B;--mint:#1F2E22;--goldp:#33232A;--line:#34463A;--glow:radial-gradient(ellipse at 50% 0,#F2A3B822,#0000 70%)}
+html.dark[data-skin=ha]{--green:#2C8CA0;--green2:#8CD3DF;--mint:#1B2E32;--goldp:#32301A;--line:#2F4549;--glow:radial-gradient(ellipse at 50% 0,#F6D36522,#0000 70%)}
+html.dark[data-skin=thu]{--green:#A8702F;--green2:#E6BE88;--mint:#2E261A;--seal:#D8643F;--goldp:#33291A;--line:#4A3E2A;--soft:#2A241B;--glow:radial-gradient(ellipse at 50% 0,#C9A24B22,#0000 70%)}
+html.dark[data-skin=dong]{--green:#4F80A3;--green2:#A5CBE6;--mint:#1D2A34;--seal:#D8605A;--goldp:#222C36;--line:#33414E;--soft:#222B33;--glow:radial-gradient(ellipse at 50% 0,#9FB6CC22,#0000 70%)}
 
 /* ---- giao diện tối (tự sinh) ---- */
 html.dark{--paper:#171B19;--card:#1F2523;--ink:#E8E4D6;--muted:#9FAEA8;--green:#478F76;--green2:#8CCDB4;--mint:#22302A;--seal:#E0574A;--gold:#D6B466;--goldp:#2E2A1C;--line:#33403B;--wash:#7E9992;--red:#E0574A;--soft:#262D2A;--shadow:0 2px 0 #0008;color-scheme:dark}
@@ -708,6 +729,12 @@ html.dark .xcg{color:#ebe9e733}
 html.dark .xct{background:#28220d}
 html.dark .xcpoly{stroke:#ebe9e7}
 html.dark .xcdot{fill:#ebe9e7}
+html.dark .xseason.s-xmas{background:#1a251c;border-color:#364639}
+html.dark .xseason.s-xmas>b{color:#e59b96}
+html.dark .xseason.s-val{background:#2c0d15;border-color:#4c252f}
+html.dark .xseason.s-val>b{color:#e18fac}
+html.dark .xseason.s-thu{background:#372a13;border-color:#58492d}
+html.dark .xseason.s-thu>b{color:#e2c0a3}
 
 html.dark .hw-padwrap,html.dark .xcpadwrap,html.dark .xct{background:#FBF6E6!important}
 html.dark .xcsvg{filter:none}
@@ -978,7 +1005,7 @@ function checkTyped(input, han, py) {
 const STATE_KEY = 'hsklab-state-v2';
 const DEFAULTS = {
   ver: 2, lessons: {}, srs: {}, errors: {}, fav: [], learnedV: {}, days: {}, lastLesson: '', sess: {}, qstat: {}, levelBest: {}, cpBest: {}, tasks: {}, lastBackup: 0, backupSnooze: 0, hwWrong: {}, hwDisputes: [], cheerOff: false, quests: null, questDone: {}, outfit: '', badges: {}, hist: {}, reads: {}, mocks: {}, calli: [], sprint: {}, weeks: {}, idiomToast: -1,
-  settings: { zhSize: 'm', rate: 0.9, voice: '', seqLesson: true, seqLevel: true, showVi: true, showPy: true, toneColor: true, markNew: true, pyFade: true, autoplay: true, goal: 30, newLimit: 15, lockTest: false, theme: 'auto', leaves: true },
+  settings: { zhSize: 'm', rate: 0.9, voice: '', seqLesson: true, seqLevel: true, showVi: true, showPy: true, toneColor: true, markNew: true, pyFade: true, autoplay: true, goal: 30, newLimit: 15, lockTest: false, theme: 'auto', leaves: true, skin: 'default' },
 };
 let S = loadState();
 function loadState() {
@@ -2636,10 +2663,24 @@ function xThemeIsDark() {
   if (t === 'dark') return true; if (t === 'light') return false;
   const h = new Date().getHours(); return h >= 19 || h < 5;
 }
+const X_SKINS = [['default', 'Mặc định', '🎋'], ['tet', 'Tết', '🏮'], ['xmas', 'Giáng sinh', '🎄'], ['val', 'Valentine', '💝'], ['seasons', 'Bốn mùa', '🌸']];
+const X_SKIN_BG = { tet: '#FBF0DC', xmas: '#F3F6F0', val: '#FBEFF1', xuan: '#F3F6EA', ha: '#EEF6F4', thu: '#F6EBD8', dong: '#EEF2F6' };
+function xDaysTo(m, d, back) { const n = new Date(), y = n.getFullYear(); let t = Math.round((Date.UTC(y, m - 1, d) - Date.UTC(y, n.getMonth(), n.getDate())) / 864e5); if (t < -back) t += 365; return t; }
+function xSkinSeason() {
+  const k = S.settings.skin || 'default';
+  if (k === 'default') return xSeason();
+  if (k === 'seasons') return xSeasonMonth();
+  if (k === 'tet') { const d = X_TET.map(xDiff).find(d => d >= -15); return { id: 'tet', zh: '春节', py: 'Chūnjié', name: d === undefined ? 'Tết Nguyên Đán' : d > 0 ? `Tết còn ${d} ngày` : d === 0 ? 'Hôm nay là Tết!' : 'Năm mới vui vẻ', greet: '新年快乐！恭喜发财！' }; }
+  if (k === 'xmas') { const d = xDaysTo(12, 25, 7); return { id: 'xmas', zh: '圣诞节', py: 'Shèngdànjié', name: d > 0 ? `Giáng sinh còn ${d} ngày` : d === 0 ? 'Hôm nay là Giáng sinh!' : 'Giáng sinh an lành', greet: '圣诞快乐！' }; }
+  const d = xDaysTo(2, 14, 3); return { id: 'val', zh: '情人节', py: 'Qíngrénjié', name: d > 0 ? `Valentine còn ${d} ngày` : d === 0 ? 'Hôm nay là Valentine!' : 'Valentine ngọt ngào', greet: '情人节快乐！' };
+}
+function xSkinId() { const k = S.settings.skin || 'default'; return k === 'default' ? '' : k === 'seasons' ? xSeasonMonth().id : k; }
+function xSetSkin(k) { S.settings.skin = k; save(); xApplyTheme(); xLeaves(); render(); }
 function xApplyTheme() {
-  const d = xThemeIsDark();
-  document.documentElement.classList.toggle('dark', d);
-  const m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', d ? '#161A18' : '#F4EEDD');
+  const d = xThemeIsDark(), sk = xSkinId(), r = document.documentElement;
+  r.classList.toggle('dark', d);
+  if (sk) r.setAttribute('data-skin', sk); else r.removeAttribute('data-skin');
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', d ? '#161A18' : (X_SKIN_BG[sk] || '#F4EEDD'));
 }
 function xSetTheme(v) { S.settings.theme = v; save(); xApplyTheme(); render(); }
 function xToggleLeaves() { S.settings.leaves = S.settings.leaves === false; save(); xLeaves(); render(); }
@@ -2653,6 +2694,9 @@ function xSeason() {
   if (tet !== undefined) return { id: 'tet', zh: '春节', py: 'Chūnjié', name: tet > 0 ? `Tết còn ${tet} ngày` : tet === 0 ? 'Hôm nay là Tết!' : 'Năm mới vui vẻ', greet: '新年快乐！恭喜发财！' };
   const tt = X_TT.map(xDiff).find(d => d >= -2 && d <= 5);
   if (tt !== undefined) return { id: 'trungthu', zh: '中秋节', py: 'Zhōngqiūjié', name: tt > 0 ? `Trung thu còn ${tt} ngày` : tt === 0 ? 'Hôm nay là Trung thu' : 'Trung thu vừa qua', greet: '中秋快乐！' };
+  return xSeasonMonth();
+}
+function xSeasonMonth() {
   const m = new Date().getMonth() + 1;
   if (m >= 3 && m <= 4) return { id: 'xuan', zh: '春天', py: 'chūntiān', name: 'Mùa xuân', greet: '春暖花开' };
   if (m >= 5 && m <= 8) return { id: 'ha', zh: '夏天', py: 'xiàtiān', name: 'Mùa hè', greet: '荷花盛开' };
@@ -2672,6 +2716,9 @@ const X_SHAPE = {
   snow: c => `<g stroke="${c}" stroke-width="1.5" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/></g>`,
   lantern: c => `<ellipse cx="12" cy="13" rx="6.6" ry="7.6" fill="${c}"/><rect x="8.6" y="3.4" width="6.8" height="2.6" rx="1" fill="#B8872A"/><path d="M9 13h6M12 5.5v15" stroke="#fff" stroke-opacity=".35" stroke-width=".8"/><path d="M12 20.6v3" stroke="#B8872A" stroke-width="1.4"/>`,
   lixi: c => `<rect x="6" y="2.5" width="12" height="19" rx="2" fill="${c}"/><circle cx="12" cy="11" r="3.3" fill="#E0A526"/><path d="M12 9.2v3.6" stroke="#C0392B" stroke-width="1"/>`,
+  star: c => `<path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.1 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z" fill="${c}"/>`,
+  heart: c => `<path d="M12 21s-8-5.3-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.7-8 11-8 11z" fill="${c}"/>`,
+  holly: c => `<path d="M12 12C8 6 3 8 3 12c3 0 5-1 9 0zM12 12c4-6 9-4 9 0-3 0-5-1-9 0z" fill="${c}"/><circle cx="12" cy="14" r="2.2" fill="#C62828"/><circle cx="9.8" cy="16.2" r="1.8" fill="#C62828"/><circle cx="14.2" cy="16.2" r="1.8" fill="#C62828"/>`,
   moon: c => `<path d="M15 3a9 9 0 1 0 6 13A7.5 7.5 0 0 1 15 3z" fill="${c}"/>`,
 };
 const X_SEASON_SPEC = {
@@ -2680,6 +2727,8 @@ const X_SEASON_SPEC = {
   ha: { leaf: ['bamboo', 'willow', 'round', 'ginkgo'], cols: ['#7FA98D', '#8E9B52', '#6E9C86'], extra: [['lotus', '#F2A3B8'], ['lotus', '#F6C9D3']] },
   dong: { leaf: ['willow', 'ginkgo', 'bamboo'], cols: ['#8FA9A0', '#B7C4BE', '#A7B59B'], extra: [['snow', '#C7D5E4'], ['snow', '#B9CADC'], ['mai', '#F3DDE2']] },
   tet: { leaf: ['bamboo', 'willow'], cols: ['#7FA98D', '#6E9C86'], extra: [['petal', '#F28DA6'], ['mai', '#E8B923'], ['lixi', '#C0392B'], ['petal', '#F6BFCB'], ['lixi', '#C0392B'], ['mai', '#E8B923']] },
+  xmas: { leaf: ['snow'], cols: ['#B9CADC', '#C7D5E4', '#A9BED3'], extra: [['star', '#E3B94C'], ['holly', '#2F7D4F'], ['snow', '#9FB6CC'], ['star', '#E3B94C'], ['holly', '#2F7D4F']] },
+  val: { leaf: ['petal'], cols: ['#F2A3B8', '#F6BFCB', '#E87A9A'], extra: [['heart', '#E0556F'], ['heart', '#F28DA6'], ['heart', '#C2255C'], ['heart', '#E0556F']] },
   trungthu: { leaf: ['ginkgo', 'maple', 'oak'], cols: ['#C9A24B', '#B9623F', '#8E9B52'], extra: [['lantern', '#D9534A'], ['lantern', '#E58A3A'], ['moon', '#E8CF7A'], ['lantern', '#D9534A']] },
 };
 function xLeaves() {
@@ -2688,7 +2737,7 @@ function xLeaves() {
     const old = document.getElementById('leaves'); if (old) old.remove();
     if (S.settings.leaves === false) return;
     if (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    const se = xSeason(), sp = X_SEASON_SPEC[se.id] || X_SEASON_SPEC.thu, N = 9, plan = [];
+    const se = xSkinSeason(), sp = X_SEASON_SPEC[se.id] || X_SEASON_SPEC.thu, N = 9, plan = [];
     for (let i = 0; i < N; i++) {
       const useExtra = sp.extra.length && i % 5 >= 2 && i % 5 < 5 && (i % 2 === 1 || i % 5 === 4);
       if (useExtra) { const e = sp.extra[plan.filter(p => p.ex).length % sp.extra.length]; plan.push({ ex: 1, k: e[0], c: e[1] }); }
@@ -2710,7 +2759,7 @@ function xLeaves() {
   } catch (e) { console.warn(e); }
 }
 function xSeasonRibbon() {
-  const s = xSeason();
+  const s = xSkinSeason();
   return `<div class="xseason s-${s.id}"><b class="zh">${s.zh}</b><span><i>${esc(s.name)}</i><em class="zh">${s.greet}</em></span></div>`;
 }
 
@@ -2871,7 +2920,8 @@ function xMeExtras() {
   ${xRow('📊', 'Biểu đồ tiến bộ', 'Số câu, độ chính xác, kỹ năng, từ vựng', "go('x_stats')")}
   <section class="card"><div class="section-title">🌙 Giao diện</div>
    <div class="set"><span>Chế độ màu</span><span class="chips2">${[['auto', 'Tự động'], ['light', 'Sáng'], ['dark', 'Tối']].map(([k, n]) => `<button class="chip ${t === k ? 'on' : ''}" onclick="xSetTheme('${k}')">${n}</button>`).join('')}</span></div>
-   <div class="set"><span>Lá, hoa rơi theo mùa<br><span class="muted tiny">hiện: ${esc(xSeason().name)}</span></span>${onOff(S.settings.leaves !== false, 'xToggleLeaves()')}</div>
+   <div class="set" style="display:block"><div style="margin-bottom:6px">Chủ đề trang trí</div><div class="chips2" style="flex-wrap:wrap">${X_SKINS.map(([k, n, ic]) => `<button class="chip ${(S.settings.skin || 'default') === k ? 'on' : ''}" onclick="xSetSkin('${k}')">${ic} ${n}</button>`).join('')}</div><div class="muted tiny" style="margin-top:4px">Chỉ đổi màu và trang trí, rất nhẹ. “Mặc định” tự có lá rơi theo mùa và Tết/Trung thu.</div></div>
+   <div class="set"><span>Lá, hoa rơi theo mùa<br><span class="muted tiny">hiện: ${esc(xSkinSeason().name)}</span></span>${onOff(S.settings.leaves !== false, 'xToggleLeaves()')}</div>
    <div class="muted tiny">“Tự động” chuyển sang nền tối từ 19:00 đến 5:00.</div></section>`;
 }
 
@@ -3010,6 +3060,7 @@ function xStartFast() {
   openSess({ key: null, type: 'practice', title: 'Ôn nhanh 3 phút', fast: true, back: 'today' }, () => fin, true);
 }
 function xAfterQuiz() {
+  const cq = curQ(); if (cq && !cq._t0) cq._t0 = Date.now();
   if (!quiz || !quiz.fast) { clearInterval(X_TIMERS.quiz); delete X_TIMERS.quiz; return; }
   quiz.t0 = quiz.t0 || Date.now();
   const w = document.querySelector('.qwrap'); if (!w) return;
@@ -3522,6 +3573,49 @@ function xDiffSort(items, meta) {
     .sort((a, b) => a.t - b.t || a.l - b.l || a.s - b.s || a.i - b.i).map(x => x.q);
 }
 
+/* ---------- Ôn thẻ ngắt quãng đa dạng (build_53) ----------
+   Mỗi từ có 2 thẻ (h: Hán→nghĩa, m: nghĩa→Hán). Mỗi ngày chỉ ôn MỘT thẻ cho mỗi từ (srsLists lọc theo từ),
+   hai chiều xen kẽ qua các ngày. Mỗi thẻ được ra bằng một dạng câu hỏi khác nhau, chấm tự động vào SM-2. */
+const X_SRS_H = ['mean', 'listen', 'recog', 'hv', 'tonePick', 'tone', 'fill'], X_SRS_M = ['meanR', 'fill', 'cloze', 'translate', 'dict', 'py'];
+function xSrsMark(c) { const k = dayKey(); if (!S.srsToday || S.srsToday.d !== k) S.srsToday = { d: k, w: {} }; S.srsToday.w[c.k + ':' + c.id] = 1; }
+function xSrsQ(key, cnt, used) {
+  const c = S.srs[key], v = c && DATA.idx.vocabByCode[c.id]; if (!v) return null;
+  const list = (c.d === 'h' ? X_SRS_H : X_SRS_M).slice();
+  const cands = shuffle(list).sort((a, b) => (cnt[a] || 0) - (cnt[b] || 0));
+  for (const k of cands) {
+    let q = null;
+    try {
+      if (['translate', 'dict'].includes(k)) { const refs = [1, 2].map(n => `E:${c.id}:${n}`).filter(r => sentRef(r)); if (!refs.length) continue; q = makeQ(k, sentRef(refs[Math.floor(Math.random() * refs.length)])); }
+      else q = makeQ(k, v);
+    } catch (e) { q = null; }
+    if (q && !used.has(q.kind + '|' + q.ref)) { cnt[k] = (cnt[k] || 0) + 1; q.srsKey = key; used.add(q.kind + '|' + q.ref); return q; }
+  }
+  return null;
+}
+function xSrsStart(filter) {
+  const l = srsLists(filter || 'all'), keys = [...shuffle(l.due), ...l.fresh].filter(k => S.srs[k] && S.srs[k].k === 'v');
+  if (!keys.length) return (l.due.length + l.fresh.length) ? startSrsFlip(filter) : toast('Hôm nay không còn thẻ nào cần ôn 🎉');
+  openSess({ key: null, type: 'practice', title: 'Ôn thẻ ngắt quãng', srs: true, noSort: true, back: lastHub || 'practice' }, () => {
+    const cnt = {}, used = new Set(), items = [];
+    keys.forEach(k => { const q = xSrsQ(k, cnt, used); if (q) items.push(q); });
+    return xSpread(shuffle(items), items.length, 99);
+  }, true);
+}
+function xSrsGrade(q, ok) {
+  const c = S.srs[q.srsKey]; if (!c) return;
+  const ms = q._t0 ? Date.now() - q._t0 : 6000, g = !ok ? 0 : q._retry ? 3 : ms < 3500 ? 5 : ms > 12000 ? 3 : 4;
+  if (c.due === null) bump('fresh');
+  S.srs[q.srsKey] = sm2(c, g); bump('cards'); bumpQ('srs');
+  if (g >= 3) xSrsMark(c);
+  else if (!q._retry && quiz && quiz.srs) {   // sai: xếp lại một lần cuối phiên bằng dạng khác
+    const nq = xSrsQ(q.srsKey, {}, new Set([q.kind + '|' + q.ref])); if (nq) { nq._retry = true; quiz.items.push(nq); }
+  }
+}
+function xSrsLinkBtns() {
+  const l = srsLists('all'), nv = [...l.due, ...l.fresh].filter(k => S.srs[k].k === 'v').length, ng = [...l.due, ...l.fresh].filter(k => S.srs[k].k === 'g').length;
+  return `<div class="grid2" style="margin-top:6px">${nv ? '<button class="btn ghost" onclick="startSrsFlip(\'v\')">Ôn kiểu lật thẻ</button>' : ''}${ng ? `<button class="btn ghost" onclick="startSrsFlip('g')">Thẻ ngữ pháp (${ng})</button>` : ''}</div>`;
+}
+
 /* ---- quiz.js ---- */
 /* ===== HSK Study Lab · bài tập, kiểm tra, sổ lỗi, ôn ngắt quãng ===== */
 let quiz = null, practiceScope = 'lesson', srsQ = null;
@@ -3919,6 +4013,7 @@ function answer(val) {
   const key = q.kind + '|' + q.ref;
   if (!ok) { const e = S.errors[key] || { key, kind: q.kind, ref: q.ref, n: 0, streak: 0 }; e.n++; e.streak = 0; e.at = Date.now(); S.errors[key] = e; }
   else if (S.errors[key]) { S.errors[key].streak++; if (S.errors[key].streak >= 2 || quiz.type === 'errors') delete S.errors[key]; }
+  if (q.srsKey) xSrsGrade(q, ok);
   if (quiz.s) quiz.s.at = Date.now();
   statUpdate(); save(); render();
   try { cheerAnswer(ok, ['py', 'tone', 'tonePick', 'sandhi'].includes(q.kind) ? 'tone' : ['type', 'trans', 'dict'].includes(q.kind) ? 'dictation' : q.kind); } catch (e) { }
@@ -4076,8 +4171,8 @@ function reviewBlock() {
   const l = srsLists('all'), nDue = l.due.length + l.fresh.length, errN = Object.keys(S.errors).length, hwN = Object.keys(S.hwWrong || {}).filter(c => typeof HW_STROKES !== 'undefined' && HW_STROKES[c]).length;
   return `<h2 class="st"><span class="zh">复</span> Ôn mỗi ngày <span class="muted tiny">làm lần lượt 1 → 2 → 3</span></h2>
    <section class="card nstep"><div class="row" style="gap:8px;margin-bottom:6px"><span class="no">1</span><b>Ôn thẻ ngắt quãng</b></div><div class="stats3"><div><b>${l.due.length}</b><span>đến hạn</span></div><div><b>${l.fresh.length}</b><span>thẻ mới hôm nay</span></div><div><b>${Object.values(S.srs).filter(c => srsItem(c)).length}</b><span>tổng số thẻ</span></div></div>
-   <button class="btn red block mt" onclick="startSrs('all')" ${nDue ? '' : 'disabled'}>${nDue ? `Ôn ${nDue} thẻ` : 'Hôm nay đã ôn xong 🎉'}</button>
-   <p class="muted tiny" style="margin:6px 0 0">Thẻ tự thêm khi bạn qua bài hoặc trả lời sai · tối đa ${S.settings.newLimit} thẻ mới mỗi ngày (đổi ở Tôi).</p></section>
+   <button class="btn red block mt" onclick="startSrs('all')" ${nDue ? '' : 'disabled'}>${nDue ? `Ôn ${nDue} thẻ` : 'Hôm nay đã ôn xong 🎉'}</button>${nDue ? xSrsLinkBtns() : ''}
+   <p class="muted tiny" style="margin:6px 0 0">Mỗi từ ôn một lần mỗi ngày, mỗi thẻ một dạng câu hỏi khác nhau · Thẻ tự thêm khi bạn qua bài hoặc trả lời sai · tối đa ${S.settings.newLimit} thẻ mới mỗi ngày (đổi ở Tôi).</p></section>
    <button class="ptype" onclick="startErrors()"><div class="ptop"><span class="no">2</span><span class="ic r">错</span><span class="pt"><b>Sổ lỗi sai</b><span>Làm lại câu từng sai · đúng 2 lần là xóa khỏi sổ</span></span><span class="badge ${errN ? 'red' : ''}">${errN}</span></div></button>
    ${dailyCard(3)}
    <button class="ptype" onclick="hwStartFix()"><div class="ptop"><span class="ic a">写</span><span class="pt"><b>Chữ viết tay hay sai</b><span>Chép lại các chữ từng viết sai (chỉ luyện)</span></span><span class="badge ${hwN ? 'warn' : ''}">${hwN}</span></div></button>`;
@@ -4104,13 +4199,21 @@ function practicePage() {
 function addCard(k, id, d) { const key = `${k}:${id}:${d}`; if (S.srs[key]) return 0; S.srs[key] = { k, id, d, ef: 2.5, iv: 0, reps: 0, due: null, lapses: 0 }; return 1; }
 const srsItem = c => c.k === 'g' ? DATA.idx.grammarByCode[c.id] : DATA.idx.vocabByCode[c.id];
 function srsLists(filter = 'all') {
-  const t = today(), due = [], fresh = [];
-  for (const [key, c] of Object.entries(S.srs)) { if (filter !== 'all' && c.k !== filter) continue; if (!srsItem(c)) continue; if (c.due === null) fresh.push(key); else if (c.due <= t) due.push(key); }
+  /* mỗi từ/điểm ngữ pháp chỉ tính MỘT thẻ mỗi ngày (thẻ đến hạn sớm nhất, nếu không có thì thẻ mới); từ đã ôn xong hôm nay thì không tính nữa */
+  const t = today(), sd = S.srsToday && S.srsToday.d === dayKey() ? S.srsToday.w : {}, best = {};
+  for (const [key, c] of Object.entries(S.srs)) {
+    if (filter !== 'all' && c.k !== filter) continue; if (!srsItem(c)) continue;
+    const wk = c.k + ':' + c.id; if (sd[wk]) continue;
+    const isDue = c.due !== null && c.due <= t; if (!isDue && c.due !== null) continue;
+    const sc = isDue ? c.due : 1e9, b = best[wk]; if (!b || sc < b.sc) best[wk] = { key, sc, due: isDue };
+  }
+  const due = [], fresh = []; Object.values(best).forEach(b => (b.due ? due : fresh).push(b.key));
   const usedNew = S.days[dayKey()]?.fresh || 0;
   return { due, fresh: fresh.slice(0, Math.max(0, S.settings.newLimit - usedNew)), freshAll: fresh.length };
 }
 function srsDueCount() { const l = srsLists(); return l.due.length + l.fresh.length; }
-function startSrs(filter) {
+function startSrs(filter) { return xSrsStart(filter); }
+function startSrsFlip(filter) {
   const l = srsLists(filter || 'all'), q = [...shuffle(l.due), ...l.fresh];
   if (!q.length) return toast('Hôm nay không còn thẻ nào cần ôn 🎉');
   srsQ = { q, i: 0, show: false, done: 0, again: {} }; go('srs', { fresh: 1 }); srsAuto();
@@ -4125,7 +4228,7 @@ function ivText(d) { return d === 0 ? '< 1 ngày' : d < 30 ? d + ' ngày' : d < 
 function gradeCard(g) {
   const key = srsQ.q[srsQ.i], c = S.srs[key]; if (!c) return;
   if (c.due === null) bump('fresh');
-  S.srs[key] = sm2(c, g); bump('cards'); bumpQ('srs'); srsQ.done++;
+  S.srs[key] = sm2(c, g); bump('cards'); bumpQ('srs'); srsQ.done++; if (g >= 3) xSrsMark(c);
   if (g < 3 && !srsQ.again[key]) { srsQ.again[key] = 1; srsQ.q.push(key); }
   save(); srsQ.i++; srsQ.show = false;
   if (srsQ.i >= srsQ.q.length) { toast(`Xong! Đã ôn ${srsQ.done} lượt thẻ`); try { cheerShow('finishGood'); } catch (e) { } srsQ = null; go(lastHub || 'today'); return; }
