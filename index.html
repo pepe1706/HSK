@@ -536,17 +536,6 @@ details.adv{margin:12px 0 10px}details.adv>summary{cursor:pointer;font-weight:90
 .xsbar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin:6px 0 10px}.xsbar i{display:block;height:100%;background:linear-gradient(90deg,#2F5E4E,#5E8F72);transition:width .1s linear}.xsbar i.low{background:linear-gradient(90deg,#C0392B,#E0574A)}
 .xsbox .han{font-size:48px;font-weight:900;text-align:center;padding:10px 0}.xsbox .qprompt{font-size:20px;font-weight:800;text-align:center;padding:12px 0}
 .xsend{text-align:center}.xbigscore{font-size:54px;font-weight:900;color:var(--seal);line-height:1.05}
-.xcal .xcinfo{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.xcbig{font-size:34px;color:var(--seal)}
-.xcpadwrap{position:relative;margin:0 auto;border:2px solid var(--seal);border-radius:10px;background:#FBF6E6;overflow:hidden;touch-action:none}
-.xcgrid{position:absolute;inset:0;background:linear-gradient(#0000 49.6%,#C0392B33 49.6% 50.4%,#0000 50.4%),linear-gradient(90deg,#0000 49.6%,#C0392B33 49.6% 50.4%,#0000 50.4%);pointer-events:none}
-.xcg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#1d1b1833;pointer-events:none;font-weight:700;font-family:'Noto Serif SC','Noto Sans SC',serif}
-#xcPad{position:absolute;inset:0;touch-action:none;cursor:crosshair}
-.xcres{text-align:center;margin-top:10px}
-.xcgal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
-.xct{position:relative;border:1px solid var(--line);background:#FBF6E6;border-radius:12px;padding:4px}.xcsvg{width:100%;display:block;aspect-ratio:1}
-.xcpoly{fill:none;stroke:#1d1b18;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}.xcdot{fill:#1d1b18}
-.xcseal{position:absolute;right:6px;bottom:30px;width:22px;height:22px;background:#C0392B;color:#FBF6E6;border-radius:3px;font-size:13px;display:flex;align-items:center;justify-content:center;transform:rotate(-6deg)}
-.xcm{display:flex;gap:4px;align-items:center;justify-content:space-between;margin-top:2px}.xcm b{font-size:13px;color:var(--seal)}.xcm .chip{padding:3px 6px;font-size:11px;min-height:0}
 /* thẻ luyện mới */
 .xwhy{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--goldp);font-size:13px;line-height:1.45;text-align:left}
 .xwhy button,.xwhy .chip{margin-top:4px}
@@ -586,6 +575,21 @@ html.dark[data-skin=xuan]{--green:#4F8A5B;--mint:#1F2E22;--goldp:#33232A;--line:
 html.dark[data-skin=ha]{--green:#2C8CA0;--green2:#8CD3DF;--mint:#1B2E32;--goldp:#32301A;--line:#2F4549;--glow:radial-gradient(ellipse at 50% 0,#F6D36522,#0000 70%)}
 html.dark[data-skin=thu]{--green:#A8702F;--green2:#E6BE88;--mint:#2E261A;--seal:#D8643F;--goldp:#33291A;--line:#4A3E2A;--soft:#2A241B;--glow:radial-gradient(ellipse at 50% 0,#C9A24B22,#0000 70%)}
 html.dark[data-skin=dong]{--green:#4F80A3;--green2:#A5CBE6;--mint:#1D2A34;--seal:#D8605A;--goldp:#222C36;--line:#33414E;--soft:#222B33;--glow:radial-gradient(ellipse at 50% 0,#9FB6CC22,#0000 70%)}
+/* viết tay làm đáp án */
+.xhw{margin-top:10px}
+.xhchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px}
+.xhc{position:relative;width:44px;height:44px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);padding:2px;cursor:pointer}
+.xhc svg{width:100%;height:100%;fill:none;stroke:var(--ink);stroke-width:.07;stroke-linecap:round;stroke-linejoin:round}
+.xhc svg circle{fill:var(--ink);stroke:none}
+.xhc.cur{border-color:var(--seal);box-shadow:0 0 0 2px var(--seal) inset}
+.xhc.has:not(.cur){background:var(--soft)}
+.xhc.ok{border-color:#2e8b57;background:#2e8b5722}
+.xhc.bad{border-color:var(--seal);background:#c0392b22}
+.xhc .xhg{position:absolute;right:1px;bottom:-1px;font-size:15px;color:var(--seal);font-weight:800;background:var(--card);border-radius:6px;padding:0 2px}
+.xhpadwrap{position:relative;margin:6px auto 10px;border:2px solid var(--seal);border-radius:14px;background:var(--card);overflow:hidden;touch-action:none}
+.xhgrid{position:absolute;inset:0;background:linear-gradient(var(--line),var(--line)) center/100% 1px no-repeat,linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat,linear-gradient(45deg,#0000 49.7%,var(--line) 49.7% 50.3%,#0000 50.3%),linear-gradient(-45deg,#0000 49.7%,var(--line) 49.7% 50.3%,#0000 50.3%);opacity:.7;pointer-events:none}
+.xhghost{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:230px;line-height:1;color:var(--ink);opacity:.13;pointer-events:none}
+.xhpad{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
 
 /* ---- giao diện tối (tự sinh) ---- */
 html.dark{--paper:#171B19;--card:#1F2523;--ink:#E8E4D6;--muted:#9FAEA8;--green:#478F76;--green2:#8CCDB4;--mint:#22302A;--seal:#E0574A;--gold:#D6B466;--goldp:#2E2A1C;--line:#33403B;--wash:#7E9992;--red:#E0574A;--soft:#262D2A;--shadow:0 2px 0 #0008;color-scheme:dark}
@@ -724,11 +728,6 @@ html.dark .xseason.s-ha{background:#1a271f}
 html.dark .xseason.s-dong{background:#181e24;border-color:#323b43}
 html.dark .xseason.s-dong>b{color:#afc0ce}
 html.dark .s-n{background:#363e3a}
-html.dark .xcpadwrap{background:#28220d}
-html.dark .xcg{color:#ebe9e733}
-html.dark .xct{background:#28220d}
-html.dark .xcpoly{stroke:#ebe9e7}
-html.dark .xcdot{fill:#ebe9e7}
 html.dark .xseason.s-xmas{background:#1a251c;border-color:#364639}
 html.dark .xseason.s-xmas>b{color:#e59b96}
 html.dark .xseason.s-val{background:#2c0d15;border-color:#4c252f}
@@ -750,6 +749,15 @@ html.dark .xsbar i,html.dark .bar i{filter:brightness(1.1)}
 (function(){
  var started=false;
  function go(){if(started)return;started=true;var m=document.getElementById('mainjs');if(!m){started=false;document.addEventListener('DOMContentLoaded',go);return}var s=document.createElement('script');s.text=m.textContent;document.body.appendChild(s);requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('fontcss');if(f){var st=document.createElement('style');st.textContent=f.textContent;document.head.appendChild(st);f.remove()}},60)})}
+ var fl=null;try{fl=localStorage.getItem('hsk-ovr')}catch(e){}
+ if(fl!=='1'){
+  /* không có dữ liệu Excel đã nhập → chạy ngay, không chờ IndexedDB (có máy treo vài giây) */
+  go();
+  if(fl===null)setTimeout(function(){try{
+   var r0=indexedDB.open('hsklab-data',1);r0.onupgradeneeded=function(){r0.result.createObjectStore('kv')};
+   r0.onsuccess=function(){try{var g=r0.result.transaction('kv').objectStore('kv').get('override');g.onsuccess=function(){var o=g.result;try{localStorage.setItem('hsk-ovr',o&&o.payload?'1':'0')}catch(e){}if(o&&o.payload)location.reload()}}catch(e){}}
+  }catch(e){}},1500);
+ }else{
  try{
   var rq=indexedDB.open('hsklab-data',1);
   rq.onupgradeneeded=function(){rq.result.createObjectStore('kv')};
@@ -763,7 +771,9 @@ html.dark .xsbar i,html.dark .bar i{filter:brightness(1.1)}
    }catch(e){go()}
   };
  }catch(e){go()}
- setTimeout(go,5000);setTimeout(function(){var p=document.getElementById("splash");if(p)p.remove()},12000);
+ setTimeout(go,2500);
+ }
+setTimeout(function(){var p=document.getElementById("splash");if(p)p.remove()},12000);
 })();
 </script>
 <script id="fontcss" type="text/plain">@font-face{font-family:'Nunito';font-style:normal;font-weight:200 1000;font-display:swap;src:url(fonts/Nunito-sub.woff) format('woff')}
@@ -1004,7 +1014,7 @@ function checkTyped(input, han, py) {
 /* ---------- trạng thái (tiến độ, khóa theo Mã bài / Mã mục) ---------- */
 const STATE_KEY = 'hsklab-state-v2';
 const DEFAULTS = {
-  ver: 2, lessons: {}, srs: {}, errors: {}, fav: [], learnedV: {}, days: {}, lastLesson: '', sess: {}, qstat: {}, levelBest: {}, cpBest: {}, tasks: {}, lastBackup: 0, backupSnooze: 0, hwWrong: {}, hwDisputes: [], cheerOff: false, quests: null, questDone: {}, outfit: '', badges: {}, hist: {}, reads: {}, mocks: {}, calli: [], sprint: {}, weeks: {}, idiomToast: -1,
+  ver: 2, lessons: {}, srs: {}, errors: {}, fav: [], learnedV: {}, days: {}, lastLesson: '', sess: {}, qstat: {}, levelBest: {}, cpBest: {}, tasks: {}, lastBackup: 0, backupSnooze: 0, hwWrong: {}, hwWeak: {}, hwDisputes: [], cheerOff: false, quests: null, questDone: {}, outfit: '', badges: {}, hist: {}, reads: {}, mocks: {}, calli: [], sprint: {}, weeks: {}, idiomToast: -1,
   settings: { zhSize: 'm', rate: 0.9, voice: '', seqLesson: true, seqLevel: true, showVi: true, showPy: true, toneColor: true, markNew: true, pyFade: true, autoplay: true, goal: 30, newLimit: 15, lockTest: false, theme: 'auto', leaves: true, skin: 'default' },
 };
 let S = loadState();
@@ -1624,7 +1634,7 @@ const HW_JSON="{\"\u4e00\":[[15,65,24,62,52,66,103,70,115,66]],\"\u4e03\":[[13,5
 let _hwS=null;const _hwo=()=>_hwS||(_hwS=JSON.parse(HW_JSON));
 const HW_STROKES=new Proxy({},{get:(t,k)=>_hwo()[k],has:(t,k)=>k in _hwo(),ownKeys:()=>Reflect.ownKeys(_hwo()),getOwnPropertyDescriptor:(t,k)=>{const d=Object.getOwnPropertyDescriptor(_hwo(),k);if(d)d.configurable=true;return d}});
 const HW_G=96,HW_LO=-0.3,HW_SPAN=1.6,HW_CELL=HW_SPAN/HW_G;
-const HW_TOL={easy:0.13,normal:0.10,strict:0.075};
+const HW_TOL={lenient:0.16,easy:0.13,normal:0.10,strict:0.075};
 const HW_TOL_NAME={easy:'Dễ',normal:'Chuẩn',strict:'Nghiêm'};
 const HW_DEF={auto:true,tol:'normal',delay:1200};
 let hw=null,hwTimer=null,hwPointer=null,hwChecking=false;
@@ -1806,6 +1816,20 @@ function hwPrepUser(strokes){
   for(let i=0;i<ud.length;i++)if(!ud[i].length)ud[i]=[un.strokes[i][0]];
   return{ud,uf:hwField(un.strokes),n:us.length,norm:un.strokes,polys:un.strokes.map(s=>hwPoly(s,HW_K))};
 }
+/* chấm "mềm": nếu chưa đạt ở mức đang chọn (trừ Nghiêm), thử lại mức Rất dễ — vẫn loại khi có chữ khác khớp rõ hơn */
+function hwEvalSoft(strokes,ch,level,withSuggest){
+  const r=hwEvaluate(strokes,ch,level,withSuggest);
+  if(r.ok===false&&!r.confused&&!r.empty&&!r.small&&level!=='strict'&&r.T){
+    try{
+      const ref=hwRef(ch),u=hwPrepUser(strokes);
+      if(ref&&u&&!u.small){
+        const fb=hwFieldCheck(ref,u,r.T,'lenient',HW_TOL.lenient);
+        if(fb){const tt=HW_TOL.normal*0.95,cl=hwClimb(ref,u,fb.T,tt),fb2={J:cl.sc.J,T:cl.T,sc:cl.sc,tol:tt};if(!hwRival(u,ch,fb2)){r.ok=true;r.soft=true;r.missing=[];r.extra=[];delete r.suggest}}
+      }
+    }catch(e){}
+  }
+  return r;
+}
 function hwEvaluate(strokes,ch,level,withSuggest){
   const ref=hwRef(ch);
   if(!ref)return{ok:null,nodata:true};
@@ -1824,7 +1848,7 @@ function hwEvaluate(strokes,ch,level,withSuggest){
       else if(alt.cost<b.cost-0.025){res.ok=false;res.confused=alt.ch;res.suggest=alt.ch}
     }
   }
-  if(!res.ok&&!res.empty&&!res.small){
+  if(!res.ok&&!res.confused&&!res.empty&&!res.small){
     const fb=hwFieldCheck(ref,u,b.T,level,tolP);
     if(fb&&!hwRival(u,ch,fb)){res.ok=true;res.missing=[];res.extra=[];res.viaField=true}
   }
@@ -1832,7 +1856,7 @@ function hwEvaluate(strokes,ch,level,withSuggest){
 }
 /* Lớp chấm theo hình dạng tổng thể (không phụ thuộc số nét / thứ tự / nét viết liền):
    mọi nét chuẩn phải được mực người viết phủ, mọi nét người viết (đủ dài) phải nằm trên chữ chuẩn. */
-const HW_FB={easy:{c:0.82,p:0.85,k:0.9},normal:{c:0.9,p:0.88,k:0.95},strict:null};
+const HW_FB={lenient:{c:0.62,p:0.66,k:1.25},easy:{c:0.82,p:0.85,k:0.9},normal:{c:0.9,p:0.88,k:0.95},strict:null};
 /* Tinh chỉnh phép biến đổi (co giãn ngang/dọc riêng + dịch) để chữ chuẩn khớp nhất với nét viết */
 function hwClimb(ref,u,T0,tol){
   let T={sx:T0.sx||T0.s,sy:T0.sy||T0.s,tx:T0.tx,ty:T0.ty,pen:0},sc=hwScore(ref,u.ud,u.uf,T,tol);
@@ -1851,7 +1875,7 @@ function hwClimb(ref,u,T0,tol){
 }
 function hwFieldCheck(ref,u,T0,level,tolP){
   const f=HW_FB[level];if(!f)return null;
-  if(u.n>ref.n+(level==='easy'?1:0))return null;
+  if(u.n>ref.n+(level==='lenient'?2:level==='easy'?1:0))return null;
   const tol=tolP*f.k,cl=hwClimb(ref,u,T0,tol),sc=cl.sc;
   if(sc.cov.some(c=>c<f.c))return null;
   for(let i=0;i<sc.prec.length;i++)if(hwLen(u.norm[i])>=0.03&&sc.prec[i]<f.p)return null;
@@ -2100,7 +2124,7 @@ async function hwCheck(){
     for(let i=0;i<hw.cells.length;i++){
       const c=hw.cells[i];
       if(!c.strokes.length){c.status='empty';c.res={ok:false,empty:true};continue}
-      const r=hwEvaluate(c.strokes,c.ch,hwCfg.tol,true);
+      const r=hwEvalSoft(c.strokes,c.ch,hwCfg.tol,true);
       c.res=r;c.status=r.ok===null?'ok':(r.ok?'ok':'bad');
       if(i%3===2)await new Promise(res=>setTimeout(res,0));
     }
@@ -2406,7 +2430,7 @@ function hskDiff(cur,nw){
 /* ---------- lưu trữ (IndexedDB) ---------- */
 function hskIdb(){return new Promise((res,rej)=>{try{const rq=indexedDB.open('hsklab-data',1);rq.onupgradeneeded=()=>rq.result.createObjectStore('kv');rq.onsuccess=()=>res(rq.result);rq.onerror=()=>rej(rq.error);rq.onblocked=()=>rej(new Error('blocked'))}catch(e){rej(e)}})}
 async function hskKvGet(k){const db=await hskIdb();return new Promise((res,rej)=>{const g=db.transaction('kv').objectStore('kv').get(k);g.onsuccess=()=>res(g.result);g.onerror=()=>rej(g.error)})}
-async function hskKvPut(obj){const db=await hskIdb();return new Promise((res,rej)=>{const tx=db.transaction('kv','readwrite'),st=tx.objectStore('kv');for(const k in obj){if(obj[k]===undefined)st.delete(k);else st.put(obj[k],k)}tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error||new Error('Không ghi được vào bộ nhớ trình duyệt'))})}
+async function hskKvPut(obj){const db=await hskIdb();return new Promise((res,rej)=>{const tx=db.transaction('kv','readwrite'),st=tx.objectStore('kv');for(const k in obj){if(obj[k]===undefined)st.delete(k);else st.put(obj[k],k)}tx.oncomplete=()=>{try{localStorage.setItem('hsk-ovr',('override' in obj&&obj.override!==undefined)?'1':'0')}catch(e){}res()};tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error||new Error('Không ghi được vào bộ nhớ trình duyệt'))})}
 function hskReloadWith(msg){try{sessionStorage.setItem('hsk-msg',msg)}catch(e){}location.reload()}
 const hskBaseEntry=()=>({base:true,meta:{src:'Bản gốc trong app',ts:0}});
 
@@ -2650,8 +2674,8 @@ const X_PART_USE = { '的': '的 nối định ngữ với danh từ: 我的书,
    Trạng thái, giao diện tối, mùa & lá rơi, huy hiệu + trang phục gấu trúc, mục tiêu tuần,
    sao lưu tự động (IndexedDB), thẻ hiển thị ở Hôm nay / Ôn & Luyện / Tôi. */
 
-const X_NAV_ON = { x_conf: 'practice', x_read: 'practice', x_mock: 'practice', x_sprint: 'practice', x_calli: 'practice', x_stats: 'me', x_badge: 'me', x_idiom: 'me' };
-const X_NONAV = ['x_sprint', 'x_calli'];
+const X_NAV_ON = { x_conf: 'practice', x_read: 'practice', x_mock: 'practice', x_sprint: 'practice', x_stats: 'me', x_badge: 'me', x_idiom: 'me' };
+const X_NONAV = ['x_sprint'];
 const xHan = c => /[一-鿿]/.test(c);
 const xPassedLessons = () => DATA.lessons.filter(l => lessonDone(l['Mã bài'])).length;
 const xCpPassed = () => LEVELS.reduce((n, lv) => n + checkpoints(lv).filter(cpPassed).length, 0);
@@ -2802,7 +2826,6 @@ const X_BADGES = [
   { id: 'b_sprint', ic: '⚡', n: 'Tia chớp', d: 'Thử thách 60 giây đạt 25 điểm', ok: () => Math.max(0, ...Object.values(S.sprint || {}).map(x => x.best || 0)) >= 25, out: 'shades' },
   { id: 'b_read', ic: '📖', n: 'Mọt sách', d: 'Đọc xong 5 bài đọc', ok: () => Object.keys(S.reads || {}).length >= 5, out: 'beret' },
   { id: 'b_week', ic: '🏅', n: 'Tuần hoàn hảo', d: 'Hoàn thành mục tiêu tuần 3 lần', ok: () => Object.keys(S.weeks || {}).length >= 3, out: 'medal' },
-  { id: 'b_calli', ic: '🖌️', n: 'Thư pháp gia', d: 'Lưu 5 chữ vào bộ chữ đẹp', ok: () => (S.calli || []).length >= 5 },
   { id: 'b_idiom', ic: '🎴', n: 'Người sưu tầm', d: 'Mở 10 thẻ thành ngữ', ok: () => xIdiomUnlocked() >= 10 },
   { id: 'b_mock', ic: '📝', n: 'Thi thử tốt', d: 'Thi thử đạt từ 70%', ok: () => Object.values(S.mocks || {}).some(a => (a || []).some(m => m.pct >= 70)) },
 ];
@@ -2910,7 +2933,7 @@ function xPracticeExtras() {
   ${xRow('读', 'Bài đọc ngắn', 'Đọc đoạn 5 câu, chạm từ để xem nghĩa, trả lời 3 câu hỏi', "go('x_read')")}
   ${xRow('考', 'Thi thử & mức sẵn sàng', '40 câu theo cấu trúc HSK, có điểm từng kỹ năng', "go('x_mock')")}
   ${xRow('快', 'Thử thách 60 giây', 'Đua điểm với chính mình: chọn nhanh nghĩa, chữ, pinyin', "go('x_sprint')")}
-  ${xRow('书', 'Thư pháp', 'Viết một chữ thật đẹp, lưu vào bộ chữ của bạn', "go('x_calli')")}`;
+  ${xHwPracticeCard()}`;
 }
 function xMeExtras() {
   const t = S.settings.theme || 'auto', nb = Object.keys(S.badges || {}).length, un = xIdiomUnlocked();
@@ -2918,6 +2941,7 @@ function xMeExtras() {
   ${xRow('🎖', 'Thành tích & gấu trúc', `${nb}/${X_BADGES.length} huy hiệu · đổi trang phục cho gấu trúc`, "go('x_badge')")}
   ${xRow('🎴', 'Thẻ thành ngữ', `${un}/${X_IDIOMS.length} thẻ đã mở`, "go('x_idiom')")}
   ${xRow('📊', 'Biểu đồ tiến bộ', 'Số câu, độ chính xác, kỹ năng, từ vựng', "go('x_stats')")}
+  ${xHwMeCard()}
   <section class="card"><div class="section-title">🌙 Giao diện</div>
    <div class="set"><span>Chế độ màu</span><span class="chips2">${[['auto', 'Tự động'], ['light', 'Sáng'], ['dark', 'Tối']].map(([k, n]) => `<button class="chip ${t === k ? 'on' : ''}" onclick="xSetTheme('${k}')">${n}</button>`).join('')}</span></div>
    <div class="set" style="display:block"><div style="margin-bottom:6px">Chủ đề trang trí</div><div class="chips2" style="flex-wrap:wrap">${X_SKINS.map(([k, n, ic]) => `<button class="chip ${(S.settings.skin || 'default') === k ? 'on' : ''}" onclick="xSetSkin('${k}')">${ic} ${n}</button>`).join('')}</div><div class="muted tiny" style="margin-top:4px">Chỉ đổi màu và trang trí, rất nhẹ. “Mặc định” tự có lá rơi theo mùa và Tết/Trung thu.</div></div>
@@ -3200,7 +3224,7 @@ function xIdiomNotify() {
 }
 
 /* ---- extras_fun.js ---- */
-/* ===== HSK Study Lab · extras_fun.js (build_48): sưu tập, thống kê, trò chơi, thư pháp ===== */
+/* ===== HSK Study Lab · extras_fun.js (build_48): sưu tập, thống kê, trò chơi ===== */
 
 /* ---------- Thẻ thành ngữ ---------- */
 function xArt(i, s = 64) {
@@ -3351,99 +3375,9 @@ function xSprintPage() {
 function xSprintMenu() { xs = null; render(); }
 function xSprintQuit() { if (xs && xs.phase === 'play' && !confirm('Thoát? Điểm lượt này sẽ không được lưu.')) return; clearInterval(X_TIMERS.x_sprint); delete X_TIMERS.x_sprint; xs = null; go('practice'); }
 
-/* ---------- Thư pháp ---------- */
-let xc = null;
-function xCalliChars() {
-  const set = new Set(); Object.keys(S.learnedV).forEach(c => { const v = DATA.idx.vocabByCode[c]; if (v) Array.from(v['Từ']).forEach(ch => set.add(ch)); });
-  let a = [...set].filter(ch => HW_STROKES[ch]);
-  if (a.length < 8) a = a.concat(levelLessons(LEVELS[0]).slice(0, 6).flatMap(l => words(l['Mã bài']).flatMap(v => Array.from(v['Từ']))).filter(ch => HW_STROKES[ch]));
-  const pref = a.filter(ch => { const n = HW_STROKES[ch].length; return n >= 4 && n <= 12; });
-  return pref.length >= 8 ? pref : a;
-}
-function xCalliPick(ch) {
-  const c = ch || shuffle(xCalliChars().filter(x => !xc || x !== xc.ch))[0] || '永';
-  xc = { ch: c, strokes: [], ghost: true, res: null, saved: false }; render();
-}
-function xCalliType(v) { const c = Array.from(String(v || '')).find(ch => xHan(ch)); if (!c) return; if (!HW_STROKES[c]) return toast('Chữ này chưa có dữ liệu nét để chấm'); xCalliPick(c); }
-function xBrush(ctx, W, strokes, ink) {
-  ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = ink; ctx.fillStyle = ink;
-  const base = Math.max(6, W * 0.045);
-  for (const st of strokes) {
-    if (st.length === 1) { ctx.beginPath(); ctx.arc(st[0].x * W, st[0].y * W, base * 0.55, 0, 7); ctx.fill(); continue; }
-    let w = base;
-    for (let i = 1; i < st.length; i++) {
-      const a = st[i - 1], b = st[i], dt = Math.max(1, (b.t || 0) - (a.t || 0)), sp = Math.hypot(b.x - a.x, b.y - a.y) * W / dt;
-      const target = base * Math.max(0.55, Math.min(1.35, 1.35 - sp * 0.9)), edge = Math.min(i, st.length - i, 6) / 6;
-      w += (target - w) * 0.35; ctx.lineWidth = Math.max(1.5, w * (0.45 + 0.55 * edge));
-      ctx.beginPath(); ctx.moveTo(a.x * W, a.y * W); ctx.lineTo(b.x * W, b.y * W); ctx.stroke();
-    }
-  }
-}
-function xCalliRedraw() { const pad = document.getElementById('xcPad'); if (!pad || !xc) return; const ctx = pad.getContext('2d'), W = pad.width; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, W); xBrush(ctx, W, xc.strokes, '#1d1b18'); }
-function xCalliAfter() {
-  if (!xc) return;
-  const pad = document.getElementById('xcPad'); if (!pad) return;
-  const sz = Math.round(Math.max(220, Math.min(window.innerWidth - 36, window.innerHeight * 0.46, 380))), dpr = Math.min(3, window.devicePixelRatio || 1);
-  pad.width = sz * dpr; pad.height = sz * dpr; pad.style.width = sz + 'px'; pad.style.height = sz + 'px';
-  const wrap = pad.parentElement; wrap.style.width = sz + 'px'; wrap.style.height = sz + 'px'; const g = wrap.querySelector('.xcg'); if (g) g.style.fontSize = Math.round(sz * 0.78) + 'px';
-  xCalliRedraw();
-  let ptr = null;
-  const pt = e => { const r = pad.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, t: e.timeStamp }; };
-  pad.onpointerdown = e => { if (xc.res || ptr !== null) return; e.preventDefault(); try { pad.setPointerCapture(e.pointerId); } catch (_) { } ptr = e.pointerId; xc.strokes.push([pt(e)]); xCalliRedraw(); };
-  pad.onpointermove = e => { if (e.pointerId !== ptr) return; e.preventDefault(); const st = xc.strokes[xc.strokes.length - 1]; if (!st) return; for (const ev of (e.getCoalescedEvents ? e.getCoalescedEvents() : [e])) { const p = pt(ev), l = st[st.length - 1]; if (Math.hypot(p.x - l.x, p.y - l.y) >= 0.004) st.push(p); } xCalliRedraw(); };
-  const up = e => { if (e.pointerId !== ptr) return; ptr = null; const st = xc.strokes[xc.strokes.length - 1]; if (st && st.length >= 2 && hwLen(st) < 0.012) xc.strokes.pop(); xCalliRedraw(); };
-  pad.onpointerup = up; pad.onpointercancel = up; pad.oncontextmenu = e => e.preventDefault();
-}
-function xCalliUndo() { if (!xc || xc.res) return; xc.strokes.pop(); xCalliRedraw(); }
-function xCalliClear() { if (!xc) return; xc.strokes = []; xc.res = null; xc.saved = false; render(); }
-function xCalliScore(res) {
-  if (res.ok === null || res.nodata) return null;
-  if (res.empty || res.small) return 0;
-  const cov = typeof res.covAll === 'number' ? res.covAll : (res.ok ? 0.9 : 0.5), prec = typeof res.precAll === 'number' ? res.precAll : cov;
-  const base = Math.round((cov * 0.55 + prec * 0.45) * 100);
-  return Math.max(0, Math.min(100, res.ok ? Math.max(base, 70) : Math.min(base, 69)));
-}
-function xCalliCheck() {
-  if (!xc || !xc.strokes.length) return toast('Hãy viết chữ trước nhé');
-  const strokes = xc.strokes.map(s => s.map(p => ({ x: p.x, y: p.y }))), res = hwEvaluate(strokes, xc.ch, 'normal');
-  xc.res = res; xc.score = xCalliScore(res); render();
-}
-function xCalliSave() {
-  if (!xc || !xc.res || xc.saved) return;
-  const polys = xc.strokes.map(s => s.filter((_, i) => i % 2 === 0 || i === s.length - 1).map(p => [Math.round(p.x * 1000) / 10, Math.round(p.y * 1000) / 10]));
-  S.calli = S.calli || []; S.calli.unshift({ ch: xc.ch, at: Date.now(), score: xc.score || 0, p: polys });
-  if (S.calli.length > 40) { S.calli.sort((a, b) => (b.score - a.score) || (b.at - a.at)); S.calli.length = 40; S.calli.sort((a, b) => b.at - a.at); }
-  xc.saved = true; bumpQ('calli', 1); save(); xCheckBadges(); toast('Đã lưu vào bộ chữ đẹp 🖌️'); render();
-}
-function xCalliPng(i) {
-  const it = (S.calli || [])[i]; if (!it) return;
-  const W = 720, cv = document.createElement('canvas'); cv.width = cv.height = W; const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#F7F0DC'; ctx.fillRect(0, 0, W, W); ctx.strokeStyle = '#E3D3C0'; ctx.lineWidth = 2; ctx.strokeRect(24, 24, W - 48, W - 48);
-  xBrush(ctx, W, it.p.map(s => s.map((q, k) => ({ x: q[0] / 100, y: q[1] / 100, t: k * 16 }))), '#1d1b18');
-  ctx.save(); ctx.translate(W - 110, W - 110); ctx.rotate(-0.1); ctx.fillStyle = '#C0392B'; ctx.fillRect(-34, -34, 68, 68); ctx.fillStyle = '#F7F0DC'; ctx.font = 'bold 40px "Noto Sans SC",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(it.ch, 0, 2); ctx.restore();
-  cv.toBlob(b => { if (!b) return; const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `thu-phap_${it.ch}_${dayKey()}.png`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 600); });
-}
-function xCalliDel(i) { if (!confirm('Xóa chữ này khỏi bộ chữ đẹp?')) return; S.calli.splice(i, 1); save(); render(); }
-function xCalliTile(it, i) {
-  return `<div class="xct"><svg viewBox="0 0 100 100" class="xcsvg">${it.p.map(s => s.length > 1 ? `<polyline points="${s.map(q => q.join(',')).join(' ')}" class="xcpoly"/>` : `<circle cx="${s[0][0]}" cy="${s[0][1]}" r="1.8" class="xcdot"/>`).join('')}</svg><span class="xcseal zh">${esc(it.ch)}</span><div class="xcm"><b>${it.score}</b><button class="chip" onclick="xCalliPng(${i})">Tải ảnh</button><button class="chip" onclick="xCalliDel(${i})">Xóa</button></div></div>`;
-}
-function xCalliPage() {
-  const gal = (S.calli || []).map((it, i) => ({ it, i })).sort((a, b) => b.it.score - a.it.score).slice(0, 12);
-  const galH = gal.length ? `<h2 class="st">Bộ chữ đẹp của bạn <span class="muted tiny">${(S.calli || []).length} chữ</span></h2><div class="xcgal">${gal.map(({ it, i }) => xCalliTile(it, i)).join('')}</div>` : '';
-  if (!xc) return headBand('书法', 'Thư pháp', 'Viết một chữ thật đẹp', "go('practice')") + `<div class="page"><section class="card"><p class="small" style="margin:0 0 8px">Chọn một chữ rồi viết thật chậm rãi bằng ngón tay. Nét viết chậm sẽ đậm, nét lướt nhanh sẽ mảnh như bút lông. Chữ đạt sẽ được lưu vào bộ chữ đẹp của bạn.</p><button class="btn red block" onclick="xCalliPick()">Chọn chữ ngẫu nhiên từ từ đã học</button>
-    <div class="set" style="margin-top:8px"><span>Hoặc gõ một chữ</span><input class="inp" style="max-width:90px;text-align:center" maxlength="2" placeholder="永" onchange="xCalliType(this.value)"></div></section>${galH}</div>`;
-  const r = xc.res, sc = xc.score, msg = !r ? '' : r.nodata || sc == null ? 'Chữ này chưa có dữ liệu để chấm.' : sc >= 90 ? 'Nét bút rất đẹp! 🌟' : sc >= 70 ? 'Đạt rồi, chữ khá cân đối.' : 'Chưa chuẩn: thử viết chậm và đủ nét hơn nhé.';
-  return headBand('书法', 'Thư pháp', 'Viết chậm, nét đậm; lướt nhanh, nét mảnh', 'xCalliBack()') + `<div class="page xcal">
-   <div class="xcinfo"><b class="zh xcbig">${esc(xc.ch)}</b><span class="small">${HW_STROKES[xc.ch] ? HW_STROKES[xc.ch].length : '?'} nét</span><button class="chip" onclick="say(${ja(xc.ch)})">🔊</button><button class="chip ${xc.ghost ? 'on' : ''}" onclick="xc.ghost=!xc.ghost;render()">Nét mờ</button><button class="chip" onclick="xCalliPick()">Chữ khác</button></div>
-   <div class="xcpadwrap"><div class="xcgrid"></div>${xc.ghost ? `<div class="xcg zh">${esc(xc.ch)}</div>` : ''}<canvas id="xcPad"></canvas></div>
-   ${r ? `<section class="card xcres"><div class="xbigscore">${sc == null ? '–' : sc}</div><div>${msg}</div>${xc.saved ? '<div class="muted small">Đã lưu vào bộ chữ đẹp ✓</div>' : sc != null && sc >= 70 ? '<button class="btn red block mt" onclick="xCalliSave()">Lưu vào bộ chữ đẹp</button>' : ''}<div class="grid2 mt"><button class="btn ghost" onclick="xCalliClear()">Viết lại</button><button class="btn" onclick="xCalliPick()">Chữ khác</button></div></section>`
-      : `<div class="grid3 mt"><button class="btn ghost" onclick="xCalliUndo()">Hoàn tác</button><button class="btn ghost" onclick="xCalliClear()">Xóa</button><button class="btn red" onclick="xCalliCheck()">Chấm</button></div>`}${galH}</div>`;
-}
-function xCalliBack() { xc = null; go('x_calli', { fresh: 1 }); }
-
 /* ---------- bảng trang ---------- */
-const X_PAGES = { x_conf: xConfPage, x_read: xReadPage, x_mock: xMockPage, x_sprint: xSprintPage, x_calli: xCalliPage, x_stats: xStatsPage, x_badge: xBadgePage, x_idiom: xIdiomPage };
-const X_AFTER = { x_calli: xCalliAfter, x_sprint: xSprintAfter };
+const X_PAGES = { x_conf: xConfPage, x_read: xReadPage, x_mock: xMockPage, x_sprint: xSprintPage, x_stats: xStatsPage, x_badge: xBadgePage, x_idiom: xIdiomPage };
+const X_AFTER = { x_sprint: xSprintAfter };
 
 /* ---- extras_more.js ---- */
 /* ===== HSK Study Lab · extras_more.js (build_49): ôn đa dạng, đồng âm, sao lưu vào thư mục ===== */
@@ -3614,6 +3548,158 @@ function xSrsGrade(q, ok) {
 function xSrsLinkBtns() {
   const l = srsLists('all'), nv = [...l.due, ...l.fresh].filter(k => S.srs[k].k === 'v').length, ng = [...l.due, ...l.fresh].filter(k => S.srs[k].k === 'g').length;
   return `<div class="grid2" style="margin-top:6px">${nv ? '<button class="btn ghost" onclick="startSrsFlip(\'v\')">Ôn kiểu lật thẻ</button>' : ''}${ng ? `<button class="btn ghost" onclick="startSrsFlip('g')">Thẻ ngữ pháp (${ng})</button>` : ''}</div>`;
+}
+
+/* ---- extras_hw.js ---- */
+/* ---------- Trả lời bằng viết tay (build_54) ----------
+   Thay cho ghép thẻ / gõ phím ở các dạng: nghe viết lại (dict, type), dịch Việt→Trung (arrange, trans),
+   và nghe/nghĩa → viết từ (listen, meanR). Mỗi chữ Hán của đáp án là một ô; chấm bằng bộ chấm nét hwEvaluate.
+   Nét viết chỉ giữ trong bộ nhớ (_hw không liệt kê) nên không bao giờ vào localStorage. */
+const XH_KINDS = ['arrange', 'dict', 'type', 'trans', 'listen', 'meanR'];
+const xhOn = () => S.settings.hwAns !== false;
+function xHwUse(q) {
+  if (!q || !xhOn() || q.hwOff || !XH_KINDS.includes(q.kind) || q.srsKey || (quiz && quiz.type === 'mock')) return false;
+  if (q._hwU === undefined) {
+    const t = hanOnly(q.kind === 'listen' || q.kind === 'meanR' ? q.han : q.answer), a = Array.from(t);
+    Object.defineProperty(q, '_hwU', { value: a.length >= 1 && a.length <= 24 && a.every(c => { try { return !!hwRef(c); } catch (e) { return false; } }), enumerable: false, writable: true });
+  }
+  return q._hwU;
+}
+function xhSt(q) {
+  if (!q._hw) { const t = Array.from(hanOnly(q.kind === 'listen' || q.kind === 'meanR' ? q.han : q.answer)); Object.defineProperty(q, '_hw', { value: { cells: t.map(ch => ({ ch, strokes: [] })), cur: 0, hint: {} }, enumerable: false, writable: true }); }
+  return q._hw;
+}
+let xhPtr = null, xhTimer = null, xhT0 = 0, xhTouch = false;
+function xhBody(q, a) {
+  const st = xhSt(q), cs = st.cells, done = cs.every(c => c.strokes.length);
+  const chips = cs.map((c, i) => {
+    const r = a && a.res && a.res.cells ? a.res.cells[i] : null;
+    return `<button class="xhc ${i === st.cur && !a ? 'cur' : ''} ${c.strokes.length ? 'has' : ''} ${r ? (r.ok ? 'ok' : 'bad') : ''}" id="xhc${i}" onclick="xHwGo(${i})" ${a ? 'disabled' : ''}>${hwChipSvg(c.strokes)}${r && !r.ok ? `<span class="xhg zh">${esc(c.ch)}</span>` : ''}</button>`;
+  }).join('');
+  if (a) return `<div class="xhw"><div class="xhchips">${chips}</div>${a.ok || q._hwG ? '' : `<div class="qbtns"><button class="btn ghost" onclick="xHwForgive()">✓ Tôi viết đúng</button></div>`}${a.ok ? '' : `<div class="muted tiny" style="text-align:center">Đỏ = chữ chưa đúng${(a.res.cells || []).some(c => !c.ok && c.sug) ? ' · chữ bị nhầm: ' + a.res.cells.filter(c => !c.ok && c.sug).map(c => `${esc(c.ch)}≈${esc(c.sug)}`).join(', ') : ''}</div>`}</div>`;
+  const c = cs[st.cur];
+  return `<div class="xhw"><div class="xhchips">${chips}</div>
+   <div class="xhpadwrap" id="xhWrap"><div class="xhgrid"></div>${st.hint[st.cur] ? `<div class="xhghost zh">${esc(c.ch)}</div>` : ''}<canvas id="xhPad" class="xhpad"></canvas></div>
+   <div class="muted tiny" style="text-align:center">Chữ ${st.cur + 1}/${cs.length} · viết từng chữ vào ô, tự chuyển chữ kế tiếp</div>
+   <div class="qbtns"><button class="btn ghost" onclick="xHwUndo()">↶ Lùi nét</button><button class="btn ghost" onclick="xHwClear()">Xóa chữ</button><button class="btn gold" onclick="xHwHint()">👁 Chữ mờ</button></div>
+   <div class="qbtns"><button class="btn ghost" onclick="xHwOff()">⌨ ${TILE_KINDS.includes(q.kind) ? 'Ghép thẻ' : q.kind === 'listen' || q.kind === 'meanR' ? 'Chọn đáp án' : 'Gõ phím'}</button><button class="btn ghost" onclick="xHwGive()">Xem đáp án</button><button class="btn" id="chkBtn" onclick="answer()" ${done ? '' : 'disabled'}>Kiểm tra</button></div></div>`;
+}
+function xhRedraw() {
+  const pad = $('#xhPad'), q = curQ(); if (!pad || !q) return;
+  const st = xhSt(q), ctx = pad.getContext('2d'), W = pad.width, dk = document.documentElement.classList.contains('dark');
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, W); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = ctx.fillStyle = dk ? '#F1EADA' : '#1F2A28'; ctx.lineWidth = Math.max(5, W * 0.024);
+  for (const s of st.cells[st.cur].strokes) {
+    if (s.length === 1) { ctx.beginPath(); ctx.arc(s[0].x * W, s[0].y * W, ctx.lineWidth / 2, 0, 7); ctx.fill(); continue; }
+    ctx.beginPath(); ctx.moveTo(s[0].x * W, s[0].y * W);
+    for (let i = 1; i < s.length - 1; i++) ctx.quadraticCurveTo(s[i].x * W, s[i].y * W, (s[i].x + s[i + 1].x) / 2 * W, (s[i].y + s[i + 1].y) / 2 * W);
+    const l = s[s.length - 1]; ctx.lineTo(l.x * W, l.y * W); ctx.stroke();
+  }
+}
+function xhRefresh(i) {
+  const q = curQ(), st = xhSt(q), el = $('#xhc' + i); if (el) { el.innerHTML = hwChipSvg(st.cells[i].strokes); el.classList.toggle('has', !!st.cells[i].strokes.length); }
+  const b = $('#chkBtn'); if (b) b.disabled = !st.cells.every(c => c.strokes.length);
+}
+function xHwBind(q) {
+  if (!xHwUse(q) || quiz.ans[quiz.i]) return;
+  const pad = $('#xhPad'); if (!pad) return;
+  const st = xhSt(q), Sz = Math.round(Math.max(170, Math.min(window.innerWidth * 0.66, window.innerHeight * 0.36, 260))), dpr = Math.min(3, window.devicePixelRatio || 1);
+  pad.width = Sz * dpr; pad.height = Sz * dpr; $('#xhWrap').style.width = Sz + 'px'; $('#xhWrap').style.height = Sz + 'px';
+  xhRedraw();
+  const pt = e => { const r = pad.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height }; };
+  pad.onpointerdown = e => { if (xhPtr !== null) return; e.preventDefault(); clearTimeout(xhTimer); try { pad.setPointerCapture(e.pointerId); } catch (_) { } xhPtr = e.pointerId; xhT0 = Date.now(); xhTouch = e.pointerType === 'touch'; st.cells[st.cur].strokes.push([pt(e)]); xhRedraw(); };
+  pad.onpointermove = e => {
+    if (e.pointerId !== xhPtr) return; e.preventDefault();
+    const s = st.cells[st.cur].strokes, l0 = s[s.length - 1]; if (!l0) return;
+    for (const ev of (e.getCoalescedEvents ? e.getCoalescedEvents() : [e])) { const p = pt(ev), l = l0[l0.length - 1]; if (Math.hypot(p.x - l.x, p.y - l.y) >= 0.004) l0.push(p); }
+    xhRedraw();
+  };
+  const up = e => {
+    if (e.pointerId !== xhPtr) return; xhPtr = null;
+    const c = st.cells[st.cur], s = c.strokes[c.strokes.length - 1];
+    if (s && ((s.length >= 2 && hwLen(s) < 0.012) || (s.length === 1 && xhTouch && Date.now() - xhT0 < 140))) c.strokes.pop();
+    xhRefresh(st.cur);
+    if (hwCfg.auto && st.cur < st.cells.length - 1 && c.strokes.length) { clearTimeout(xhTimer); xhTimer = setTimeout(() => xHwGo(st.cur + 1), hwCfg.delay); }
+  };
+  pad.onpointerup = up; pad.onpointercancel = up; pad.oncontextmenu = e => e.preventDefault();
+}
+function xHwGo(i) { const q = curQ(); if (!q || quiz.ans[quiz.i]) return; clearTimeout(xhTimer); const st = xhSt(q); st.cur = Math.max(0, Math.min(st.cells.length - 1, i)); render(); }
+function xHwUndo() { clearTimeout(xhTimer); const st = xhSt(curQ()); st.cells[st.cur].strokes.pop(); xhRedraw(); xhRefresh(st.cur); }
+function xHwClear() { clearTimeout(xhTimer); const st = xhSt(curQ()); st.cells[st.cur].strokes = []; xhRedraw(); xhRefresh(st.cur); }
+function xHwHint() { const q = curQ(), st = xhSt(q); st.hint[st.cur] = !st.hint[st.cur]; if (st.hint[st.cur]) q.hinted = 1; render(); }
+function xHwOff() { const q = curQ(); q.hwOff = 1; q.typed = ''; render(); }
+function xHwGive() { const q = curQ(); Object.defineProperty(q, '_hwG', { value: 1, enumerable: false, writable: true }); answer(); }
+function xHwGrade(q) {
+  const st = xhSt(q), cells = st.cells.map(c => {
+    if (q._hwG) return { ch: c.ch, ok: false };
+    const r = hwEvalSoft(c.strokes, c.ch, hwCfg.tol);
+    return { ch: c.ch, ok: r.ok !== false, sug: r.ok === false ? (r.suggest || r.confused || '') : '' };
+  });
+  S.hwWeak = S.hwWeak || {};
+  cells.forEach(c => { const w = S.hwWeak[c.ch]; if (!c.ok) S.hwWeak[c.ch] = { n: (w ? w.n : 0) + 1, at: Date.now() }; else if (w) { w.n--; if (w.n <= 0) delete S.hwWeak[c.ch]; } });
+  const ok = cells.every(c => c.ok);
+  return { ok, val: cells.map(c => c.ok ? c.ch : '□').join(''), res: { hw: 1, cells: cells.map(c => ({ ch: c.ch, ok: c.ok, sug: c.sug || '' })) } };
+}
+function xHwToggle() { S.settings.hwAns = S.settings.hwAns === false; save(); render(); }
+function xHwMeCard() {
+  return `<section class="card"><div class="section-title">✍ Trả lời bằng viết tay</div>
+   <div class="set"><span>Viết tay thay cho ghép thẻ / gõ phím<br><span class="muted tiny">nghe viết lại, dịch Việt→Trung, nghe/nghĩa → viết từ</span></span>${onOff(xhOn(), 'xHwToggle()')}</div>
+   <div class="set"><span>Độ khó chấm</span><span class="chips2">${['easy', 'normal', 'strict'].map(k => `<button class="chip ${hwCfg.tol === k ? 'on' : ''}" onclick="hwCfg.tol='${k}';hwSaveCfg();render()">${HW_TOL_NAME[k]}</button>`).join('')}</span></div>
+   <div class="set"><span>Tự chuyển sang chữ kế tiếp</span>${onOff(hwCfg.auto, 'hwToggleAuto()')}</div></section>`;
+}
+/* Bài luyện điểm yếu: câu sai trước đây → chữ hay viết sai → câu ngắn mới */
+function xHwWeakStart() {
+  const scope = practiceScope || 'lesson';
+  openSess({ key: null, type: 'practice', title: 'Luyện viết tay điểm yếu', noSort: false, back: lastHub || 'practice' }, () => {
+    const out = [], used = new Set(), push = q => { if (q && !used.has(q.kind + '|' + q.ref)) { used.add(q.kind + '|' + q.ref); out.push(q); } };
+    Object.values(S.errors || {}).filter(e => XH_KINDS.includes(e.kind)).sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 8).forEach(e => {
+      const sk = ['arrange', 'dict', 'type', 'trans'].includes(e.kind);
+      try { push(makeQ(e.kind, sk ? sentRef(e.ref) : DATA.idx.vocabByCode[e.ref])); } catch (_) { }
+    });
+    const weak = Object.entries(S.hwWeak || {}).sort((a, b) => b[1].n - a[1].n).slice(0, 10).map(e => e[0]);
+    if (weak.length) {
+      const pool = scopePool('all'), refs = sentRefs(pool, 'sgv').filter(r => { const s = sentRef(r); return s && weak.some(c => s.zh.includes(c)); });
+      shuffle(refs).slice(0, 10).forEach(r => push(makeQ(shuffle(['dict', 'trans'])[0], sentRef(r))));
+      shuffle(DATA.vocab.filter(v => weak.some(c => v['Từ'].includes(c)))).slice(0, 4).forEach(v => push(makeQ(shuffle(['listen', 'meanR'])[0], v)));
+    }
+    const pool = scopePool(scope);
+    shuffle(sentRefs(pool, 'sgv')).slice(0, 40).forEach(r => { if (out.length < 14) push(makeQ(shuffle(['dict', 'trans', 'arrange', 'type'])[0], sentRef(r))); });
+    return out.slice(0, 14);
+  }, true);
+}
+function xHwPracticeCard() {
+  const nw = Object.keys(S.hwWeak || {}).length, ne = Object.values(S.errors || {}).filter(e => XH_KINDS.includes(e.kind)).length;
+  return `${xRow('✍', 'Luyện viết tay điểm yếu', nw || ne ? `${ne} câu sai · ${nw} chữ hay viết sai · câu ngắn → dài` : 'Nghe viết lại & dịch Việt→Trung bằng tay · câu ngắn → dài', 'xHwWeakStart()')}`;
+}
+
+function xHwSub(q) {
+  if (q.kind === 'listen' || q.kind === 'meanR') return 'Viết từ này bằng chữ Hán' + (q.sub ? ' · ' + q.sub : '');
+  return String(q.sub || '').replace(/Gõ câu/, 'Viết câu').replace(/Nghe rồi gõ lại/, 'Nghe rồi viết lại').replace(/Sắp xếp thành câu tiếng Trung/, 'Viết câu tiếng Trung có nghĩa như trên').replace(/Nghe rồi chạm các (từ|thẻ)[^.]*thứ tự/, 'Nghe rồi viết lại câu');
+}
+const XH_LAB = { dict: 'Nghe chép (viết tay)', type: 'Nghe chép (viết tay)', arrange: 'Dịch Việt → Trung (viết tay)', trans: 'Dịch Việt → Trung (viết tay)', listen: 'Nghe → viết từ (viết tay)', meanR: 'Nghĩa → viết từ (viết tay)' };
+const xHwLabel = q => XH_LAB[q.kind] || KIND_LABEL[q.kind] || '';
+
+function xHwBackBtn(q, a) {
+  if (a || !q.hwOff || !xhOn() || !XH_KINDS.includes(q.kind) || q.srsKey || q._hwU === false) return '';
+  return `<div class="qbtns"><button class="btn ghost" onclick="xHwOn1()">✍ Quay lại viết tay</button></div>`;
+}
+function xHwOn1() { const q = curQ(); q.hwOff = 0; render(); }
+
+/* người học tự xác nhận mình viết đúng (máy chấm sai): tính là đúng, lưu nét để tinh chỉnh bộ chấm */
+function xHwForgive() {
+  const q = curQ(), a = quiz.ans[quiz.i]; if (!q || !a || a.ok || !a.res || !a.res.hw) return;
+  try {
+    const st = xhSt(q); S.hwDisputes = Array.isArray(S.hwDisputes) ? S.hwDisputes : [];
+    a.res.cells.forEach((c, i) => { const w = st.cells[i]; if (c.ok || !w || !w.strokes.length) return;
+      S.hwDisputes.push({ ch: c.ch, lv: hwCfg.tol, nm: 0, ne: 0, st: w.strokes.map(s => { const o = []; s.forEach(p => o.push(Math.round(p.x * 1000) / 1000, Math.round(p.y * 1000) / 1000)); return o; }) });
+      if (S.hwDisputes.length > 40) S.hwDisputes.shift();
+      const wk = S.hwWeak && S.hwWeak[c.ch]; if (wk) { wk.n--; if (wk.n <= 0) delete S.hwWeak[c.ch]; } });
+  } catch (e) { }
+  a.ok = true; a.res.cells.forEach(c => c.ok = true); a.val = a.res.cells.map(c => c.ch).join('');
+  quiz.combo = (quiz.combo || 0) + 1; bump('ok'); bumpSkill(q.kind, true);
+  const key = q.kind + '|' + q.ref; if (S.errors[key]) delete S.errors[key];
+  if (q.srsKey) { try { xSrsGrade(q, true); } catch (e) { } }
+  statUpdate(); save(); render(); toast('Đã tính là đúng ✓');
 }
 
 /* ---- quiz.js ---- */
@@ -3999,9 +4085,11 @@ function autoCards(ids) { let n = 0; ids.forEach(id => { const it = lessonItems(
 const curQ = () => quiz && quiz.items[quiz.i];
 function answer(val) {
   const q = curQ(); if (!q || quiz.ans[quiz.i]) return;
-  if (val == null && !['arrange', 'dict'].includes(q.kind)) return;
+  const hwu = xHwUse(q);
+  if (val == null && !hwu && !['arrange', 'dict'].includes(q.kind)) return;
   let ok, res = null;
-  if (q.kind === 'py') { if (/[㐀-鿿]/.test(String(val))) { toast('Câu này cần gõ pinyin (không phải chữ Hán)'); return; } if (!String(val).trim()) res = { ok: false, syl: [] }; else res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
+  if (hwu) { const g = xHwGrade(q); ok = g.ok; res = g.res; val = g.val; }
+  else if (q.kind === 'py') { if (/[㐀-鿿]/.test(String(val))) { toast('Câu này cần gõ pinyin (không phải chữ Hán)'); return; } if (!String(val).trim()) res = { ok: false, syl: [] }; else res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
   else if (q.kind === 'cloze') { res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
   else if (q.kind === 'type' || q.kind === 'trans') { res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
   else if (TILE_KINDS.includes(q.kind)) { val = q.order.map(i => q.tokens[i].t).join(''); ok = normZh(val) === normZh(q.answer); }
@@ -4050,7 +4138,7 @@ function finishQuiz() {
   setTimeout(() => { try { cheerShow(cheer, { lv: quiz && quiz.lv || '' }); } catch (e) { } }, 500);
 }
 function quitQuiz() { TTS.stop(); const b = quiz && quiz.back || 'practice'; quiz = null; go(['quiz', 'qlist', 'result'].includes(b) ? 'practice' : b); }
-function redoWrong() { quiz.items.forEach((q, i) => { const a = quiz.ans[i]; if (a && !a.ok) { quiz.ans[i] = null; if (q.order) q.order = []; q.typed = ''; q.sel = null; q.cut = null; q.hinted = 0; q.hintText = ''; } }); quiz.combo = 0; statUpdate(); save(); const j = quiz.ans.findIndex((a, i) => !a && i < quiz.items.length); gotoQ(j < 0 ? nextUnanswered(-1) : j); }
+function redoWrong() { quiz.items.forEach((q, i) => { const a = quiz.ans[i]; if (a && !a.ok) { quiz.ans[i] = null; if (q.order) q.order = []; if (q._hw) { q._hw.cells.forEach(c => c.strokes = []); q._hw.cur = 0; q._hw.hint = {}; } if (q._hwG) q._hwG = 0; q.typed = ''; q.sel = null; q.cut = null; q.hinted = 0; q.hintText = ''; } }); quiz.combo = 0; statUpdate(); save(); const j = quiz.ans.findIndex((a, i) => !a && i < quiz.items.length); gotoQ(j < 0 ? nextUnanswered(-1) : j); }
 function doUnanswered() { const j = nextUnanswered(-1); if (j >= 0) gotoQ(j); }
 function pickTile(idx) { const q = curQ(); if (quiz.ans[quiz.i] || q.order.includes(idx)) return; q.order.push(idx); render(); }
 function selOpt(k) { const q = curQ(); if (!q || quiz.ans[quiz.i]) return; q.sel = q.options[k]; document.querySelectorAll('.opts .opt').forEach((b, j) => b.classList.toggle('sel', j === k)); const c = $('#chkBtn'); if (c) c.disabled = false; }
@@ -4083,8 +4171,10 @@ function quizPage() {
   if (q.posHtml) pr = `<div class="posq">${q.posHtml}</div>`;
   else if (q.prompt) pr = `<div class="${q.pz ? 'han zh ' + (hlen(q.prompt) > 6 ? 'long' : '') : 'qprompt'}">${q.pz ? esc(q.prompt).replace(/＿＿?/, '<span class="blank">' + (a ? esc(q.answer) : '＿') + '</span>') : esc(q.prompt)}</div>`;
   const pyLine = (q.kind === 'mean' || q.kind === 'py' && a) && q.wpy && pyOk ? `<div class="qpy">${pinyinHTML(q.wpy)}</div>` : q.kind === 'tf' && q.stPy && pyOk ? `<div class="qpy">${pinyinHTML(q.stPy)}</div>` : '';
-  const hvLine = q.kind === 'py' && (q.hv || q.mean) ? `<div class="hv">${q.hv ? 'Hán Việt: ' + esc(String(q.hv).toUpperCase()) + ' · ' : ''}${esc(q.mean || '')}</div>` : q.sub ? `<div class="qsub">${esc(q.sub)}</div>` : '';
-  if (TILE_KINDS.includes(q.kind)) {
+  const hwSub = xHwUse(q) ? xHwSub(q) : null;
+  const hvLine = hwSub != null ? `<div class="qsub">${esc(hwSub)}</div>` : q.kind === 'py' && (q.hv || q.mean) ? `<div class="hv">${q.hv ? 'Hán Việt: ' + esc(String(q.hv).toUpperCase()) + ' · ' : ''}${esc(q.mean || '')}</div>` : q.sub ? `<div class="qsub">${esc(q.sub)}</div>` : '';
+  if (xHwUse(q)) body = xhBody(q, a);
+  else if (TILE_KINDS.includes(q.kind)) {
     body = `<div class="azone">${q.order.map((ti, p) => `<button class="tile" onclick="unpickTile(${p})">${esc(q.tokens[ti].t)}</button>`).join('') || '<span class="muted small" style="padding:6px">Chạm các thẻ bên dưới theo đúng thứ tự…</span>'}</div>
      <div class="tiles2">${q.tokens.map((t, i) => `<button class="tile ${q.order.includes(i) ? 'used' : ''}" onclick="pickTile(${i})" ${q.order.includes(i) || a ? 'disabled' : ''}>${esc(t.t)}</button>`).join('')}</div>
      ${!a ? `<div class="qbtns"><button class="btn ghost" onclick="curQ().order=[];render()" ${q.order.length ? '' : 'disabled'}>Xóa làm lại</button>${hintBtn(q)}<button class="btn" id="chkBtn" onclick="answer()" ${q.order.length === q.tokens.length ? '' : 'disabled'}>Kiểm tra</button></div>` : ''}`;
@@ -4111,7 +4201,7 @@ function quizPage() {
   return headBand(esc(lt), esc(quiz.title), sub, 'quitQuiz()') + `<div class="qwrap">
    <div class="cnt"><span class="ok">Đúng ${c.ok}/${n}</span><span class="ng">Sai ${c.bad}/${n}</span><span>Chưa làm ${c.none}/${n}</span><button class="lst" onclick="go('qlist',{fresh:1})">☰ Danh sách</button></div>${strip}
    <div class="qbox"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-   <span class="qtag">Câu ${quiz.i + 1} · ${esc(q.kind === 'particle' ? 'Trợ từ ' + q.plabel : KIND_LABEL[q.kind] || '')}</span>${q.hintText && !a ? `<div class="hint" style="color:var(--gold);font-weight:800">💡 ${esc(q.hintText)} · câu dùng gợi ý: bộ này tối đa 2 sao</div>` : ''}${pr}${pyLine}${hvLine}${audio}${body}${fb}${navb}</div>
+   <span class="qtag">Câu ${quiz.i + 1} · ${esc(q.kind === 'particle' ? 'Trợ từ ' + q.plabel : xHwUse(q) ? xHwLabel(q) : KIND_LABEL[q.kind] || '')}</span>${q.hintText && !a ? `<div class="hint" style="color:var(--gold);font-weight:800">💡 ${esc(q.hintText)} · câu dùng gợi ý: bộ này tối đa 2 sao</div>` : ''}${pr}${pyLine}${hvLine}${audio}${body}${xHwBackBtn(q, a)}${fb}${navb}</div>
    <div style="text-align:center;margin-top:12px"><button class="btn red" onclick="finishQuiz()">Xem kết quả · ${c.ok + c.bad}/${n} đã làm</button></div>
    <div style="position:relative;height:120px"><div class="dc" style="left:2px;top:0">${D.bamboo(110, 'leaf')}</div><div class="dc bob" style="right:14px;top:20px">${D.panda(48)}</div></div></div>`;
 }
@@ -4119,9 +4209,10 @@ function hintBtn(q) { return q.hinted || (q.options && q.options.length <= 2) ? 
 function afterQuizRender() {
   try { xAfterQuiz(); } catch (e) { console.warn(e); }
   const q = curQ(); if (!q) return;
+  try { xHwBind(q); } catch (e) { console.warn(e); }
   const st = $('#qstrip'), cur = st && st.querySelector('.c'); if (cur) st.scrollLeft = cur.offsetLeft - st.clientWidth / 2 + cur.clientWidth / 2;
   if (q.audio && !quiz.played && !quiz.ans[quiz.i]) { quiz.played = true; setTimeout(() => say(q.audio), 300); }
-  if (INPUT_KINDS.includes(q.kind) && !quiz.ans[quiz.i]) { const t = $('#typed'); if (t) { t.oninput = () => q.typed = t.value; t.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); answer(t.value); } }; try { t.focus({ preventScroll: true }); } catch (e) { } } }
+  if (INPUT_KINDS.includes(q.kind) && !xHwUse(q) && !quiz.ans[quiz.i]) { const t = $('#typed'); if (t) { t.oninput = () => q.typed = t.value; t.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); answer(t.value); } }; try { t.focus({ preventScroll: true }); } catch (e) { } } }
   if (quiz.ans[quiz.i]) { const b = $('#nextBtn'); if (b) try { b.focus({ preventScroll: true }); } catch (e) { } }
 }
 function qLabel(q) { if (q.kind === 'listen' || q.kind === 'tonePick' || q.kind === 'dict' || q.kind === 'type') return '🔊 ' + KIND_LABEL[q.kind]; if (q.kind === 'pos') return q.sub; return q.prompt || KIND_LABEL[q.kind]; }
