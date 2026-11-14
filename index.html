@@ -590,6 +590,10 @@ html.dark[data-skin=dong]{--green:#4F80A3;--green2:#A5CBE6;--mint:#1D2A34;--seal
 .xhgrid{position:absolute;inset:0;background:linear-gradient(var(--line),var(--line)) center/100% 1px no-repeat,linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat,linear-gradient(45deg,#0000 49.7%,var(--line) 49.7% 50.3%,#0000 50.3%),linear-gradient(-45deg,#0000 49.7%,var(--line) 49.7% 50.3%,#0000 50.3%);opacity:.7;pointer-events:none}
 .xhghost{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:230px;line-height:1;color:var(--ink);opacity:.13;pointer-events:none}
 .xhpad{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.xhom{margin:6px 0 2px;padding:6px 9px;border:1.5px dashed var(--seal);border-radius:12px;background:var(--soft);font-size:13px;line-height:1.35;text-align:left}
+.xhm{margin-top:3px;padding-top:3px;border-top:1px dotted var(--line)}
+.xhom .zh{font-size:17px;font-weight:700;color:var(--seal)}
+.xhomr{display:block}
 
 /* ---- giao diện tối (tự sinh) ---- */
 html.dark{--paper:#171B19;--card:#1F2523;--ink:#E8E4D6;--muted:#9FAEA8;--green:#478F76;--green2:#8CCDB4;--mint:#22302A;--seal:#E0574A;--gold:#D6B466;--goldp:#2E2A1C;--line:#33403B;--wash:#7E9992;--red:#E0574A;--soft:#262D2A;--shadow:0 2px 0 #0008;color-scheme:dark}
@@ -1149,7 +1153,7 @@ function lockMsg(id) {
 function learnedLessonIds() { return DATA.lessons.map(l => l['Mã bài']).filter(id => { const s = S.lessons[id]; return s && (s.vocab || s.text || s.grammar || s.best !== null); }); }
 
 /* ---------- kỹ năng ---------- */
-const SKILL = { mean: 'vocab', meanR: 'vocab', recog: 'vocab', hv: 'vocab', fill: 'vocab', measure: 'vocab', listen: 'listen', tonePick: 'listen', dict: 'listen', type: 'listen', arrange: 'gram', particle: 'gram', pos: 'gram', py: 'write', cloze: 'write', trans: 'write', translate: 'read', tf: 'read', tone: 'pron', sandhi: 'pron' };
+const SKILL = { mean: 'vocab', meanR: 'vocab', recog: 'vocab', hv: 'vocab', fill: 'vocab', measure: 'vocab', listen: 'listen', tonePick: 'listen', dict: 'listen', type: 'listen', arrange: 'gram', particle: 'gram', pos: 'gram', py: 'write', cloze: 'write', trans: 'write', translate: 'read', zv: 'read', tf: 'read', tone: 'pron', sandhi: 'pron' };
 const SKILL_NAME = { vocab: ['📚', 'Từ vựng & chữ', 'mean'], listen: ['🎧', 'Nghe', 'listen'], gram: ['🧩', 'Câu & ngữ pháp', 'arrange'], write: ['⌨️', 'Viết (tự gõ)', 'py'], read: ['📖', 'Đọc hiểu', 'translate'], pron: ['🎵', 'Thanh điệu', 'tone'] };
 function bumpSkill(kind, ok) { const sk = SKILL[kind]; if (!sk) return; const k = dayKey(); S.days[k] = S.days[k] || { a: 0, ok: 0, cards: 0, fresh: 0 }; const m = S.days[k].sk = S.days[k].sk || {}; m[sk] = m[sk] || [0, 0]; m[sk][0]++; if (ok) m[sk][1]++; }
 function skillStats(days) { const out = {}; const from = days ? dayKey(today() - days + 1) : ''; for (const k of Object.keys(S.days).sort()) { if (k < from) continue; const m = S.days[k].sk || {}; for (const [s, [a, ok]] of Object.entries(m)) { out[s] = out[s] || [0, 0]; out[s][0] += a; out[s][1] += ok; } } return out; }
@@ -2190,7 +2194,7 @@ function hwPracticeCard(){
   const seg=[[1,'1 câu'],[3,'3 câu'],['all','Cả bài']].map(([v,n])=>`<button class="toggle ${String(L)===String(v)?'active':''}" onclick="hwSetLen(${typeof v==='number'?v:"'all'"})">${n}</button>`).join('');
   const row=(mode,ic,name,desc)=>`<button class="practice-row" onclick="hwStart('${mode}',hwCfg.len===undefined?1:hwCfg.len)"><span class="practice-icon">${ic}</span><span class="practice-label"><b>${name}</b><small>${desc}</small></span><span>›</span></button>`;
   const nBad=Object.keys(state.hwWrong||{}).filter(c=>HW_STROKES[c]).length;
-  return`<div class="card"><b>VIẾT TAY · VIẾT CHỮ HÁN BẰNG NGÓN TAY</b><div class="hw-len"><span class="muted small">Độ dài:</span>${seg}</div>${row('listen','听','Nghe rồi viết','Nghe câu bài khóa, viết lại bằng tay')}${row('meaning','写','Nhìn nghĩa viết câu','Đọc nghĩa tiếng Việt, viết câu tiếng Trung')}${row('copy','抄','Chép lại bài khóa','Nhìn chữ mẫu mờ, tập viết đúng nét')}${row('vocab','字','Viết từ vựng của bài','Xem pinyin + nghĩa, viết từ')}${nBad?`<button class="practice-row" onclick="hwStartFix()"><span class="practice-icon">✓</span><span class="practice-label"><b>Luyện chữ hay viết sai</b><small>${nBad} chữ đang cần luyện</small></span><span>›</span></button>`:''}<div class="g2-help">Không cần đúng thứ tự nét: chỉ cần đủ nét và đúng hình chữ. Viết xong một chữ, đợi một chút để tự chuyển ô tiếp theo.</div></div>`;
+  return`<div class="card"><b>VIẾT TAY · VIẾT CHỮ HÁN BẰNG NGÓN TAY</b><div class="hw-len"><span class="muted small">Độ dài:</span>${seg}</div>${row('listen','听','Nghe rồi viết','Nghe câu bài khóa, viết lại bằng tay')}${row('meaning','写','Nhìn nghĩa viết câu','Đọc nghĩa tiếng Việt, viết câu tiếng Trung')}${row('vocab','字','Viết từ vựng của bài','Xem pinyin + nghĩa, viết từ')}${nBad?`<button class="practice-row" onclick="hwStartFix()"><span class="practice-icon">✓</span><span class="practice-label"><b>Luyện chữ hay viết sai</b><small>${nBad} chữ đang cần luyện</small></span><span>›</span></button>`:''}<div class="g2-help">Không cần đúng thứ tự nét: chỉ cần đủ nét và đúng hình chữ. Viết xong một chữ, đợi một chút để tự chuyển ô tiếp theo.</div></div>`;
 }
 function hwMeCard(){
   const bad=Object.keys(state.hwWrong||{}).filter(c=>HW_STROKES[c]);
@@ -2674,8 +2678,8 @@ const X_PART_USE = { '的': '的 nối định ngữ với danh từ: 我的书,
    Trạng thái, giao diện tối, mùa & lá rơi, huy hiệu + trang phục gấu trúc, mục tiêu tuần,
    sao lưu tự động (IndexedDB), thẻ hiển thị ở Hôm nay / Ôn & Luyện / Tôi. */
 
-const X_NAV_ON = { x_conf: 'practice', x_read: 'practice', x_mock: 'practice', x_sprint: 'practice', x_stats: 'me', x_badge: 'me', x_idiom: 'me' };
-const X_NONAV = ['x_sprint'];
+const X_NAV_ON = { x_conf: 'practice', x_read: 'practice', x_mock: 'practice', x_stats: 'me', x_badge: 'me', x_idiom: 'me' };
+const X_NONAV = [];
 const xHan = c => /[一-鿿]/.test(c);
 const xPassedLessons = () => DATA.lessons.filter(l => lessonDone(l['Mã bài'])).length;
 const xCpPassed = () => LEVELS.reduce((n, lv) => n + checkpoints(lv).filter(cpPassed).length, 0);
@@ -2823,7 +2827,6 @@ const X_BADGES = [
   { id: 'b_cp', ic: '🏯', n: 'Qua chặng đầu', d: 'Qua 1 kiểm tra chặng', ok: () => xCpPassed() >= 1, out: 'bowtie' },
   { id: 'b_lv1', ic: '🎖', n: 'Xong HSK 1', d: 'Đạt kiểm tra cấp HSK 1', ok: () => levelPassed('HSK 1'), out: 'grad' },
   { id: 'b_write', ic: '✍️', n: 'Nét bút', d: 'Luyện viết tay 100 chữ', ok: () => xHwSum() >= 100, out: 'headband' },
-  { id: 'b_sprint', ic: '⚡', n: 'Tia chớp', d: 'Thử thách 60 giây đạt 25 điểm', ok: () => Math.max(0, ...Object.values(S.sprint || {}).map(x => x.best || 0)) >= 25, out: 'shades' },
   { id: 'b_read', ic: '📖', n: 'Mọt sách', d: 'Đọc xong 5 bài đọc', ok: () => Object.keys(S.reads || {}).length >= 5, out: 'beret' },
   { id: 'b_week', ic: '🏅', n: 'Tuần hoàn hảo', d: 'Hoàn thành mục tiêu tuần 3 lần', ok: () => Object.keys(S.weeks || {}).length >= 3, out: 'medal' },
   { id: 'b_idiom', ic: '🎴', n: 'Người sưu tầm', d: 'Mở 10 thẻ thành ngữ', ok: () => xIdiomUnlocked() >= 10 },
@@ -2932,7 +2935,6 @@ function xPracticeExtras() {
   ${xRow('混', 'Chữ dễ nhầm', 'Đối chiếu các cặp chữ giống nhau (你/他, 买/卖…)', "go('x_conf')")}
   ${xRow('读', 'Bài đọc ngắn', 'Đọc đoạn 5 câu, chạm từ để xem nghĩa, trả lời 3 câu hỏi', "go('x_read')")}
   ${xRow('考', 'Thi thử & mức sẵn sàng', '40 câu theo cấu trúc HSK, có điểm từng kỹ năng', "go('x_mock')")}
-  ${xRow('快', 'Thử thách 60 giây', 'Đua điểm với chính mình: chọn nhanh nghĩa, chữ, pinyin', "go('x_sprint')")}
   ${xHwPracticeCard()}`;
 }
 function xMeExtras() {
@@ -3302,82 +3304,9 @@ function xStatsPage() {
    <section class="card"><div class="section-title">Từ hay sai nhất</div>${weakV.length ? weakV.map(w => `<div class="set"><span><b class="zh">${esc(w.v['Từ'])}</b> <span class="fpy">${pinyinHTML(w.v['Pinyin'])}</span><br><span class="muted tiny">${esc(w.v['Nghĩa tiếng Việt'])}</span></span><span class="chip" style="pointer-events:none">sai ${w.n} lần</span></div>`).join('') : '<p class="muted small">Chưa có từ nào trong sổ lỗi. Tuyệt vời!</p>'}</section></div>`;
 }
 
-/* ---------- Thử thách 60 giây ---------- */
-let xs = null;
-const X_SP_MODES = [['mean', 'Hán → nghĩa', '你好 → xin chào'], ['meanR', 'Nghĩa → chữ Hán', 'xin chào → 你好'], ['recog', 'Hán → pinyin', '你好 → nǐ hǎo'], ['mix', 'Trộn cả ba', 'đủ mọi dạng']];
-function xSpPool() {
-  let vs = Object.keys(S.learnedV).map(c => DATA.idx.vocabByCode[c]).filter(Boolean);
-  if (vs.length < 12) vs = vs.concat(levelLessons(LEVELS[0]).slice(0, 12).flatMap(l => words(l['Mã bài'])));
-  return [...new Map(vs.map(v => [VC(v), v])).values()];
-}
-function xSprintStart(mode) {
-  xs = { phase: 'play', mode, score: 0, combo: 0, ok: 0, bad: 0, pen: 0, pool: xSpPool(), q: null, lock: false, t0: 0 };
-  render();
-}
-function xSpQ() {
-  for (let i = 0; i < 30; i++) {
-    const v = xs.pool[Math.floor(Math.random() * xs.pool.length)], k = xs.mode === 'mix' ? ['mean', 'meanR', 'recog'][Math.floor(Math.random() * 3)] : xs.mode;
-    let q = null; try { q = makeQ(k, v); } catch (e) { }
-    if (q && q.options && q.options.length >= 3 && q.prompt) return q;
-  }
-  return null;
-}
-function xSprintPaint() {
-  if (!xs || xs.phase !== 'play' || !xs.q) return;
-  const q = xs.q, qe = document.getElementById('xsQ'), oe = document.getElementById('xsO'); if (!qe || !oe) return;
-  qe.innerHTML = q.pz ? `<div class="han zh">${esc(q.prompt)}</div>` : `<div class="qprompt">${esc(q.prompt)}</div>`;
-  oe.innerHTML = q.options.map((o, i) => `<button class="opt" onclick="xSprintPick(${i})"><span>${optHTML(q, o)}</span></button>`).join('');
-  const s = document.getElementById('xsS'), c = document.getElementById('xsC'); if (s) s.textContent = xs.score; if (c) c.textContent = xs.combo >= 3 ? '🔥 x' + xs.combo : '';
-}
-function xSprintNext() { xs.q = xSpQ(); xs.lock = false; if (!xs.q) return xSprintEnd(); xSprintPaint(); }
-function xSprintPick(i) {
-  if (!xs || xs.phase !== 'play' || xs.lock) return; xs.lock = true;
-  const q = xs.q, pick = q.options[i], ok = pick === q.answer, btns = [...document.querySelectorAll('#xsO .opt')];
-  btns.forEach((b, j) => { if (q.options[j] === q.answer) b.classList.add('right'); else if (j === i) b.classList.add('wrong'); });
-  bump('a'); if (ok) bump('ok'); bumpSkill(q.kind, ok);
-  if (ok) { xs.ok++; xs.combo++; xs.score += xs.combo >= 5 ? 2 : 1; }
-  else { xs.bad++; xs.combo = 0; xs.pen += 3; srsBoost(q.ref); const key = q.kind + '|' + q.ref, e = S.errors[key] || { key, kind: q.kind, ref: q.ref, n: 0, streak: 0 }; e.n++; e.streak = 0; e.at = Date.now(); S.errors[key] = e; }
-  const s = document.getElementById('xsS'); if (s) s.textContent = xs.score;
-  setTimeout(() => { if (xs && xs.phase === 'play') xSprintNext(); }, ok ? 180 : 650);
-}
-function xSprintEnd() {
-  if (!xs || xs.phase !== 'play') return; clearInterval(X_TIMERS.x_sprint); delete X_TIMERS.x_sprint;
-  xs.phase = 'end'; S.sprint = S.sprint || {}; const o = S.sprint[xs.mode] || { best: 0, plays: 0 };
-  xs.record = xs.score > o.best && xs.score > 0; S.sprint[xs.mode] = { best: Math.max(o.best, xs.score), plays: o.plays + 1 };
-  bumpQ('sprint', 1); save(); xCheckBadges(); render();
-}
-function xSprintAfter() {
-  if (!xs || xs.phase !== 'play') { clearInterval(X_TIMERS.x_sprint); delete X_TIMERS.x_sprint; return; }
-  if (!xs.t0) xs.t0 = Date.now();
-  if (!xs.q) xs.q = xSpQ(); if (!xs.q) return xSprintEnd();
-  xSprintPaint();
-  clearInterval(X_TIMERS.x_sprint);
-  X_TIMERS.x_sprint = setInterval(() => {
-    if (!xs || xs.phase !== 'play') return;
-    const left = Math.max(0, 60 - (Date.now() - xs.t0) / 1000 - xs.pen), b = document.getElementById('xsT'), tx = document.getElementById('xsTx');
-    if (b) { b.style.width = (left / 60 * 100) + '%'; b.classList.toggle('low', left <= 10); } if (tx) tx.textContent = Math.ceil(left);
-    if (left <= 0) xSprintEnd();
-  }, 100);
-}
-function xSprintPage() {
-  if (xs && xs.phase === 'play') return headBand('快', 'Thử thách 60 giây', 'Đúng +1 (liên tiếp ≥5: +2) · sai −3 giây', 'xSprintQuit()') + `<div class="page xsp">
-   <div class="xshead"><span>Điểm <b id="xsS">0</b></span><span id="xsC" class="xcombo"></span><span>⏱ <b id="xsTx">60</b></span></div><div class="xsbar"><i id="xsT" style="width:100%"></i></div>
-   <div class="qbox xsbox"><div id="xsQ"></div><div id="xsO" class="opts two"></div></div></div>`;
-  if (xs && xs.phase === 'end') {
-    const tot = xs.ok + xs.bad, best = (S.sprint[xs.mode] || {}).best || 0;
-    return headBand('快', 'Kết quả thử thách', '', 'xSprintMenu()') + `<div class="page"><section class="card xsend"><div class="rp bob">${xs.score >= 15 ? D.pandaHappy(86) : D.panda(80)}</div><div class="xbigscore">${xs.score}</div><div class="muted">điểm · ${tot ? xPct(xs.ok, tot) : 0}% đúng (${xs.ok}/${tot})</div>${xs.record ? '<div class="pass zh" style="margin:8px auto">新纪录!</div><div style="color:var(--seal);font-weight:900">Kỷ lục mới! 🎉</div>' : `<div class="muted small" style="margin-top:6px">Kỷ lục của bạn: <b>${best}</b></div>`}
-     <div class="grid2 mt"><button class="btn ghost" onclick="xSprintMenu()">Chọn chế độ</button><button class="btn" onclick="xSprintStart('${xs.mode}')">Chơi lại</button></div></section></div>`;
-  }
-  const sb = S.sprint || {}, n = xSpPool().length;
-  return headBand('快', 'Thử thách 60 giây', `${n} từ trong kho · không khóa tiến độ`, "go('practice')") + `<div class="page"><p class="muted small" style="margin:0 2px 8px">Trả lời thật nhanh trong 60 giây. Đúng +1 điểm (liên tiếp từ 5 câu: +2). Sai bị trừ 3 giây. Từ lấy từ các bài bạn đã học.</p>
-   ${X_SP_MODES.map(([k, nm, ex]) => xRow('⚡', nm, `${ex} · kỷ lục ${(sb[k] || {}).best || 0}`, `xSprintStart('${k}')`, 'Chơi ▶')).join('')}</div>`;
-}
-function xSprintMenu() { xs = null; render(); }
-function xSprintQuit() { if (xs && xs.phase === 'play' && !confirm('Thoát? Điểm lượt này sẽ không được lưu.')) return; clearInterval(X_TIMERS.x_sprint); delete X_TIMERS.x_sprint; xs = null; go('practice'); }
-
 /* ---------- bảng trang ---------- */
-const X_PAGES = { x_conf: xConfPage, x_read: xReadPage, x_mock: xMockPage, x_sprint: xSprintPage, x_stats: xStatsPage, x_badge: xBadgePage, x_idiom: xIdiomPage };
-const X_AFTER = { x_sprint: xSprintAfter };
+const X_PAGES = { x_conf: xConfPage, x_read: xReadPage, x_mock: xMockPage, x_stats: xStatsPage, x_badge: xBadgePage, x_idiom: xIdiomPage };
+const X_AFTER = {};
 
 /* ---- extras_more.js ---- */
 /* ===== HSK Study Lab · extras_more.js (build_49): ôn đa dạng, đồng âm, sao lưu vào thư mục ===== */
@@ -3498,8 +3427,8 @@ function xDirInit() {
 }
 
 /* ---------- Sắp câu hỏi từ dễ đến khó, từ ngắn đến dài (build_51) ---------- */
-const X_TIER = { mean: 1, meanR: 1, listen: 1, recog: 1, hv: 1, tonePick: 1, tone: 2, fill: 2, measure: 2, particle: 2, pos: 2, sandhi: 2, py: 2, translate: 3, tf: 3, dict: 3, cloze: 3, arrange: 4, type: 4, trans: 4 };
-const X_SUB = { mean: 0, meanR: 1, listen: 2, recog: 3, hv: 4, tonePick: 5, tone: 0, fill: 1, measure: 2, particle: 3, pos: 4, sandhi: 5, py: 6, translate: 0, tf: 1, dict: 2, cloze: 3, arrange: 0, type: 1, trans: 2 };
+const X_TIER = { mean: 1, meanR: 1, listen: 1, recog: 1, hv: 1, tonePick: 1, tone: 2, fill: 2, measure: 2, particle: 2, pos: 2, sandhi: 2, py: 2, translate: 3, zv: 3, tf: 3, dict: 3, cloze: 3, arrange: 4, type: 4, trans: 4 };
+const X_SUB = { mean: 0, meanR: 1, listen: 2, recog: 3, hv: 4, tonePick: 5, tone: 0, fill: 1, measure: 2, particle: 3, pos: 4, sandhi: 5, py: 6, translate: 0, zv: 4, tf: 1, dict: 2, cloze: 3, arrange: 0, type: 1, trans: 2 };
 function xQLen(q) { let n = 0; [q.han, q.prompt, q.answer, q.audio].forEach(s => { try { n = Math.max(n, hanOnly(String(s || '')).length); } catch (e) { } }); return n; }
 function xDiffSort(items, meta) {
   if (!items || items.length < 2 || (meta && (meta.type === 'mock' || meta.noSort))) return items;
@@ -3673,7 +3602,7 @@ function xHwPracticeCard() {
 }
 
 function xHwSub(q) {
-  if (q.kind === 'listen' || q.kind === 'meanR') return 'Viết từ này bằng chữ Hán' + (q.sub ? ' · ' + q.sub : '');
+  if (q.kind === 'listen' || q.kind === 'meanR') return 'Viết từ này bằng chữ Hán';
   return String(q.sub || '').replace(/Gõ câu/, 'Viết câu').replace(/Nghe rồi gõ lại/, 'Nghe rồi viết lại').replace(/Sắp xếp thành câu tiếng Trung/, 'Viết câu tiếng Trung có nghĩa như trên').replace(/Nghe rồi chạm các (từ|thẻ)[^.]*thứ tự/, 'Nghe rồi viết lại câu');
 }
 const XH_LAB = { dict: 'Nghe chép (viết tay)', type: 'Nghe chép (viết tay)', arrange: 'Dịch Việt → Trung (viết tay)', trans: 'Dịch Việt → Trung (viết tay)', listen: 'Nghe → viết từ (viết tay)', meanR: 'Nghĩa → viết từ (viết tay)' };
@@ -3685,21 +3614,128 @@ function xHwBackBtn(q, a) {
 }
 function xHwOn1() { const q = curQ(); q.hwOff = 0; render(); }
 
-/* người học tự xác nhận mình viết đúng (máy chấm sai): tính là đúng, lưu nét để tinh chỉnh bộ chấm */
-function xHwForgive() {
-  const q = curQ(), a = quiz.ans[quiz.i]; if (!q || !a || a.ok || !a.res || !a.res.hw) return;
-  try {
+/* ---------- "Tôi đúng": máy chấm sai → tính ĐÚNG HOÀN TOÀN (hoàn tác mọi dấu vết của lần sai) ---------- */
+function xUndoSnap(q) {
+  const d = dayKey(), key = q.kind + '|' + q.ref, ks = [`v:${q.ref}:h`, `v:${q.ref}:m`];
+  return { d, day: JSON.stringify(S.days[d] || null), err: JSON.stringify(S.errors[key] || null), srs: ks.map(k => JSON.stringify(S.srs[k] || null)), ks };
+}
+function xForgive() {
+  const q = curQ(), a = quiz.ans[quiz.i]; if (!q || !a || a.ok) return;
+  const u = a.undo;
+  if (u) {
+    try {
+      const key = q.kind + '|' + q.ref, day = JSON.parse(u.day), err = JSON.parse(u.err);
+      if (day) S.days[u.d] = day; else delete S.days[u.d];
+      if (err) S.errors[key] = err; else delete S.errors[key];
+      u.ks.forEach((k, i) => { const v = JSON.parse(u.srs[i]); if (v) S.srs[k] = v; else delete S.srs[k]; });
+    } catch (e) { }
+  } else { delete S.errors[q.kind + '|' + q.ref]; }
+  if (q.kind !== 'zv') try {
     const st = xhSt(q); S.hwDisputes = Array.isArray(S.hwDisputes) ? S.hwDisputes : [];
-    a.res.cells.forEach((c, i) => { const w = st.cells[i]; if (c.ok || !w || !w.strokes.length) return;
+    (a.res && a.res.cells || []).forEach((c, i) => { const w = st.cells[i]; if (c.ok || !w || !w.strokes.length) return;
       S.hwDisputes.push({ ch: c.ch, lv: hwCfg.tol, nm: 0, ne: 0, st: w.strokes.map(s => { const o = []; s.forEach(p => o.push(Math.round(p.x * 1000) / 1000, Math.round(p.y * 1000) / 1000)); return o; }) });
       if (S.hwDisputes.length > 40) S.hwDisputes.shift();
       const wk = S.hwWeak && S.hwWeak[c.ch]; if (wk) { wk.n--; if (wk.n <= 0) delete S.hwWeak[c.ch]; } });
   } catch (e) { }
-  a.ok = true; a.res.cells.forEach(c => c.ok = true); a.val = a.res.cells.map(c => c.ch).join('');
-  quiz.combo = (quiz.combo || 0) + 1; bump('ok'); bumpSkill(q.kind, true);
-  const key = q.kind + '|' + q.ref; if (S.errors[key]) delete S.errors[key];
-  if (q.srsKey) { try { xSrsGrade(q, true); } catch (e) { } }
+  a.ok = true; delete a.undo;
+  if (a.res && a.res.cells) { a.res.cells.forEach(c => c.ok = true); a.val = a.res.cells.map(c => c.ch).join(''); }
+  quiz.combo = (quiz.combo || 0) + 1; bump('a'); bump('ok'); bumpSkill(q.kind, true);
+  const key = q.kind + '|' + q.ref; if (S.errors[key]) { S.errors[key].streak++; if (S.errors[key].streak >= 2) delete S.errors[key]; }
   statUpdate(); save(); render(); toast('Đã tính là đúng ✓');
+}
+const xHwForgive = xForgive;
+/* chấm nghĩa tiếng Việt: bỏ dấu, so theo từ; chấp nhận khi khớp một nghĩa (cách nhau ; , /) */
+function checkViet(val, ref) {
+  const tk = s => fold(String(s || '').replace(/\([^)]*\)/g, ' ')).replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const raw = s => fold(String(s || '')).replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean).join(' ');
+  const u = tk(val); if (!raw(val)) return { ok: false, zv: 1, score: 0 };
+  if (raw(val) === raw(ref)) return { ok: true, zv: 1, score: 1 };
+  if (!u.length) return { ok: false, zv: 1, score: 0 };
+  const alts = String(ref || '').split(/[;；,，/／]|\s+hoặc\s+/).map(x => x.trim()).filter(Boolean);
+  const whole = tk(ref); let best = 0;
+  [...alts, String(ref)].forEach(r => {
+    const t = tk(r); if (!t.length) return; const set = new Set(u);
+    const hit = t.filter(x => set.has(x)).length, rec = hit / t.length, prec = u.filter(x => t.includes(x)).length / u.length;
+    const sc = t.length <= 2 ? (rec === 1 && prec >= 0.5 ? 1 : rec * prec) : (rec >= 0.75 && prec >= 0.6 ? 1 : Math.min(rec, prec));
+    best = Math.max(best, sc);
+  });
+  if (whole.length && u.join(' ') === whole.join(' ')) best = 1;
+  return { ok: best >= 1, zv: 1, score: Math.round(best * 100) / 100 };
+}
+/* ---------- BẮT BUỘC: các dạng viết tay / dịch / nghe chép luôn có mặt trong bài tập bài khóa, kiểm tra bài, chặng, cấp ---------- */
+const X_MAND_T = {
+  arrange: q => q.kind === 'arrange', dict: q => q.kind === 'dict', zvS: q => q.kind === 'zv' && !!q.sent,
+  zvV: q => q.kind === 'zv' && !q.sent, meanR: q => q.kind === 'meanR', listen: q => q.kind === 'listen'
+};
+const X_MAND_SRC = { arrange: ['arrange', 'sg'], dict: ['dict', 's'], zvS: ['zv', 's'], zvV: ['zv', 'v'], meanR: ['meanR', 'v'], listen: ['listen', 'v'] };
+function xMand(items, spec, pool, N) {
+  const used = new Set(items.map(q => q.kind + '|' + q.ref)), add = [];
+  const src = { v: pool.v, s: sentRefs(pool, 's'), sg: sentRefs(pool, 'sg') };
+  Object.entries(spec).forEach(([id, n]) => {
+    const have = items.filter(X_MAND_T[id]).length + add.filter(X_MAND_T[id]).length; if (have >= n) return;
+    const [kind, s] = X_MAND_SRC[id];
+    add.push(...build([kind], src[s], n - have, s === 'v' ? vQ : sQ, used));
+  });
+  if (!add.length) return items;
+  const isM = q => Object.keys(spec).some(id => X_MAND_T[id](q));
+  const mand = items.filter(isM), rest = shuffle(items.filter(q => !isM(q)));
+  return shuffle([...mand, ...add, ...rest.slice(0, Math.max(0, N - mand.length - add.length))]);
+}
+const xMandMix = N => { const f = N / 20, r = x => Math.max(1, Math.round(x * f)); return { arrange: r(2), dict: r(2), zvS: r(2), zvV: r(1), meanR: r(2), listen: r(1) }; };
+const X_MAND_STEP = [
+  { zvV: 3, meanR: 3 },                 // 1 Từ vựng
+  { dict: 4, listen: 3 },               // 2 Nghe
+  { arrange: 3, zvS: 3 },               // 3 Câu
+  { arrange: 3, dict: 2 }               // 4 Viết
+];
+
+/* ---------- Gợi ý phân biệt chữ đồng âm (nghe → viết) ----------
+   Với mỗi chữ trong đáp án có chữ khác cùng âm + cùng thanh (他/她/它, 在/再, 的/得/地…), hiện: âm → các chữ có thể + nghĩa,
+   kèm nghĩa tiếng Việt của cả từ/câu để chọn đúng chữ. Chỉ dùng chữ có trong dữ liệu app. */
+let _xhi = null;
+const xFirstSense = s => String(s || '').split(/[;,；，(（]/)[0].trim().slice(0, 28);
+function xHomoIdx() {
+  if (_xhi) return _xhi;
+  const syl = new Map(), freq = new Map(), gl = new Map(), ex = new Map();
+  const add = (han, py, mean, single) => {
+    const ss = pySyllables(py).filter(x => !x.r), hs = sylHanMap(han, pySyllables(py)); if (!hs || hs.length !== ss.length) return;
+    hs.forEach((c, i) => {
+      const k = ss[i].b + ss[i].t; let m = syl.get(k); if (!m) syl.set(k, m = new Set()); m.add(c);
+      freq.set(c, (freq.get(c) || 0) + 1);
+      if (single && !gl.has(c)) gl.set(c, xFirstSense(mean));
+      else if (!single && mean && (!ex.has(c) || han.length < ex.get(c).w.length)) ex.set(c, { w: han, m: xFirstSense(mean) });
+    });
+  };
+  DATA.vocab.forEach(v => add(v['Từ'], v['Pinyin'], v['Nghĩa tiếng Việt'], hanOnly(v['Từ']).length === 1));
+  Object.values(DATA.idx.lineByCode || {}).forEach(r => add(r['Câu tiếng Trung'], r['Pinyin'], '', false));
+  return _xhi = { syl, freq, gl, ex };
+}
+function xHomoItems(han, py) {
+  const I = xHomoIdx(), ss = pySyllables(py).filter(x => !x.r), hs = sylHanMap(han, pySyllables(py)); if (!hs || hs.length !== ss.length) return [];
+  const out = [], seen = new Set();
+  hs.forEach((c, i) => {
+    const k = ss[i].b + ss[i].t; if (seen.has(k + c)) return; seen.add(k + c);
+    const F = x => I.freq.get(x) || 0;
+    const cand = [...(I.syl.get(k) || [])].filter(x => x === c || (F(x) >= 8 && (I.gl.has(x) || I.ex.has(x))));
+    const rival = Math.max(0, ...cand.filter(x => x !== c).map(F));
+    const cur = X_HOMO.some(([cs]) => cs.includes(c) && cand.some(x => x !== c && cs.includes(x)));
+    if (rival < 20 || (!cur && rival < 0.2 * F(c))) return;
+    const show = cand.sort((x, y) => F(y) - F(x) || x.localeCompare(y)).slice(0, 4); if (!show.includes(c)) show[show.length - 1] = c;
+    out.push({ k, py: markSyl(ss[i].b, ss[i].t), list: show.map(x => ({ c: x, g: I.gl.get(x) || (I.ex.get(x) ? 'trong ' + I.ex.get(x).w + ' – ' + I.ex.get(x).m : '') })), n: rival });
+  });
+  return out.sort((a, b) => b.n - a.n).slice(0, 3);
+}
+function xHomoLine(q) {
+  if (!XH_KINDS.includes(q.kind) || q.kind === 'trans' || q.kind === 'arrange' || (q.kind === 'meanR' || q.kind === 'listen') && !xHwUse(q)) return '';
+  if (q._hom === undefined) {
+    let h = '';
+    try {
+      const it = xHomoItems(q.han, q.wpy);
+      if (it.length && q.mean) h = `<div class="xhom">Có chữ đồng âm · nghĩa ${q.sent ? 'cả câu' : 'của từ'}: <b>“${esc(q.mean)}”</b></div>`;
+    } catch (e) { }
+    Object.defineProperty(q, '_hom', { value: h, enumerable: false, writable: true });
+  }
+  return q._hom;
 }
 
 /* ---- quiz.js ---- */
@@ -3758,16 +3794,17 @@ function sentRef(ref) {
 const lvOfQ = q => lvNum(q.lv || '');
 
 /* ---------- tạo câu hỏi ---------- */
-const KIND_LABEL = { mean: 'Chọn nghĩa', meanR: 'Chọn chữ', listen: 'Nghe chọn từ', recog: 'Nhận mặt chữ', hv: 'Hán Việt → chữ', fill: 'Điền từ vào câu', cloze: 'Điền từ (tự gõ)', py: 'Gõ pinyin ⌨', tone: 'Đánh dấu thanh', tonePick: 'Nghe chọn thanh', measure: 'Chọn lượng từ', particle: 'Trợ từ', pos: 'Chọn vị trí A B C D', tf: 'Đúng / sai theo bài khóa', arrange: 'Dịch Việt → Trung (sắp xếp)', trans: 'Dịch Việt → Trung (tự gõ) ⌨', translate: 'Chọn câu dịch đúng', dict: 'Nghe chép (ghép từ)', type: 'Nghe chép (tự gõ) ⌨', sandhi: 'Biến điệu' };
-const INPUT_KINDS = ['py', 'cloze', 'trans', 'type'];
+const KIND_LABEL = { mean: 'Chọn nghĩa', meanR: 'Chọn chữ', listen: 'Nghe chọn từ', recog: 'Nhận mặt chữ', hv: 'Hán Việt → chữ', fill: 'Điền từ vào câu', cloze: 'Điền từ (tự gõ)', py: 'Gõ pinyin ⌨', tone: 'Đánh dấu thanh', tonePick: 'Nghe chọn thanh', measure: 'Chọn lượng từ', particle: 'Trợ từ', pos: 'Chọn vị trí A B C D', tf: 'Đúng / sai theo bài khóa', arrange: 'Dịch Việt → Trung (sắp xếp)', trans: 'Dịch Việt → Trung (tự gõ) ⌨', zv: 'Dịch Trung → Việt (tự gõ) ⌨', translate: 'Chọn câu dịch đúng', dict: 'Nghe chép (ghép từ)', type: 'Nghe chép (tự gõ) ⌨', sandhi: 'Biến điệu' };
+const INPUT_KINDS = ['py', 'cloze', 'trans', 'type', 'zv'];
 const TILE_KINDS = ['arrange', 'dict'];
 function makeQ(kind, x) {
   if (!x) return null;
   const opts = (a, ds) => shuffle([a, ...ds]);
   const base = { kind, lv: x['Cấp'] || levelOf(x.lid || x['Mã bài học']) };
-  if (['mean', 'meanR', 'listen', 'recog', 'hv', 'fill', 'cloze', 'py', 'tone', 'tonePick', 'pos', 'sandhi'].includes(kind)) {
+  if (['mean', 'meanR', 'listen', 'recog', 'hv', 'fill', 'cloze', 'py', 'tone', 'tonePick', 'pos', 'sandhi', 'zv'].includes(kind) && !(kind === 'zv' && x.zh !== undefined)) {
     const v = x, code = VC(v), w = v['Từ'], syl = pySyllables(v['Pinyin']).filter(s => !s.r);
     const info = { ref: code, han: w, wpy: v['Pinyin'], hv: v['Âm Hán Việt'], mean: v['Nghĩa tiếng Việt'], audioAfter: w };
+    if (kind === 'zv') { if (!String(v['Nghĩa tiếng Việt'] || '').trim()) return null; return { ...base, ...info, prompt: w, pz: 1, sub: 'Dịch từ này sang tiếng Việt', hint: 'Gõ nghĩa tiếng Việt (có dấu hoặc không dấu đều được) · chỉ cần đúng một nghĩa chính', answer: v['Nghĩa tiếng Việt'] }; }
     if (kind === 'mean') { const ds = distract(v, 'Nghĩa tiếng Việt', 3, y => sameMean(y, v)); if (ds.length < 2) return null; return { ...base, ...info, prompt: w, pz: 1, py: v['Pinyin'], hideHv: 1, options: opts(v['Nghĩa tiếng Việt'], ds), answer: v['Nghĩa tiếng Việt'] }; }
     if (kind === 'meanR' || kind === 'listen') {
       const ds = distract(v, 'Từ', 3, y => sameMean(y, v) || (kind === 'listen' && homophone(y, v))); if (ds.length < 2) return null;
@@ -3853,6 +3890,7 @@ function makeQ(kind, x) {
     const n = hanOnly(s.zh).length; if (n < 2 || n > (kind === 'trans' ? 18 : 24)) return null;
     return { ...sb, answer: s.zh, prompt: kind === 'trans' ? s.vi : '', sub: kind === 'trans' ? 'Gõ câu tiếng Trung có nghĩa như trên' : (xHomoNote(s.zh) ? 'Nghe rồi gõ lại câu. Nghĩa của câu: “' + s.vi + '”' : 'Nghe rồi gõ lại câu'), audio: kind === 'type' ? s.zh : '', hint: 'Gõ chữ Hán (Gboard) hoặc pinyin có thanh (số/dấu) · bỏ qua dấu câu' + (kind === 'type' && xHomoNote(s.zh) ? ' · Chú ý đồng âm: ' + xHomoNote(s.zh) : '') };
   }
+  if (kind === 'zv') { const n = hanOnly(s.zh).length; if (n < 2 || n > 24 || !String(s.vi || '').trim()) return null; return { ...sb, prompt: s.zh, pz: 1, sub: 'Dịch cả câu sang tiếng Việt', hint: 'Gõ nghĩa tiếng Việt (có dấu hoặc không dấu đều được) · khác từ ngữ nhưng cùng ý thì bấm “Tôi đúng”', answer: s.vi }; }
   if (kind === 'translate') {
     const sib = rows(s.lid).filter(r => r['Câu tiếng Trung'] !== s.zh).map(r => r['Câu tiếng Trung']);
     const ds = shuffle(uniq(sib)).filter(z => hanOnly(z) !== hanOnly(s.zh)).slice(0, 3); if (ds.length < 2) return null;
@@ -3896,7 +3934,7 @@ function makeQ(kind, x) {
   }
   return null;
 }
-function qFromSpec(sp) { const sk = ['arrange', 'dict', 'type', 'trans', 'translate', 'measure', 'particle', 'tf'].includes(sp.kind); return makeQ(sp.kind, sk ? sentRef(sp.ref) : DATA.idx.vocabByCode[sp.ref]); }
+function qFromSpec(sp) { const sk = ['arrange', 'dict', 'type', 'trans', 'translate', 'measure', 'particle', 'tf'].includes(sp.kind) || (sp.kind === 'zv' && /^[SGE]:/.test(sp.ref)); return makeQ(sp.kind, sk ? sentRef(sp.ref) : DATA.idx.vocabByCode[sp.ref]); }
 
 /* ---------- phạm vi ---------- */
 function scopeIds(scope) {
@@ -3939,14 +3977,15 @@ function practiceTypes() {
     { k: 'measure', sk: 'vocab', t: 'Lượng từ', d: '一本书, 一件衣服… chọn lượng từ đúng', i: '个', can: it => it.s.length + it.v.length >= 3 },
     { k: 'listen', sk: 'listen', t: 'Nghe chọn từ', d: 'Nghe rồi chọn chữ đúng', i: '听', c: 'a', can: it => it.v.length >= 1 },
     { k: 'tonePick', sk: 'listen', t: 'Nghe chọn thanh', d: 'Nghe từ, chọn thanh điệu từng âm tiết', i: '声', c: 'a', can: it => it.v.length >= 1 },
-    { k: 'dict', sk: 'listen', t: 'Nghe chép · ghép từ', d: 'Nghe câu, chạm các từ theo thứ tự', i: '拼', c: 'a', can: it => it.s.length >= 1 },
+    { k: 'dict', sk: 'listen', t: 'Nghe chép · viết tay / ghép chữ', d: 'Nghe câu, viết tay từng chữ hoặc chạm các từ theo thứ tự', i: '拼', c: 'a', can: it => it.s.length >= 1 },
     { k: 'type', sk: 'listen', t: 'Nghe chép · tự gõ', d: 'Nghe câu rồi gõ lại (chữ Hán hoặc pinyin)', i: '写', c: 'a', can: it => it.s.length >= 1 },
-    { k: 'arrange', sk: 'gram', t: 'Dịch Việt → Trung · sắp xếp', d: 'Ghép từ thành câu đúng trật tự', i: '排', can: it => it.s.length + it.g.length >= 1 },
+    { k: 'arrange', sk: 'gram', t: 'Dịch Việt → Trung · viết tay / ghép chữ', d: 'Viết tay câu tiếng Trung hoặc ghép từ đúng trật tự', i: '排', can: it => it.s.length + it.g.length >= 1 },
     { k: 'particle', sk: 'gram', t: '的 / 得 / 地 · 了 / 过 / 着', d: 'Chọn trợ từ đúng cho câu', i: '的', can: it => it.s.length >= 3 },
     { k: 'pos', sk: 'gram', t: 'Chọn vị trí A B C D', d: 'Đặt phó từ / động từ năng nguyện vào đúng chỗ', i: 'Ⓐ', can: it => it.v.some(v => /phó từ|năng nguyện/.test(String(v['Từ loại']))) },
     { k: 'py', sk: 'write', t: 'Gõ pinyin', d: 'Nhìn chữ, gõ pinyin có thanh · sai thanh = sai', i: '⌨', c: 'r', can: it => it.v.length >= 1 },
     { k: 'cloze', sk: 'write', t: 'Điền từ · tự gõ', d: 'Câu có chỗ trống, gõ pinyin hoặc chữ Hán', i: '填', c: 'r', can: it => it.v.length >= 1 },
     { k: 'trans', sk: 'write', t: 'Dịch Việt → Trung · tự gõ', d: 'Gõ cả câu tiếng Trung', i: '译', c: 'r', can: it => it.s.length + it.g.length >= 1 },
+    { k: 'zv', sk: 'read', t: 'Dịch Trung → Việt', d: 'Đọc từ / câu tiếng Trung, gõ nghĩa tiếng Việt', i: '越', c: 'r', can: it => it.s.length + it.v.length >= 1 },
     { k: 'translate', sk: 'read', t: 'Chọn câu dịch đúng', d: 'Đọc tiếng Việt, chọn câu tiếng Trung', i: '读', can: it => it.s.length >= 3 },
     { k: 'tf', sk: 'read', t: 'Đúng / sai theo bài khóa', d: 'Câu nói có đúng với bài khóa không?', i: '✓✗', can: it => it.s.length >= 3 },
     { k: 'tone', sk: 'pron', t: 'Đánh dấu thanh', d: 'Chọn pinyin ghi thanh đúng', i: 'ǎ', c: 'a', can: it => it.v.length >= 1 },
@@ -3980,7 +4019,7 @@ function buildPractice(k, scope) {
   const pool = scopePool(scope), N = 15, sr = sentRefs(pool, 'sgv'), srS = sentRefs(pool, 's'), srSG = sentRefs(pool, 'sg');
   const vq = kinds => build(kinds, pool.v, N, vQ);
   const m = { mean: () => vq(['mean', 'meanR']), recog: () => vq(['recog', 'hv']), fill: () => vq(['fill']), listen: () => vq(['listen']), tonePick: () => vq(['tonePick']), tone: () => vq(['tone']), py: () => vq(['py']), cloze: () => build(['cloze'], pool.v, 10, vQ), pos: () => build(['pos'], pool.v.filter(v => /phó từ|năng nguyện/.test(String(v['Từ loại']))), 10, vQ),
-    measure: () => build(['measure'], sr, 10, sQ), particle: () => build(['particle'], sr, 10, sQ), arrange: () => build(['arrange'], srSG, 10, sQ), dict: () => build(['dict'], srS, 10, sQ), type: () => build(['type'], srS, 8, sQ), trans: () => build(['trans'], srSG, 8, sQ), translate: () => build(['translate'], srS, 10, sQ), tf: () => build(['tf'], srS, 10, sQ) };
+    measure: () => build(['measure'], sr, 10, sQ), particle: () => build(['particle'], sr, 10, sQ), arrange: () => build(['arrange'], srSG, 10, sQ), dict: () => build(['dict'], srS, 10, sQ), type: () => build(['type'], srS, 8, sQ), trans: () => build(['trans'], srSG, 8, sQ), translate: () => build(['translate'], srS, 10, sQ), zv: () => [...build(['zv'], srS, 6, sQ), ...build(['zv'], pool.v, 5, vQ)], tf: () => build(['tf'], srS, 10, sQ) };
   return m[k] ? m[k]() : [];
 }
 function startPractice(k, scope, fresh) {
@@ -4000,7 +4039,8 @@ function buildGroup(k, scope) {
   const sks = isSt ? DRILL[+sk - 1].sks : [sk], N = scope === 'cp' ? 20 : 16;
   const ts = practiceTypes().filter(t => sks.includes(t.sk) && t.can(it)), per = Math.ceil(N / Math.max(1, ts.length)), out = [];
   ts.forEach(t => out.push(...buildPractice(t.k, scope).slice(0, per)));
-  return shuffle(out).slice(0, N);
+  const res = shuffle(out).slice(0, N);
+  return isSt && X_MAND_STEP[+sk - 1] ? xMand(res, X_MAND_STEP[+sk - 1], pool, N) : res;
 }
 /* trộn đủ dạng; luôn có dạng tự gõ */
 function buildMix(pool, N, opt = {}) {
@@ -4017,7 +4057,7 @@ function buildMix(pool, N, opt = {}) {
   push(['translate', 'arrange', 'dict', 'tf', 'type'], sS, N - items.length, sQ);
   if (items.length < N) push(['mean', 'meanR', 'listen', 'recog', 'fill', 'tone', 'py'], pool.v, N - items.length, vQ);
   if (items.length < N) push(['arrange', 'translate', 'dict', 'particle', 'measure'], sAll, N - items.length, sQ);
-  return shuffle(items.slice(0, N));
+  return shuffle(xMand(items.slice(0, N), xMandMix(N), pool, N));
 }
 function startQuiz(kind, fresh) {
   if (kind !== 'test' || !lesson(lessonId)) return;
@@ -4092,9 +4132,12 @@ function answer(val) {
   else if (q.kind === 'py') { if (/[㐀-鿿]/.test(String(val))) { toast('Câu này cần gõ pinyin (không phải chữ Hán)'); return; } if (!String(val).trim()) res = { ok: false, syl: [] }; else res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
   else if (q.kind === 'cloze') { res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
   else if (q.kind === 'type' || q.kind === 'trans') { res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
+  else if (q.kind === 'zv') { res = checkViet(val, q.answer); ok = res.ok; }
   else if (TILE_KINDS.includes(q.kind)) { val = q.order.map(i => q.tokens[i].t).join(''); ok = normZh(val) === normZh(q.answer); }
   else ok = val === q.answer;
+  const undo = !ok && (hwu || q.kind === 'zv') ? xUndoSnap(q) : null;
   quiz.ans[quiz.i] = { ok, val: String(val ?? ''), res, hint: !!q.hinted };
+  if (undo) quiz.ans[quiz.i].undo = undo;
   quiz.combo = ok ? (quiz.combo || 0) + 1 : 0;
   bump('a'); if (ok) bump('ok'); bumpSkill(q.kind, ok); if (quiz.type === 'errors') bumpQ('err');
   if (!ok) srsBoost(q.ref);
@@ -4104,7 +4147,7 @@ function answer(val) {
   if (q.srsKey) xSrsGrade(q, ok);
   if (quiz.s) quiz.s.at = Date.now();
   statUpdate(); save(); render();
-  try { cheerAnswer(ok, ['py', 'tone', 'tonePick', 'sandhi'].includes(q.kind) ? 'tone' : ['type', 'trans', 'dict'].includes(q.kind) ? 'dictation' : q.kind); } catch (e) { }
+  try { cheerAnswer(ok, ['py', 'tone', 'tonePick', 'sandhi'].includes(q.kind) ? 'tone' : ['type', 'trans', 'dict'].includes(q.kind) ? 'dictation' : q.kind === 'zv' ? 'translate' : q.kind); } catch (e) { }
   if (q.audioAfter && (ok || ['listen', 'dict', 'type', 'trans', 'py', 'cloze', 'tonePick'].includes(q.kind))) setTimeout(() => say(q.audioAfter), 200);
 }
 function nextUnanswered(from) { const n = quiz.items.length; for (let d = 1; d <= n; d++) { const j = (from + d) % n; if (!quiz.ans[j]) return j; } return -1; }
@@ -4170,7 +4213,7 @@ function quizPage() {
   let pr = '';
   if (q.posHtml) pr = `<div class="posq">${q.posHtml}</div>`;
   else if (q.prompt) pr = `<div class="${q.pz ? 'han zh ' + (hlen(q.prompt) > 6 ? 'long' : '') : 'qprompt'}">${q.pz ? esc(q.prompt).replace(/＿＿?/, '<span class="blank">' + (a ? esc(q.answer) : '＿') + '</span>') : esc(q.prompt)}</div>`;
-  const pyLine = (q.kind === 'mean' || q.kind === 'py' && a) && q.wpy && pyOk ? `<div class="qpy">${pinyinHTML(q.wpy)}</div>` : q.kind === 'tf' && q.stPy && pyOk ? `<div class="qpy">${pinyinHTML(q.stPy)}</div>` : '';
+  const pyLine = (q.kind === 'mean' || q.kind === 'zv' || q.kind === 'py' && a) && q.wpy && pyOk ? `<div class="qpy">${pinyinHTML(q.wpy)}</div>` : q.kind === 'tf' && q.stPy && pyOk ? `<div class="qpy">${pinyinHTML(q.stPy)}</div>` : '';
   const hwSub = xHwUse(q) ? xHwSub(q) : null;
   const hvLine = hwSub != null ? `<div class="qsub">${esc(hwSub)}</div>` : q.kind === 'py' && (q.hv || q.mean) ? `<div class="hv">${q.hv ? 'Hán Việt: ' + esc(String(q.hv).toUpperCase()) + ' · ' : ''}${esc(q.mean || '')}</div>` : q.sub ? `<div class="qsub">${esc(q.sub)}</div>` : '';
   if (xHwUse(q)) body = xhBody(q, a);
@@ -4179,8 +4222,8 @@ function quizPage() {
      <div class="tiles2">${q.tokens.map((t, i) => `<button class="tile ${q.order.includes(i) ? 'used' : ''}" onclick="pickTile(${i})" ${q.order.includes(i) || a ? 'disabled' : ''}>${esc(t.t)}</button>`).join('')}</div>
      ${!a ? `<div class="qbtns"><button class="btn ghost" onclick="curQ().order=[];render()" ${q.order.length ? '' : 'disabled'}>Xóa làm lại</button>${hintBtn(q)}<button class="btn" id="chkBtn" onclick="answer()" ${q.order.length === q.tokens.length ? '' : 'disabled'}>Kiểm tra</button></div>` : ''}`;
   } else if (INPUT_KINDS.includes(q.kind)) {
-    const multi = q.kind === 'type' || q.kind === 'trans';
-    body = `${multi ? `<textarea id="typed" class="inp typebox zh" rows="2" placeholder="Gõ chữ Hán hoặc pinyin…" autocomplete="off" autocapitalize="off" spellcheck="false" ${a ? 'disabled' : ''}>${esc(a ? a.val : q.typed || '')}</textarea>` : `<input id="typed" class="inp" placeholder="${q.kind === 'py' ? 'ji3 kou3 ren2  hoặc  jǐ kǒu rén' : 'Gõ pinyin hoặc chữ Hán…'}" autocomplete="off" autocapitalize="off" spellcheck="false" ${a ? 'disabled' : ''} value="${esc(a ? a.val : q.typed || '')}">`}
+    const multi = q.kind === 'type' || q.kind === 'trans' || (q.kind === 'zv' && q.sent);
+    body = `${multi ? `<textarea id="typed" class="inp typebox zh" rows="2" placeholder="${q.kind === 'zv' ? 'Gõ nghĩa tiếng Việt…' : 'Gõ chữ Hán hoặc pinyin…'}" autocomplete="off" autocapitalize="off" spellcheck="false" ${a ? 'disabled' : ''}>${esc(a ? a.val : q.typed || '')}</textarea>` : `<input id="typed" class="inp" placeholder="${q.kind === 'py' ? 'ji3 kou3 ren2  hoặc  jǐ kǒu rén' : q.kind === 'zv' ? 'Gõ nghĩa tiếng Việt…' : 'Gõ pinyin hoặc chữ Hán…'}" autocomplete="off" autocapitalize="off" spellcheck="false" ${a ? 'disabled' : ''} value="${esc(a ? a.val : q.typed || '')}">`}
      ${a ? sylChips(a.res) : `<div class="qbtns">${hintBtn(q)}<button class="btn ghost" onclick="answer('')">Xem đáp án</button><button class="btn" onclick="answer($('#typed').value)">Kiểm tra</button></div>`}
      ${q.hint && !a ? `<div class="hint">${esc(q.hint)}</div>` : ''}`;
   } else {
@@ -4194,14 +4237,14 @@ function quizPage() {
       : `<div><span class="ans zh">${esc(q.han)}</span> <span class="fpy">${pinyinHTML(q.wpy || '')}</span>${q.hv ? ` · <b>${esc(String(q.hv).toUpperCase())}</b>` : ''}</div><div>${esc(q.mean || '')}</div>`;
     const tfx = q.kind === 'tf' ? `<div class="small">Bài khóa: <span class="zh"><b>${esc(q.tfOrig)}</b></span></div>` : '';
     const head = a.ok ? '<b>Chính xác!</b> +10 XP' : `<b>Chưa đúng.</b> ${q.kind === 'py' && a.res && a.res.syl.some(s => !s.ok) && a.res.syl.every(s => s.toneOnly) ? 'Sai thanh điệu ở âm tiết tô đỏ. ' : ''}${!INPUT_KINDS.includes(q.kind) && !TILE_KINDS.includes(q.kind) ? `Đáp án: <b class="${q.optZh ? 'zh' : ''}">${q.optPat ? patLabel(q.answer) : esc(q.answer)}</b>` : ''} · đã thêm vào thẻ ôn 🃏`;
-    fb = `<div class="fb ${a.ok ? 'g' : 'r'}">${head}${q.audioAfter ? ` <button class="snd mini" style="vertical-align:middle" onclick="say(${ja(q.audioAfter)})">${IC.sound}</button>` : ''}<div style="margin-top:4px">${tfx}${ansBlock}</div>${xWhy(q, a)}${a.res && a.res.mode === 'han' && !a.ok ? `<div class="small">Bạn gõ: <s class="zh">${esc(a.res.got)}</s></div>` : ''}</div>`;
+    fb = `<div class="fb ${a.ok ? 'g' : 'r'}">${head}${q.audioAfter ? ` <button class="snd mini" style="vertical-align:middle" onclick="say(${ja(q.audioAfter)})">${IC.sound}</button>` : ''}<div style="margin-top:4px">${tfx}${ansBlock}</div>${xWhy(q, a)}${a.res && a.res.mode === 'han' && !a.ok ? `<div class="small">Bạn gõ: <s class="zh">${esc(a.res.got)}</s></div>` : ''}${q.kind === 'zv' && !a.ok ? `<div class="small">Bạn trả lời: <s>${esc(a.val || '(bỏ trống)')}</s></div><div class="qbtns"><button class="btn ghost" onclick="xForgive()">✓ Tôi đúng (cùng ý nghĩa)</button></div>` : ''}</div>`;
   }
   const left = c.none;
   const navb = `<div class="qnav"><button class="btn-o" onclick="gotoQ(${quiz.i - 1})" ${quiz.i ? '' : 'disabled style="opacity:.4"'}>← ${quiz.i ? 'Câu ' + quiz.i : 'Câu trước'}</button>${a ? `<button class="btn-s" id="nextBtn" onclick="nextQ()">${left ? 'Câu tiếp →' : 'Xem kết quả →'}</button>` : `<button class="btn-s" onclick="gotoQ(${quiz.i + 1})" ${quiz.i < n - 1 ? '' : 'disabled style="opacity:.4"'}>${quiz.i < n - 1 ? 'Câu ' + (quiz.i + 2) : 'Câu sau'} →</button>`}</div>`;
   return headBand(esc(lt), esc(quiz.title), sub, 'quitQuiz()') + `<div class="qwrap">
    <div class="cnt"><span class="ok">Đúng ${c.ok}/${n}</span><span class="ng">Sai ${c.bad}/${n}</span><span>Chưa làm ${c.none}/${n}</span><button class="lst" onclick="go('qlist',{fresh:1})">☰ Danh sách</button></div>${strip}
    <div class="qbox"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-   <span class="qtag">Câu ${quiz.i + 1} · ${esc(q.kind === 'particle' ? 'Trợ từ ' + q.plabel : xHwUse(q) ? xHwLabel(q) : KIND_LABEL[q.kind] || '')}</span>${q.hintText && !a ? `<div class="hint" style="color:var(--gold);font-weight:800">💡 ${esc(q.hintText)} · câu dùng gợi ý: bộ này tối đa 2 sao</div>` : ''}${pr}${pyLine}${hvLine}${audio}${body}${xHwBackBtn(q, a)}${fb}${navb}</div>
+   <span class="qtag">Câu ${quiz.i + 1} · ${esc(q.kind === 'particle' ? 'Trợ từ ' + q.plabel : xHwUse(q) ? xHwLabel(q) : KIND_LABEL[q.kind] || '')}</span>${q.hintText && !a ? `<div class="hint" style="color:var(--gold);font-weight:800">💡 ${esc(q.hintText)} · câu dùng gợi ý: bộ này tối đa 2 sao</div>` : ''}${pr}${pyLine}${hvLine}${xHomoLine(q)}${audio}${body}${xHwBackBtn(q, a)}${fb}${navb}</div>
    <div style="text-align:center;margin-top:12px"><button class="btn red" onclick="finishQuiz()">Xem kết quả · ${c.ok + c.bad}/${n} đã làm</button></div>
    <div style="position:relative;height:120px"><div class="dc" style="left:2px;top:0">${D.bamboo(110, 'leaf')}</div><div class="dc bob" style="right:14px;top:20px">${D.panda(48)}</div></div></div>`;
 }
@@ -4348,10 +4391,10 @@ function srsPage() {
 /* ===== Lộ trình luyện bài: 4 bước dễ → khó, rồi kiểm tra ===== */
 const DRILL_PASS = 70;
 const DRILL = [
-  { n: 1, zh: '词', name: 'Từ vựng', desc: 'Chọn nghĩa · nhận mặt chữ · điền từ · lượng từ', sks: ['vocab'] },
-  { n: 2, zh: '听', name: 'Nghe & thanh điệu', desc: 'Nghe chọn từ · nghe chọn thanh · nghe chép · đánh dấu thanh', sks: ['listen', 'pron'] },
-  { n: 3, zh: '法', name: 'Câu & ngữ pháp', desc: 'Sắp xếp câu · trợ từ · chọn câu dịch · đúng/sai theo bài', sks: ['gram', 'read'] },
-  { n: 4, zh: '写', name: 'Viết tự gõ', desc: 'Gõ pinyin · điền từ · dịch cả câu (khó nhất)', sks: ['write'] },
+  { n: 1, zh: '词', name: 'Từ vựng', desc: 'Chọn nghĩa · nhận mặt chữ · điền từ · dịch Trung → Việt · viết tay từ', sks: ['vocab'] },
+  { n: 2, zh: '听', name: 'Nghe & thanh điệu', desc: 'Nghe chọn từ · nghe chọn thanh · nghe chép (viết tay / ghép chữ) · đánh dấu thanh', sks: ['listen', 'pron'] },
+  { n: 3, zh: '法', name: 'Câu & ngữ pháp', desc: 'Dịch Việt → Trung (viết tay / ghép chữ) · dịch Trung → Việt · trợ từ · đúng/sai', sks: ['gram', 'read'] },
+  { n: 4, zh: '写', name: 'Viết tự gõ', desc: 'Gõ pinyin · điền từ · dịch Việt → Trung viết tay / ghép chữ (khó nhất)', sks: ['write'] },
 ];
 /* bài ôn tập: luyện trên toàn bộ nội dung của chặng (scope 'cp'); bài thường: scope 'lesson' */
 const drillScope = id => { const l = lesson(id); return l && isReview(l) && checkpointOf(id) ? 'cp' : 'lesson'; };
@@ -4796,7 +4839,7 @@ function exTab(it, rv) {
      <button class="btn red block mt" ${locked ? 'disabled' : ''} onclick="startQuiz('test')">${locked ? `🔒 Xong bước 1–${nS} để mở` : !ss ? (st.best === null ? 'Làm bài kiểm tra' : 'Làm lại bài kiểm tra') : done < (cq ? cq.n : 20) ? 'Làm tiếp bài kiểm tra' : 'Xem danh sách câu'}</button></section>${cpInfo(lessonId)}`;
   }
   const opt = rv ? '' : `<h2 class="st">Thêm <span class="muted tiny">không bắt buộc</span></h2>${taskCard(lessonId, it)}`;
-  return `<div class="page">${road}${steps}${head}${opt}<h2 class="st"><span class="zh">练</span> Luyện thêm</h2>${typeCard({ k: 'mix', t: '🎲 Trộn tất cả các bước', d: '20 câu, đủ mọi kỹ năng, có cả dạng tự gõ', i: '混', c: 'r', go: sc => `startPractice('mix','${sc}')` }, 'lesson')}<button class="btn ghost block" onclick="practiceScope='lesson';go('practice')">Chọn dạng riêng · Viết tay ›</button></div>`;
+  return `<div class="page">${road}${steps}${head}${opt}<h2 class="st"><span class="zh">练</span> Luyện thêm</h2>${typeCard({ k: 'mix', t: '🎲 Trộn tất cả các bước', d: '20 câu, đủ mọi kỹ năng, có cả dạng tự gõ', i: '混', c: 'r', go: sc => `startPractice('mix','${sc}')` }, 'lesson')}${lessonMoreHtml(it)}</div>`;
 }
 function cpInfo(id) {
   const l = lesson(id), c = checkpoints(l['Cấp']).find(x => x.ids.includes(id)); if (!c) return '';
@@ -4950,6 +4993,15 @@ async function importBackup(file) {
     S = st; save(); if (j.hw) try { Object.assign(hwCfg, j.hw); hwSaveCfg(); } catch (e) { }
     render(); toast('Đã khôi phục tiến độ');
   } catch (e) { toast('File sao lưu không hợp lệ'); }
+}
+
+/* "Chọn dạng riêng · Viết tay": xổ xuống ngay trong trang bài, không chuyển sang tab Luyện tập */
+let lessonMoreOpen = false;
+function toggleLessonMore() { lessonMoreOpen = !lessonMoreOpen; render(); }
+function lessonMoreHtml(it) {
+  const pool = { v: it.v, g: it.g, s: rows(lessonId) }, types = practiceTypes().filter(t => t.can(pool));
+  return `<button class="btn ghost block" onclick="practiceScope='lesson';toggleLessonMore()">Chọn dạng riêng · Viết tay ${lessonMoreOpen ? '▴' : '▾'}</button>` +
+    (lessonMoreOpen ? `<div class="lmore">${types.map(t => typeCard(t, 'lesson')).join('')}${hwPracticeCard()}</div>` : '');
 }
 
 /* ---- init.js ---- */
