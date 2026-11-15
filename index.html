@@ -246,7 +246,7 @@ details summary{cursor:pointer;font-weight:800;font-size:13px;color:var(--green2
 .strip button{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;background:#EEE7D3;color:var(--muted);border:1.5px solid #DDD3B8;padding:0}
 .strip .g{background:#2F7A4E;color:#fff;border-color:#1E4639}.strip .r{background:var(--seal);color:#fff;border-color:#8E2A20}.strip .c{background:#fff;color:var(--seal);border:2.5px solid var(--seal)}
 .qbox .qprompt{font-size:20px;font-weight:800;text-align:center;margin:12px 0 2px;line-height:1.4}.qbox .qprompt.zh{font-size:24px}
-.han{line-height:1.2}.han.long{font-size:28px;line-height:1.45}.qsub{text-align:center;color:var(--muted);font-size:13px;margin-top:2px}
+.han{line-height:1.2}.han.long{font-size:28px;line-height:1.45}.qnote{text-align:center;color:var(--gold);background:var(--goldp);border-radius:10px;padding:6px 10px;margin:6px auto 2px;font-size:13px;font-weight:700;line-height:1.4;max-width:92%}.qsub{text-align:center;color:var(--muted);font-size:13px;margin-top:2px}
 .qpy{text-align:center;font-size:16px;font-weight:800;margin-top:4px}
 .qaudio{display:flex;justify-content:center;gap:8px;margin:10px 0 4px}.qaudio button{width:54px;height:54px;border-radius:50%;border:0;background:var(--green);color:#fff;box-shadow:0 3px 0 #1E4639;display:flex;align-items:center;justify-content:center;font-weight:900}
 .qaudio button svg{width:24px;height:24px}.qaudio .slow{background:var(--card);color:var(--green2);border:1.5px solid var(--green);box-shadow:none;font-size:13px}
@@ -468,7 +468,7 @@ details.adv{margin:12px 0 10px}details.adv>summary{cursor:pointer;font-weight:90
 .hw-tick{color:#2c7a43}.hw-cross{color:var(--red)}
 .hw-right{font-size:15px;font-weight:800;color:var(--red);line-height:1.1}
 .hw-sum{text-align:center}.hw-score{font-size:24px;font-weight:900;margin-bottom:4px}
-.hw-dock{position:fixed;z-index:6;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,560px);background:#fbf8eef7;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 12px calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:7px}
+.hw-dock{position:fixed;z-index:6;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,560px);background:#fbf8eef7;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 12px calc(clamp(70px,14vh,128px) + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:7px}
 .hw-dockrow{display:flex;gap:6px;align-items:center;width:100%}
 .hw-dockrow .toggle{min-height:40px;padding:6px 10px;font-size:13px}
 .hw-sp{flex:1}.hw-pos{font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap}
@@ -1982,7 +1982,8 @@ function hwLeave(){
 }
 
 /* ---------- giao diện ---------- */
-function hwPadSize(){return Math.round(Math.max(200,Math.min(window.innerWidth-36,window.innerHeight*0.42,380)))}
+function hwPadSize(){return Math.round(Math.max(200,Math.min(window.innerWidth-60,window.innerHeight*0.34,310)))}
+function hwLift(){return Math.round(Math.max(70,Math.min(128,window.innerHeight*0.14)))} /* chừa chỗ dưới ô viết cho bàn tay tì xuống, không chạm ô (khớp CSS .hw-dock) */
 function hwChipSvg(strokes){
   if(!strokes.length)return'';
   return`<svg viewBox="0 0 1 1" aria-hidden="true">${strokes.map(st=>st.length===1?`<circle cx="${st[0].x.toFixed(3)}" cy="${st[0].y.toFixed(3)}" r=".03"/>`:`<polyline points="${st.map(p=>p.x.toFixed(3)+','+p.y.toFixed(3)).join(' ')}"/>`).join('')}</svg>`;
@@ -2011,6 +2012,7 @@ function hwItemBlock(i){
   const showMean=m==='meaning'||m==='vocab'||m==='fix'||done;
   const parts=[];
   if(showMean&&it.meaning)parts.push(`<div class="hw-mean">${esc(it.meaning)}</div>`);
+  if(m==='meaning'&&it.meaning&&it.text&&typeof xViNote==='function'){const nt=xViNote(it.text,it.meaning);if(nt)parts.push(`<div class="qnote">💡 Lưu ý: ${esc(nt)}</div>`)}
   if(showPy&&it.pinyin)parts.push(`<div class="hw-py">${pinyinHTML(it.pinyin)}</div>`);
   if(showText)parts.push(`<div class="hw-text zh">${esc(it.text)}</div>`);
   if(acts)parts.push(`<div class="hw-act">${acts}</div>`);
@@ -2034,7 +2036,7 @@ function hwPage(){
     sum=`<div class="card hw-sum"><div class="hw-score">${ok}/${tot} chữ đúng</div><div class="muted small">Chạm chữ sai để xem nét thiếu/thừa (nét đỏ). ${bad.length?'Chữ cần luyện: <b class="zh">'+esc(bad.join(' '))+'</b>':'Tuyệt vời!'}</div><div class="g2-action-row"><button class="btn" onclick="hwAgain()">Viết lại</button><button class="btn secondary" onclick="hwStart(hw.mode==='fix'?'listen':hw.mode,hw.len)">Câu khác</button>${bad.length?`<button class="btn outline" onclick="hwStartFixFrom()">Luyện chữ sai</button>`:''}<button class="btn outline" onclick="hwLeave()">Thoát</button></div></div>`;
   }
   const blocks=hw.items.map((_,i)=>hwItemBlock(i)).join('');
-  return`<div class="hw-wrap">${cfg}${sum}${blocks}${hw.checked?'':`<div style="height:${S+130}px"></div>`}</div>${hw.checked?'':hwDock()}`;
+  return`<div class="hw-wrap">${cfg}${sum}${blocks}${hw.checked?'':`<div style="height:${S+130+hwLift()}px"></div>`}</div>${hw.checked?'':hwDock()}`;
 }
 function hwAfterRender(){
   if(page!=='hand'||!hw||hw.checked)return;
@@ -3920,6 +3922,33 @@ function xWeekStart() {
   }, true);
 }
 
+/* ---------- Ghi chú cho đề Việt → Trung: các câu tiếng Việt mơ hồ giữa nhiều cấu trúc/từ tiếng Trung ---------- */
+const X_NOTE_RULES = [
+  /* hỏi tuổi: 几岁 (trẻ nhỏ) / 多大 (từ 10 tuổi) / 多大年纪 (người cao tuổi) */
+  { id: 'age-ji', zh: /几岁/, vi: /tuổi/, note: 'Đang hỏi tuổi của trẻ nhỏ (dưới 10 tuổi)' },
+  { id: 'age-da', zh: /多大年纪|多大岁数/, vi: /tuổi/, note: 'Đang hỏi tuổi của người cao tuổi, hỏi một cách kính trọng' },
+  { id: 'age-da', zh: /多大(?!年纪|岁数)/, vi: /tuổi/, note: 'Đang hỏi tuổi của người từ 10 tuổi trở lên (bạn bè, người lớn)' },
+  /* hỏi số lượng: 几 (số ít, dưới 10) / 多少 (số nhiều hoặc chưa biết; 多少钱 hỏi giá thì bỏ qua) */
+  { id: 'num-ji', zh: /(?:^|[^这那好哪])几(?:个|口|位|只|本|张|件|条|块|种|次|瓶|杯|碗|双|辆|台|家|间|层|节|名|道|课|门|首|封|支|页|站|遍|趟|所|斤|公斤|米|元|分钟|天|年|周|星期)/, vi: /mấy|bao nhiêu/, q: 1, note: 'Hỏi số lượng ít (ước chừng dưới 10)' },
+  { id: 'num-duo', zh: /多少(?!钱)/, vi: /bao nhiêu|mấy/, q: 1, note: 'Hỏi số lượng nhiều hoặc chưa biết (không chỉ số nhỏ dưới 10)' },
+  /* lại / nữa: 又 (đã lặp lại) / 再 (sẽ lặp lại) */
+  { id: 'again-you', zh: /又/, vi: /lại|nữa/, note: '“Lại” = việc đã lặp lại (đã xảy ra rồi)' },
+  { id: 'again-zai', zh: /再(?!见|说|也)/, vi: /lại|nữa|thêm/, note: '“Lại/nữa/thêm” = làm thêm hoặc làm lại về sau (chưa xảy ra)' },
+];
+function xViNote(zh, vi) {
+  zh = String(zh || ''); vi = String(vi || '');
+  if (!zh || !vi) return '';
+  const isQ = /[？?]/.test(zh), out = [];
+  for (const r of X_NOTE_RULES) {
+    if (!r.zh.test(zh) || !r.vi.test(vi.toLowerCase())) continue;
+    if (r.q && !isQ) continue;
+    if (r.not && r.not.test(vi.toLowerCase())) continue;
+    if (out.some(o => o.id === r.id)) continue;
+    out.push(r);
+  }
+  return out.slice(0, 2).map(r => r.note).join(' · ');
+}
+
 /* ---- quiz.js ---- */
 /* ===== HSK Study Lab · bài tập, kiểm tra, sổ lỗi, ôn ngắt quãng ===== */
 let quiz = null, practiceScope = 'lesson', srsQ = null;
@@ -4398,6 +4427,8 @@ function quizPage() {
   let pr = '';
   if (q.posHtml) pr = `<div class="posq">${q.posHtml}</div>`;
   else if (q.prompt) pr = `<div class="${q.pz ? 'han zh ' + (hlen(q.prompt) > 6 ? 'long' : '') : 'qprompt'}">${q.pz ? esc(q.prompt).replace(/＿＿?/, '<span class="blank">' + (a ? esc(q.answer) : '＿') + '</span>') : esc(q.prompt)}</div>`;
+  const vnote = ['arrange', 'trans', 'translate'].includes(q.kind) && q.prompt && q.answer ? xViNote(q.answer, q.prompt) : '';
+  if (vnote) pr += `<div class="qnote">💡 Lưu ý: ${esc(vnote)}</div>`;
   const pyLine = (q.kind === 'mean' || q.kind === 'zv' || q.kind === 'py' && a) && q.wpy && pyOk ? `<div class="qpy">${pinyinHTML(q.wpy)}</div>` : q.kind === 'tf' && q.stPy && pyOk ? `<div class="qpy">${pinyinHTML(q.stPy)}</div>` : '';
   const hwSub = xHwUse(q) ? xHwSub(q) : null;
   const hvLine = hwSub != null ? `<div class="qsub">${esc(hwSub)}</div>` : q.kind === 'py' && (q.hv || q.mean) ? `<div class="hv">${q.hv ? 'Hán Việt: ' + esc(String(q.hv).toUpperCase()) + ' · ' : ''}${esc(q.mean || '')}</div>` : q.sub ? `<div class="qsub">${esc(q.sub)}</div>` : '';
