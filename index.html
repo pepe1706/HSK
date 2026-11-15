@@ -4365,7 +4365,7 @@ function finishQuiz() {
   xFinish(c); save(); go('result', { fresh: 1 });
   setTimeout(() => { try { cheerShow(cheer, { lv: quiz && quiz.lv || '' }); } catch (e) { } }, 500);
 }
-function quitQuiz() { TTS.stop(); const b = quiz && quiz.back || 'practice'; quiz = null; go(['quiz', 'qlist', 'result'].includes(b) ? 'practice' : b); }
+function quitQuiz() { TTS.stop(); const b = quiz && quiz.back || 'practice'; quiz = null; goBack(['quiz', 'qlist', 'result'].includes(b) ? 'practice' : b); }
 function redoWrong() { quiz.items.forEach((q, i) => { const a = quiz.ans[i]; if (a && !a.ok) { quiz.ans[i] = null; if (q.order) q.order = []; if (q._hw) { q._hw.cells.forEach(c => c.strokes = []); q._hw.cur = 0; q._hw.hint = {}; } if (q._hwG) q._hwG = 0; q.typed = ''; q.sel = null; q.cut = null; q.hinted = 0; q.hintText = ''; } }); quiz.combo = 0; statUpdate(); save(); const j = quiz.ans.findIndex((a, i) => !a && i < quiz.items.length); gotoQ(j < 0 ? nextUnanswered(-1) : j); }
 function doUnanswered() { const j = nextUnanswered(-1); if (j >= 0) gotoQ(j); }
 function pickTile(idx) { const q = curQ(); if (quiz.ans[quiz.i] || q.order.includes(idx)) return; q.order.push(idx); render(); }
@@ -4550,20 +4550,20 @@ function gradeCard(g) {
   S.srs[key] = sm2(c, g); bump('cards'); bumpQ('srs'); srsQ.done++; if (g >= 3) xSrsMark(c);
   if (g < 3 && !srsQ.again[key]) { srsQ.again[key] = 1; srsQ.q.push(key); }
   save(); srsQ.i++; srsQ.show = false;
-  if (srsQ.i >= srsQ.q.length) { toast(`Xong! Đã ôn ${srsQ.done} lượt thẻ`); try { cheerShow('finishGood'); } catch (e) { } srsQ = null; go(lastHub || 'today'); return; }
+  if (srsQ.i >= srsQ.q.length) { toast(`Xong! Đã ôn ${srsQ.done} lượt thẻ`); try { cheerShow('finishGood'); } catch (e) { } srsQ = null; goBack(lastHub || 'today'); return; }
   lastKey = ''; render(); srsAuto();
 }
 function srsAuto() { if (!srsQ) return; const c = S.srs[srsQ.q[srsQ.i]]; if (!c || !S.settings.autoplay) return; const x = srsItem(c); if (c.k === 'v' && c.d === 'h') setTimeout(() => say(x['Từ']), 250); }
 function srsReveal() { srsQ.show = true; lastKey = 'x'; render(); const c = S.srs[srsQ.q[srsQ.i]], x = srsItem(c); if (c.k === 'v') say(x['Từ']); else say(x['Ví dụ 1']); }
 function srsPage() {
-  if (!srsQ) { setTimeout(() => go(lastHub || 'today'), 0); return ''; }
+  if (!srsQ) { setTimeout(() => goBack(lastHub || 'today'), 0); return ''; }
   const key = srsQ.q[srsQ.i], c = S.srs[key], x = srsItem(c), show = srsQ.show;
   let front = '', back = '';
   if (c.k === 'v' && c.d === 'h') { front = `<div class="qsub">Từ này nghĩa là gì?</div><div class="big">${esc(x['Từ'])}</div><div>${sndBtn(x['Từ'])}</div>`; back = `<div class="qpy">${pinyinHTML(x['Pinyin'])} · <b style="color:var(--gold)">${esc(String(x['Âm Hán Việt'] || '').toUpperCase())}</b></div><div class="mean" style="font-size:18px">${esc(x['Nghĩa tiếng Việt'])}</div>${x['Ví dụ 1'] ? `<p class="small"><span class="zh">${esc(x['Ví dụ 1'])}</span><br><span class="muted">${esc(x['Nghĩa ví dụ 1'])}</span></p>` : ''}`; }
   else if (c.k === 'v') { front = `<div class="qsub">Viết / nói từ tiếng Trung</div><div class="qprompt">${esc(x['Nghĩa tiếng Việt'])}</div><div class="pos">${esc(x['Từ loại'])}</div>`; back = `<div class="big">${esc(x['Từ'])}</div><div class="qpy">${pinyinHTML(x['Pinyin'])}</div><div>${sndBtn(x['Từ'])}</div>`; }
   else { front = `<div class="qsub">Ngữ pháp · nói câu tiếng Trung</div><div class="small muted" style="margin:6px 0">${esc(x['Tên điểm ngữ pháp (nhìn là biết)'])}</div><div class="qprompt">${esc(x['Nghĩa ví dụ 1'] || '')}</div>`; back = `<div class="zh" style="font-size:22px;font-weight:800">${esc(x['Ví dụ 1'] || '')}</div><div class="qpy">${pinyinHTML(x['Pinyin ví dụ 1'] || '')}</div>${x['Công thức'] ? `<div class="formula" style="text-align:left;margin-top:8px">${esc(x['Công thức'])}</div>` : ''}`; }
   const prev = [0, 3, 4, 5].map(g => ivText(sm2(c, g).iv));
-  return headBand('复习', 'Thẻ ôn ' + (srsQ.i + 1) + '/' + srsQ.q.length, c.due === null ? 'Thẻ mới' : 'Đến hạn', "srsQ=null;go(lastHub||'today')") + `<div class="page">
+  return headBand('复习', 'Thẻ ôn ' + (srsQ.i + 1) + '/' + srsQ.q.length, c.due === null ? 'Thẻ mới' : 'Đến hạn', "srsQ=null;goBack(lastHub||'today')") + `<div class="page">
    <div class="qbox srsc"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>${front}${show ? `<hr style="border:0;border-top:1px dashed var(--line);margin:12px 0">${back}` : ''}</div>
    ${show ? `<div class="grades"><button class="g0" onclick="gradeCard(0)">Quên<small>${prev[0]}</small></button><button class="g3" onclick="gradeCard(3)">Khó<small>${prev[1]}</small></button><button class="g4" onclick="gradeCard(4)">Nhớ<small>${prev[2]}</small></button><button class="g5" onclick="gradeCard(5)">Dễ<small>${prev[3]}</small></button></div><p class="muted tiny" style="text-align:center;margin-top:6px">Số dưới nút = lần ôn tiếp theo</p>`
       : `<button class="btn red block big mt" onclick="srsReveal()">Hiện đáp án</button><p class="muted tiny" style="text-align:center;margin-top:6px">Tự nhớ (hoặc nói to) đáp án trước rồi mới mở.</p>`}
@@ -4722,8 +4722,30 @@ const NAV = [['today', '今', 'Hôm nay'], ['home', '学', 'Học'], ['practice'
 const HUBS = ['today', 'home', 'practice', 'lookup', 'me'];
 const routeKey = () => page + '|' + (page === 'lesson' ? lessonId + '|' + lessonTab : page === 'tone' ? toneId : '');
 
+/* ===== Ngăn xếp điều hướng (build_63): vào bài tập/bài học từ đâu thì Thoát/Quay lại về đúng chỗ đó ===== */
+const navStack = []; let sessPushed = false;
+const SESS = ['quiz', 'qlist', 'result', 'srs', 'hand'];
+function navSnap() { return { page, lessonId, lessonTab, toneId }; }
+function navTrack(p) {
+  const curS = SESS.includes(page), newS = SESS.includes(p);
+  if (HUBS.includes(p)) { navStack.length = 0; sessPushed = false; return; }   /* bấm tab chính = bắt đầu lại */
+  if (curS && newS) return;                                                       /* đang trong một phiên bài tập */
+  if (curS) { if (sessPushed) navStack.pop(); sessPushed = false; return; }       /* rời bài tập bằng đường khác (vd Bài sau) */
+  if (newS) { navStack.push(navSnap()); sessPushed = true; return; }              /* vào bài tập: nhớ trang đang đứng */
+  if (page !== p) { navStack.push(navSnap()); if (navStack.length > 20) navStack.shift(); }   /* trang con → trang con khác */
+}
+function goBack(fb) {
+  let s = null;
+  if (!SESS.includes(page) || sessPushed) { s = navStack.pop(); while (s && SESS.includes(s.page)) s = navStack.pop(); }
+  sessPushed = false;
+  if (!s) { const t = typeof fb === 'string' ? fb : (lastHub || 'home'); if (HUBS.includes(t)) navStack.length = 0; return go(t, { noPush: 1, keep: 1 }); }
+  if (HUBS.includes(s.page)) navStack.length = 0;
+  if (s.page === 'tone') toneId = s.toneId;
+  go(s.page, { noPush: 1, keep: 1, ...(s.page === 'lesson' ? { lesson: s.lessonId, tab: s.lessonTab } : {}) });
+}
 function go(p, opt = {}) {
   if (p === 'review') p = 'practice';
+  if (!opt.noPush) navTrack(p);
   const v = $('#view'); if (v && lastKey) scrollMem[lastKey] = v.scrollTop;
   TTS.stop(); textMode.playing = -1; textMode.all = false;
   if (opt.lesson) { lessonId = opt.lesson; if (!isTone(lessonId)) { S.lastLesson = lessonId; save(); } }
@@ -4735,7 +4757,7 @@ function go(p, opt = {}) {
   render();
 }
 const openPage = p => go(p);
-function backToHub() { go(lastHub || 'home'); }
+function backToHub() { goBack(lastHub || 'home'); }
 /* Bấm hình tròn: chỉ hiện khung bài (bấm lại để ẩn); vào bài khi bấm "Bắt đầu". Giữ nút đang bấm đứng yên khi bản đồ giãn ra. */
 function mapPick(id) {
   if (!lesson(id) || !lessonUnlocked(id) || isTone(id)) return openLesson(id);
@@ -4860,7 +4882,7 @@ function lessonPage() {
   const i = DATA.idx.lessonIndex[lessonId], prev = DATA.lessons[i - 1], next = DATA.lessons[i + 1];
   const nav = `<div class="lnav">${prev ? `<button onclick="openLesson('${prev['Mã bài']}')" aria-label="Bài trước">‹</button>` : ''}${next ? `<button onclick="openLesson('${next['Mã bài']}')" aria-label="Bài sau">›</button>` : ''}</div>`;
   const body = lessonTab === 'vocab' ? vocabTab(it, rv) : lessonTab === 'grammar' ? grammarTab(it, rv) : lessonTab === 'ex' ? exTab(it, rv) : textTab(it);
-  return headBand(esc(l['Tiêu đề (tiếng Trung)']), `${rv ? 'Bài ôn tập' : 'Bài'} ${esc(l['Bài số'])} · ${esc(l['Tiêu đề (tiếng Việt)'])}`, `${esc(l['Cấp'])} · ${esc(l['Dạng bài'] || '')} · ${it.s.length} câu`, `go('${lastHub === 'home' ? 'home' : lastHub}')`, nav)
+  return headBand(esc(l['Tiêu đề (tiếng Trung)']), `${rv ? 'Bài ôn tập' : 'Bài'} ${esc(l['Bài số'])} · ${esc(l['Tiêu đề (tiếng Việt)'])}`, `${esc(l['Cấp'])} · ${esc(l['Dạng bài'] || '')} · ${it.s.length} câu`, `goBack('${lastHub || 'home'}')`, nav)
     + `<div class="steps4">${tabs.map(([k, zh, t, ok]) => `<button class="${lessonTab === k ? 'on' : ''} ${ok ? 'ok' : ''}" onclick="setTab('${k}')"><b>${zh}</b>${t}${ok ? ' ✓' : ''}</button>`).join('')}</div>${body}`;
 }
 function effPy() { const lv = lvNum(levelOf(lessonId)); if (textMode.py !== null) return textMode.py; return S.settings.showPy && !(S.settings.pyFade && lv >= 4); }
@@ -5081,7 +5103,7 @@ function tonePage() {
     <section class="card"><div class="section-title">一 yī → yí / yì</div><p class="gx small">Đứng một mình hoặc là số thứ tự: <b class="t1">yī</b>. Trước <b>thanh 4</b> (cả 个 gè): <b class="t2">yí</b>. Trước thanh 1, 2, 3: <b class="t4">yì</b>.</p><div class="tpair">${ex(/一/, 6).map(row).join('')}</div></section>
     <section class="card"><div class="section-title">Thanh 3 + thanh 3 → 2 + 3</div><p class="gx small">Hai thanh 3 liền nhau: âm đầu đọc gần <b class="t2">thanh 2</b>. Chữ viết vẫn giữ dấu thanh 3: 你好 viết <b>nǐ hǎo</b>, đọc gần <b>ní hǎo</b>.</p><div class="tpair">${s33.map(row).join('')}</div></section>`;
   }
-  return headBand(t.zh, 'Chặng 0 · ' + t.vi, 'Nhập môn thanh điệu · không bắt buộc', "go('home')", `<div class="lnav">${TONE_LESSONS.map(x => `<button style="${x.id === t.id ? 'background:var(--seal);color:#fff' : ''}" class="zh" onclick="toneId='${x.id}';go('tone')">${x.icon}</button>`).join('')}</div>`)
+  return headBand(t.zh, 'Chặng 0 · ' + t.vi, 'Nhập môn thanh điệu · không bắt buộc', "goBack('home')", `<div class="lnav">${TONE_LESSONS.map(x => `<button style="${x.id === t.id ? 'background:var(--seal);color:#fff' : ''}" class="zh" onclick="toneId='${x.id}';go('tone')">${x.icon}</button>`).join('')}</div>`)
     + `<div class="page">${body}<section class="card test ${best >= PASS ? 'okc' : ''}">${best >= PASS ? fwk() : ''}<div class="row between"><div class="section-title mb0">🎵 Luyện thanh điệu · 12 câu</div>${best >= PASS ? '<span class="badge ok">Đã đạt</span>' : `<span class="badge warn">Mốc ${PASS}%</span>`}</div>
     <div class="row" style="gap:14px;margin-top:6px"><div class="score">${best == null ? '–' : best + '%'}</div>${starRow(starsOf(best || 0), 20)}</div>${c && done ? statBar(c) + statChips(c) : ''}
     <button class="btn red block mt" onclick="startTone('${t.id}')">${!ss ? 'Bắt đầu luyện' : done < c.n ? 'Làm tiếp' : 'Xem danh sách câu'}</button></section></div>`;
