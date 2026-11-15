@@ -979,7 +979,7 @@ function sylHanMap(han, syls) {
 function checkTyped(input, han, py) {
   const raw = String(input || '').trim();
   if (!raw) return { ok: false, mode: 'py', syl: [], empty: true };
-  if (/[\u3400-\u9fff]/.test(raw)) { const a = hanOnly(raw), b = hanOnly(han); return { ok: a === b, mode: 'han', got: a, want: b }; }
+  if (/[\u3400-\u9fff]/.test(raw)) { const a = hanOnly(raw), b = hanOnly(han); return { ok: zhCanon(raw) === zhCanon(han), mode: 'han', got: Array.from(raw).filter(c => !PUNCT.test(c)).join(''), want: b }; }
   const want = pySyllables(py);
   const hm = sylHanMap(han || '', want);
   const { L: Lt, T } = pyLetters(raw); const got = Lt.join('');
@@ -3486,6 +3486,182 @@ function xSrsLinkBtns() {
   return `<div class="grid2" style="margin-top:6px">${nv ? '<button class="btn ghost" onclick="startSrsFlip(\'v\')">Ôn kiểu lật thẻ</button>' : ''}${ng ? `<button class="btn ghost" onclick="startSrsFlip('g')">Thẻ ngữ pháp (${ng})</button>` : ''}</div>`;
 }
 
+/* ---- extras_alt.js ---- */
+/* ---------- Đáp án thay thế & số viết chữ/viết số (build_65) ----------
+   1) Việt→Trung (ghép thẻ / gõ / viết tay): từ chỉ thời gian đứng đầu câu hoặc sau chủ ngữ đều đúng
+      (今年我23岁 = 我今年23岁). Mỗi câu có q.alts = [{zh, py}] (cùng số chữ với câu mẫu).
+   2) Gõ chữ Hán: chữ số Ả Rập = chữ số Hán (23 = 二十三, 2026年 = 二〇二六年).
+      Viết tay: luôn phải viết bằng chữ Hán (số trong đáp án được đổi thành chữ).
+   3) Trung→Việt: số viết chữ hay viết số đều được (23 = hai mươi ba; ngày 5 = ngày năm). */
+
+/* ----- số Hán <-> số Ả Rập ----- */
+const ZH_D = '零一二三四五六七八九';
+function zhPos4(s) { // chuỗi gồm chữ số 1-9, 零, 十百千 (< 10000) -> số hoặc null
+  let total = 0, d = null, last = 10000, first = true;
+  for (const c of s) {
+    if (c === '零') { first = false; continue; }
+    const k = ZH_D.indexOf(c);
+    if (k > 0) { if (d !== null) return null; d = k; first = false; continue; }
+    const u = c === '十' ? 10 : c === '百' ? 100 : c === '千' ? 1000 : 0; if (!u) return null;
+    if (u >= last) return null;
+    if (d === null) { if (u === 10 && first) d = 1; else return null; }
+    total += d * u; d = null; last = u; first = false;
+  }
+  if (d !== null) total += d;
+  return total;
+}
+function zhRunToNum(run) { // một cụm chữ số Hán -> chuỗi số Ả Rập, hoặc null nếu không hợp lệ
+  const a = Array.from(run).map(c => c === '〇' ? '零' : c);
+  if (!a.some(c => '十百千万'.includes(c))) return a.map(c => ZH_D.indexOf(c)).join(''); // đọc từng chữ số: 二〇二六, 三零二
+  const s = a.join(''), i = s.indexOf('万');
+  if (i < 0) { const n = zhPos4(s); return n === null ? null : String(n); }
+  const l = s.slice(0, i), r = s.slice(i + 1); if (!l) return null;
+  const nl = zhPos4(l), nr = r ? zhPos4(r) : 0; if (nl === null || nr === null) return null;
+  return String(nl * 10000 + nr);
+}
+/* chuẩn hóa để so sánh: đổi số Hán thành số Ả Rập, bỏ dấu câu và khoảng trắng */
+function zhCanon(s) {
+  let t = String(s || '').normalize('NFKC');
+  t = t.replace(/[零〇一二三四五六七八九十百千万]+/g, m => { const n = zhRunToNum(m); return n === null ? m : n; });
+  return Array.from(t).filter(c => !PUNCT.test(c)).join('');
+}
+function numToZh(n) { // 0..99999999 -> chữ Hán (cách đọc số đếm)
+  if (n === 0) return '零';
+  const U = ['', '十', '百', '千'], dg = ZH_D;
+  const four = (x, lead) => { // x < 10000
+    let out = '', zero = false;
+    for (let p = 3; p >= 0; p--) {
+      const d = Math.floor(x / 10 ** p) % 10;
+      if (d === 0) { if (out) zero = true; continue; }
+      if (zero) { out += '零'; zero = false; }
+      out += (d === 1 && p === 1 && !out && lead ? '' : dg[d]) + U[p];
+    }
+    return out;
+  };
+  if (n >= 10000) { const hi = Math.floor(n / 10000), lo = n % 10000; return four(hi, true) + '万' + (lo ? (lo < 1000 ? '零' : '') + four(lo, false) : ''); }
+  return four(n, true);
+}
+/* đáp án để VIẾT TAY: số Ả Rập -> chữ Hán (năm / số dài đọc từng chữ số, còn lại đọc số đếm) */
+function zhDigitsToHan(s) {
+  return String(s || '').replace(/\d+/g, (m, off, all) => {
+    const nx = all[off + m.length];
+    if (m.length >= 5 || nx === '年' || (m.length > 1 && m[0] === '0')) return Array.from(m).map(c => ZH_D[+c]).join('');
+    return numToZh(parseInt(m, 10));
+  });
+}
+function xHwTxt(q) { return hanOnly(zhDigitsToHan(q.kind === 'listen' || q.kind === 'meanR' ? q.han : q.answer)); }
+
+/* ----- từ chỉ thời gian: đứng đầu câu hoặc sau chủ ngữ ----- */
+const ZH_TIMEW = ['什么时候', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日', '星期天', '周末', '今天', '明天', '昨天', '后天', '前天', '今年', '去年', '明年', '现在', '每天', '早上', '晚上', '上午', '下午', '中午', '早晨', '平时', '最近', '刚才', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+const ZH_PRON = ['我们', '你们', '他们', '她们', '咱们', '大家', '我', '你', '他', '她', '它'];
+const ZH_PERSON = ['爸爸', '妈妈', '哥哥', '姐姐', '弟弟', '妹妹', '爷爷', '奶奶', '老师', '同学', '朋友', '孩子', '学生', '医生', '先生', '女儿', '儿子', '丈夫', '妻子', '老板', '同事', '经理', '小王', '小李', '小明'];
+let _altRe = null;
+function altRe() {
+  if (_altRe) return _altRe;
+  const esc2 = a => a.slice().sort((x, y) => y.length - x.length).join('|');
+  let names = []; try { names = DATA.names.map(n => String(n['Tên (chữ Hán)'] || '')).filter(x => x && x.length <= 4 && /^[\u3400-\u9fff]+$/.test(x)); } catch (e) { }
+  const T = '(?:' + esc2(ZH_TIMEW) + ')+';
+  const P = '(?:(?:' + esc2(ZH_PRON) + ')的)?(?:' + esc2([...ZH_PERSON, ...names]) + ')';
+  const SUBJ = '(?:' + esc2(ZH_PRON) + '|' + P + ')';
+  _altRe = { A: new RegExp('^(' + T + ')(' + SUBJ + ')(.+)$'), B: new RegExp('^(' + SUBJ + ')(' + T + ')(.+)$') };
+  return _altRe;
+}
+const PUNCT_SPLIT = /[^，。！？、；：,.!?;:「」『』“”‘’（）()《》…—~～·\s]+|[，。！？、；：,.!?;:「」『』“”‘’（）()《》…—~～·\s]+/g;
+/* trả về [{zh, py}] các cách đặt từ thời gian khác (không gồm câu mẫu) */
+function zhAlts(zh, py) {
+  zh = String(zh || ''); if (!zh) return [];
+  const re = altRe(), pieces = zh.match(PUNCT_SPLIT) || [];
+  let syl = null;
+  try { const all = pySyllables(py || ''), s2 = all.filter(x => !x.r), hs = Array.from(zh).filter(isHan); if (py && all.length === s2.length && hs.length === s2.length) syl = s2; } catch (e) { }
+  const hc = t => Array.from(t).filter(isHan).length;
+  let off = 0; const info = [];
+  pieces.forEach(p => {
+    let m = null;
+    if (isHan(Array.from(p)[0] || '')) m = p.match(re.A) || p.match(re.B);
+    info.push({ t: p, off, g: m ? [m[1], m[2], m[3]] : null }); off += hc(p);
+  });
+  const build = swap => { // swap: mảng chỉ số mảnh cần đổi chỗ phần 1 và phần 2
+    let out = ''; const pa = syl ? [] : null;
+    info.forEach((it, k) => {
+      if (swap.includes(k) && it.g) {
+        const [x, y, z] = it.g, lx = hc(x), ly = hc(y), lz = hc(z), o = it.off;
+        out += y + x + z;
+        if (pa) pa.push(...syl.slice(o + lx, o + lx + ly), ...syl.slice(o, o + lx), ...syl.slice(o + lx + ly, o + lx + ly + lz));
+      } else { out += it.t; if (pa) pa.push(...syl.slice(it.off, it.off + hc(it.t))); }
+    });
+    return { zh: out, py: pa ? pa.map(x => markSyl(x.b, x.t)).join(' ') : null };
+  };
+  const ks = info.map((it, k) => it.g ? k : -1).filter(k => k >= 0); if (!ks.length) return [];
+  const res = ks.map(k => build([k])); if (ks.length > 1) res.push(build(ks));
+  const seen = new Set([zh]); return res.filter(a => { if (seen.has(a.zh)) return false; seen.add(a.zh); return true; }).slice(0, 4);
+}
+/* gõ chữ Hán / pinyin: chấm câu mẫu rồi tới các cách đặt khác */
+function checkTypedQ(val, q) {
+  const r = checkTyped(val, q.han, q.wpy);
+  if (r.ok || !q.alts || !q.alts.length) return r;
+  const han = /[\u3400-\u9fff]/.test(String(val || ''));
+  for (const a of q.alts) {
+    if (!han && !a.py) continue;
+    const r2 = checkTyped(val, a.zh, a.py || q.wpy);
+    if (r2.ok) { r2.alt = a.zh; return r2; }
+  }
+  return r;
+}
+function tileOkQ(val, q) { if (zhCanon(val) === zhCanon(q.answer)) return true; return (q.alts || []).some(a => zhCanon(val) === zhCanon(a.zh)); }
+
+/* ----- Trung→Việt: số viết chữ = số viết số ----- */
+const VN_D = { mot: 1, hai: 2, ba: 3, bon: 4, sau: 6, bay: 7, tam: 8, chin: 9 };
+const VN_NEXT5 = ['tuoi', 'gio', 'phut', 'giay', 'tieng', 'nguoi', 'cai', 'chiec', 'quyen', 'con', 'ngay', 'tuan', 'dong', 'ban', 'bai', 'lan', 'cuon', 'to', 'lop', 'tang', 'phong'];
+const VN_PREV5 = ['ngay', 'thang', 'so', 'phong', 'tang', 'lop', 'bai', 'gio', 'luc', 'thu', 'cau', 'trang', 'chuong'];
+function viNumFix(s) {
+  const parts = fold(String(s || '')).split(/([^a-z0-9]+)/), W = []; // W: các từ (vị trí trong parts)
+  parts.forEach((p, i) => { if (/^[a-z0-9]+$/.test(p)) W.push({ w: p, i }); });
+  const ww = W.map(x => x.w), BIG = ['muoi', 'tram', 'nghin', 'ngan', 'trieu'];
+  const base = w => w in VN_D || BIG.includes(w) || w === 'linh' || w === 'le';
+  const num0 = [];
+  const num = ww.map((w, k) => { const r = isN(w, k); num0[k] = r; return r; });
+  function isN(w, k) {
+    if (base(w)) return true;
+    if (w === 'khong') return ww[k + 1] === 'tram' && k > 0 && num0[k - 1];
+    if (w === 'tu' || w === 'lam') return k > 0 && ww[k - 1] === 'muoi';
+    if (w === 'nam') {
+      const pv = ww[k - 1], nx = ww[k + 1];
+      if (pv && (base(pv) || pv === 'tu' || pv === 'lam')) return true;
+      if (nx && (BIG.includes(nx) || VN_NEXT5.includes(nx))) return true;
+      if (pv && VN_PREV5.includes(pv) && !/^(nay|ngoai|sau|truoc|hoc|moi|ay|do|kia)$/.test(nx || '')) return true;
+    }
+    return false;
+  }
+  const out = parts.slice(); let k = 0;
+  while (k < ww.length) {
+    if (!num[k]) { k++; continue; }
+    let j = k; while (j + 1 < ww.length && num[j + 1] && /^\s+$/.test(parts[W[j].i + 1] || '')) j++;
+    const val = parseVN(ww.slice(k, j + 1));
+    if (val) { out[W[k].i] = val.join(' '); for (let t = k + 1; t <= j; t++) { out[W[t].i] = ''; out[W[t].i - 1] = ''; } }
+    k = j + 1;
+  }
+  return out.join('');
+}
+/* một cụm từ số tiếng Việt -> mảng số (thường 1 số; chuỗi chữ số rời thì nhiều số) */
+function parseVN(tk) {
+  const res = []; let total = 0, cur = 0, pend = null, any = false;
+  const flush = () => { if (!any) return; const v = total + cur + (pend || 0); res.push(String(v)); total = 0; cur = 0; pend = null; any = false; };
+  for (let i = 0; i < tk.length; i++) {
+    const w = tk[i];
+    if (w in VN_D) { if (pend !== null) flush(); pend = VN_D[w]; any = true; }
+    else if (w === 'nam') { if (pend !== null) flush(); pend = 5; any = true; }
+    else if (w === 'lam') { if (pend === null) { pend = 5; any = true; } }
+    else if (w === 'tu') { if (pend === null) { pend = 4; any = true; } }
+    else if (w === 'muoi') { if (pend !== null) { cur += pend * 10; pend = null; } else cur += 10; any = true; }
+    else if (w === 'tram') { cur += (pend || 1) * 100; pend = null; any = true; }
+    else if (w === 'linh' || w === 'le') { any = true; }
+    else if (w === 'khong') { if (tk[i + 1] === 'tram') { i++; any = true; } }
+    else if (w === 'nghin' || w === 'ngan') { total += (cur + (pend || 0) || 1) * 1000; cur = 0; pend = null; any = true; }
+    else if (w === 'trieu') { total += (cur + (pend || 0) || 1) * 1000000; cur = 0; pend = null; any = true; }
+  }
+  flush(); return res.length ? res : null;
+}
+
 /* ---- extras_hw.js ---- */
 /* ---------- Trả lời bằng viết tay (build_54) ----------
    Thay cho ghép thẻ / gõ phím ở các dạng: nghe viết lại (dict, type), dịch Việt→Trung (arrange, trans),
@@ -3496,13 +3672,13 @@ const xhOn = () => S.settings.hwAns !== false;
 function xHwUse(q) {
   if (!q || !xhOn() || q.hwOff || !XH_KINDS.includes(q.kind) || (quiz && quiz.type === 'mock')) return false;
   if (q._hwU === undefined) {
-    const t = hanOnly(q.kind === 'listen' || q.kind === 'meanR' ? q.han : q.answer), a = Array.from(t);
+    const t = xHwTxt(q), a = Array.from(t);
     Object.defineProperty(q, '_hwU', { value: a.length >= 1 && a.length <= 24 && a.every(c => { try { return !!hwRef(c); } catch (e) { return false; } }), enumerable: false, writable: true });
   }
   return q._hwU;
 }
 function xhSt(q) {
-  if (!q._hw) { const t = Array.from(hanOnly(q.kind === 'listen' || q.kind === 'meanR' ? q.han : q.answer)); Object.defineProperty(q, '_hw', { value: { cells: t.map(ch => ({ ch, strokes: [] })), cur: 0, hint: {} }, enumerable: false, writable: true }); }
+  if (!q._hw) { const t = Array.from(xHwTxt(q)); Object.defineProperty(q, '_hw', { value: { cells: t.map(ch => ({ ch, strokes: [] })), cur: 0, hint: {} }, enumerable: false, writable: true }); }
   return q._hw;
 }
 let xhPtr = null, xhTimer = null, xhT0 = 0, xhTouch = false;
@@ -3566,15 +3742,20 @@ function xHwHint() { const q = curQ(), st = xhSt(q); st.hint[st.cur] = !st.hint[
 function xHwOff() { const q = curQ(); q.hwOff = 1; q.typed = ''; render(); }
 function xHwGive() { const q = curQ(); Object.defineProperty(q, '_hwG', { value: 1, enumerable: false, writable: true }); answer(); }
 function xHwGrade(q) {
-  const st = xhSt(q), cells = st.cells.map(c => {
-    if (q._hwG) return { ch: c.ch, ok: false };
-    const r = hwEvalSoft(c.strokes, c.ch, hwCfg.tol);
-    return { ch: c.ch, ok: r.ok !== false, sug: r.ok === false ? (r.suggest || r.confused || '') : '' };
-  });
+  const st = xhSt(q), ev = (c, ch) => { const r = hwEvalSoft(c.strokes, ch, hwCfg.tol); return { ch, ok: r.ok !== false, sug: r.ok === false ? (r.suggest || r.confused || '') : '' }; };
+  let cells = st.cells.map(c => q._hwG ? { ch: c.ch, ok: false } : ev(c, c.ch)), altHit = false;
+  /* build_65: cách đặt từ thời gian khác (今年我… = 我今年…) cũng đúng */
+  if (!q._hwG && q.alts && q.alts.length && !cells.every(c => c.ok)) {
+    for (const a of q.alts) {
+      const t = Array.from(hanOnly(zhDigitsToHan(a.zh))); if (t.length !== st.cells.length) continue;
+      const cs = st.cells.map((c, i) => t[i] === c.ch ? cells[i] : ev(c, t[i]));
+      if (cs.every(c => c.ok)) { cells = cs; altHit = true; break; }
+    }
+  }
   S.hwWeak = S.hwWeak || {};
   cells.forEach(c => { const w = S.hwWeak[c.ch]; if (!c.ok) S.hwWeak[c.ch] = { n: (w ? w.n : 0) + 1, at: Date.now() }; else if (w) { w.n--; if (w.n <= 0) delete S.hwWeak[c.ch]; } });
   const ok = cells.every(c => c.ok);
-  return { ok, val: cells.map(c => c.ok ? c.ch : '□').join(''), res: { hw: 1, cells: cells.map(c => ({ ch: c.ch, ok: c.ok, sug: c.sug || '' })) } };
+  return { ok, val: cells.map(c => c.ok ? c.ch : '□').join(''), res: { hw: 1, alt: altHit, cells: cells.map(c => ({ ch: c.ch, ok: c.ok, sug: c.sug || '' })) } };
 }
 function xHwToggle() { S.settings.hwAns = S.settings.hwAns === false; save(); render(); }
 function xHwMeCard() {
@@ -3656,8 +3837,10 @@ const xHwForgive = xForgive;
 function checkViet(val, ref) {
   const tk = s => fold(String(s || '').replace(/\([^)]*\)/g, ' ')).replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
   const raw = s => fold(String(s || '')).replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean).join(' ');
+  try { val = viNumFix(val); ref = viNumFix(ref); } catch (e) { }
   const u = tk(val); if (!raw(val)) return { ok: false, zv: 1, score: 0 };
   if (raw(val) === raw(ref)) return { ok: true, zv: 1, score: 1 };
+  { const rn = tk(ref).filter(x => /^\d+$/.test(x) && x !== '1'); if (rn.length && !rn.every(x => u.includes(x))) return { ok: false, zv: 1, score: 0.5 }; } /* sai số = sai */
   if (!u.length) return { ok: false, zv: 1, score: 0 };
   const alts = String(ref || '').split(/[;；,，/／]|\s+hoặc\s+/).map(x => x.trim()).filter(Boolean);
   const whole = tk(ref); let best = 0;
@@ -4094,6 +4277,7 @@ function makeQ(kind, x) {
   }
   /* --- dạng theo câu: x = sentRef --- */
   const s = x, sb = { ...base, ref: s.ref, han: s.zh, wpy: s.py, mean: s.vi, sent: { zh: s.zh, py: s.py, vi: s.vi }, audioAfter: s.zh };
+  if (kind === 'arrange' || kind === 'trans') { let al = []; try { al = zhAlts(s.zh, s.py); } catch (e) { } if (al.length) sb.alts = al; }
   if (kind === 'arrange' || kind === 'dict') {
     const tk = tiles(s.zh); if (tk.length < 3 || tk.length > 14) return null;
     return { ...sb, tokens: shuffle(tk.map((t, i) => ({ t, i }))), order: [], answer: s.zh, prompt: kind === 'arrange' ? s.vi : '', sub: kind === 'arrange' ? 'Sắp xếp thành câu tiếng Trung' : 'Nghe rồi chạm các từ theo đúng thứ tự', audio: kind === 'dict' ? s.zh : '' };
@@ -4344,12 +4528,13 @@ function answer(val) {
   if (hwu) { const g = xHwGrade(q); ok = g.ok; res = g.res; val = g.val; }
   else if (q.kind === 'py') { if (/[㐀-鿿]/.test(String(val))) { toast('Câu này cần gõ pinyin (không phải chữ Hán)'); return; } if (!String(val).trim()) res = { ok: false, syl: [] }; else res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
   else if (q.kind === 'cloze') { res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
-  else if (q.kind === 'type' || q.kind === 'trans') { res = checkTyped(val, q.han, q.wpy); ok = res.ok; }
+  else if (q.kind === 'type' || q.kind === 'trans') { res = checkTypedQ(val, q); ok = res.ok; }
   else if (q.kind === 'zv') { res = checkViet(val, q.answer); ok = res.ok; }
-  else if (TILE_KINDS.includes(q.kind)) { val = q.order.map(i => q.tokens[i].t).join(''); ok = normZh(val) === normZh(q.answer); }
+  else if (TILE_KINDS.includes(q.kind)) { val = q.order.map(i => q.tokens[i].t).join(''); ok = tileOkQ(val, q); }
   else ok = val === q.answer;
   const undo = !ok && (hwu || q.kind === 'zv') ? xUndoSnap(q) : null;
   quiz.ans[quiz.i] = { ok, val: String(val ?? ''), res, hint: !!q.hinted };
+  if (ok && q.alts && q.alts.length && ((res && res.alt) || (TILE_KINDS.includes(q.kind) && !hwu && zhCanon(val) !== zhCanon(q.answer)))) quiz.ans[quiz.i].alt = 1;
   if (undo) quiz.ans[quiz.i].undo = undo;
   quiz.combo = ok ? (quiz.combo || 0) + 1 : 0;
   bump('a'); if (ok) bump('ok'); bumpSkill(q.kind, ok); if (quiz.type === 'errors') bumpQ('err');
@@ -4453,7 +4638,7 @@ function quizPage() {
       : `<div><span class="ans zh">${esc(q.han)}</span> <span class="fpy">${pinyinHTML(q.wpy || '')}</span>${q.hv ? ` · <b>${esc(String(q.hv).toUpperCase())}</b>` : ''}</div><div>${esc(q.mean || '')}</div>`;
     const tfx = q.kind === 'tf' ? `<div class="small">Bài khóa: <span class="zh"><b>${esc(q.tfOrig)}</b></span></div>` : '';
     const head = a.ok ? '<b>Chính xác!</b> +10 XP' : `<b>Chưa đúng.</b> ${q.kind === 'py' && a.res && a.res.syl.some(s => !s.ok) && a.res.syl.every(s => s.toneOnly) ? 'Sai thanh điệu ở âm tiết tô đỏ. ' : ''}${!INPUT_KINDS.includes(q.kind) && !TILE_KINDS.includes(q.kind) ? `Đáp án: <b class="${q.optZh ? 'zh' : ''}">${q.optPat ? patLabel(q.answer) : esc(q.answer)}</b>` : ''} · đã thêm vào thẻ ôn 🃏`;
-    fb = `<div class="fb ${a.ok ? 'g' : 'r'}">${head}${q.audioAfter ? ` <button class="snd mini" style="vertical-align:middle" onclick="say(${ja(q.audioAfter)})">${IC.sound}</button>` : ''}<div style="margin-top:4px">${tfx}${ansBlock}</div>${xWhy(q, a)}${a.res && a.res.mode === 'han' && !a.ok ? `<div class="small">Bạn gõ: <s class="zh">${esc(a.res.got)}</s></div>` : ''}${q.kind === 'zv' && !a.ok ? `<div class="small">Bạn trả lời: <s>${esc(a.val || '(bỏ trống)')}</s></div><div class="qbtns"><button class="btn ghost" onclick="xForgive()">✓ Tôi đúng (cùng ý nghĩa)</button></div>` : ''}</div>`;
+    fb = `<div class="fb ${a.ok ? 'g' : 'r'}">${head}${q.audioAfter ? ` <button class="snd mini" style="vertical-align:middle" onclick="say(${ja(q.audioAfter)})">${IC.sound}</button>` : ''}<div style="margin-top:4px">${tfx}${ansBlock}</div>${a.ok && a.alt ? '<div class="small">✓ Cách đặt của bạn cũng đúng: từ chỉ thời gian có thể đứng trước hoặc sau chủ ngữ. Câu mẫu ở trên.</div>' : ''}${xWhy(q, a)}${a.res && a.res.mode === 'han' && !a.ok ? `<div class="small">Bạn gõ: <s class="zh">${esc(a.res.got)}</s></div>` : ''}${q.kind === 'zv' && !a.ok ? `<div class="small">Bạn trả lời: <s>${esc(a.val || '(bỏ trống)')}</s></div><div class="qbtns"><button class="btn ghost" onclick="xForgive()">✓ Tôi đúng (cùng ý nghĩa)</button></div>` : ''}</div>`;
   }
   const left = c.none;
   const navb = `<div class="qnav"><button class="btn-o" onclick="gotoQ(${quiz.i - 1})" ${quiz.i ? '' : 'disabled style="opacity:.4"'}>← ${quiz.i ? 'Câu ' + quiz.i : 'Câu trước'}</button>${a ? `<button class="btn-s" id="nextBtn" onclick="nextQ()">${left ? 'Câu tiếp →' : 'Xem kết quả →'}</button>` : `<button class="btn-s" onclick="gotoQ(${quiz.i + 1})" ${quiz.i < n - 1 ? '' : 'disabled style="opacity:.4"'}>${quiz.i < n - 1 ? 'Câu ' + (quiz.i + 2) : 'Câu sau'} →</button>`}</div>`;
@@ -4540,7 +4725,7 @@ function practicePage() {
    <div class="muted small mt">${pool.v.length} từ · ${pool.g.length} ngữ pháp · ${pool.s.length} câu bài khóa</div></section>
    ${typeCard({ k: 'mix', t: '🎲 Trộn tất cả các bước', d: '20 câu, đủ mọi kỹ năng, có cả dạng tự gõ', i: '混', c: 'r', go: sc => `startPractice('mix','${sc}')` }, practiceScope)}
    <h2 class="st">Hoặc luyện từng bước <span class="muted tiny">dễ → khó</span></h2>${stepCards}
-   <details class="adv"><summary>Chọn từng dạng cụ thể (${types.length} dạng)</summary>${Object.entries(SKILL_NAME).map(([sk, [ic, name]]) => { const ts = types.filter(t => t.sk === sk); return ts.length ? `<h2 class="st">${ic} ${name}</h2>${ts.map(t => typeCard(t, practiceScope)).join('')}` : ''; }).join('')}</details>
+   <details class="adv" open><summary>Chọn từng dạng cụ thể (${types.length} dạng)</summary>${Object.entries(SKILL_NAME).map(([sk, [ic, name]]) => { const ts = types.filter(t => t.sk === sk); return ts.length ? `<h2 class="st">${ic} ${name}</h2>${ts.map(t => typeCard(t, practiceScope)).join('')}` : ''; }).join('')}</details>
    ${xPracticeExtras()}
    <h2 class="st">✍️ Viết tay <span class="muted tiny">chỉ luyện, không tính điểm</span></h2>${hwPracticeCard()}</div>`;
 }
