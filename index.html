@@ -787,7 +787,7 @@ setTimeout(function(){var p=document.getElementById("splash");if(p)p.remove()},1
 <script id="mainjs" type="text/plain">/* ---- core.js ---- */
 /* ===== HSK Study Lab · core: dữ liệu, trạng thái, pinyin, tách từ, giọng đọc, khóa bài/chặng ===== */
 'use strict';
-const APP_VER = '5.8 (build_69)';
+const APP_VER = '6.0 (build_71)';
 const PASS = 85;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -2647,42 +2647,21 @@ const X_CONF = [
 /* Bài đọc ngắn: [mã, cấp, tiêu đề (Việt), [câu tiếng Trung], [nghĩa từng câu], [[câu hỏi, [đáp án đúng, sai, sai, sai]]]]
    Pinyin tự lấy từ từ vựng của app, nên mọi từ trong bài đều là từ đã có trong app. */
 const X_READS = [
-  ['R1', 'HSK 1', 'Một ngày của tôi',
-    ['我每天早上六点起床。', '我先吃早饭，然后去学校。', '中午我在学校吃饭。', '下午我学习汉语。', '晚上我在家看书，十点睡觉。'],
-    ['Mỗi ngày tôi dậy lúc sáu giờ sáng.', 'Tôi ăn sáng trước, sau đó đến trường.', 'Buổi trưa tôi ăn cơm ở trường.', 'Buổi chiều tôi học tiếng Trung.', 'Buổi tối tôi đọc sách ở nhà, mười giờ đi ngủ.'],
-    [['Tôi dậy lúc mấy giờ?', ['6 giờ sáng', '7 giờ sáng', '8 giờ sáng', '10 giờ sáng']], ['Buổi trưa tôi ăn cơm ở đâu?', ['Ở trường', 'Ở nhà', 'Ở nhà hàng', 'Ở công ty']], ['Buổi tối tôi làm gì?', ['Đọc sách ở nhà', 'Xem phim', 'Đi mua sắm', 'Học ở trường']]]],
+  ["R1", "HSK 1", "Một ngày của tôi", ["我早上六点半起床。", "七点我吃早饭，七点半去学校。", "中午我在学校吃饭。", "下午五点下课，我回家。", "晚上我看书，十点睡觉。"], ["Tôi dậy lúc sáu giờ rưỡi sáng.", "Bảy giờ tôi ăn sáng, bảy giờ rưỡi đến trường.", "Buổi trưa tôi ăn cơm ở trường.", "Năm giờ chiều tan học, tôi về nhà.", "Buổi tối tôi đọc sách, mười giờ đi ngủ."], [["Tôi dậy lúc mấy giờ?", ["6 giờ rưỡi sáng", "6 giờ sáng", "7 giờ rưỡi sáng", "10 giờ sáng"]], ["Mấy giờ tôi tan học?", ["5 giờ chiều", "4 giờ chiều", "7 giờ rưỡi", "10 giờ tối"]], ["Buổi tối tôi làm gì?", ["Đọc sách, 10 giờ đi ngủ", "Xem phim", "Đi mua sắm", "Học ở trường"]]]],
   ['R2', 'HSK 1', 'Gia đình tôi',
     ['我家有四口人：爸爸、妈妈、哥哥和我。', '爸爸是医生，妈妈是老师。', '哥哥在大学学习。', '我们住在北京。', '我很爱我的家。'],
     ['Nhà tôi có bốn người: bố, mẹ, anh trai và tôi.', 'Bố là bác sĩ, mẹ là giáo viên.', 'Anh trai học ở đại học.', 'Chúng tôi sống ở Bắc Kinh.', 'Tôi rất yêu gia đình mình.'],
     [['Mẹ làm nghề gì?', ['Giáo viên', 'Bác sĩ', 'Sinh viên', 'Nhân viên văn phòng']], ['Ai đang học đại học?', ['Anh trai', 'Bố', 'Mẹ', 'Tôi']], ['Gia đình sống ở đâu?', ['Bắc Kinh', 'Thượng Hải', 'Hà Nội', 'Quảng Châu']]]],
-  ['R3', 'HSK 1', 'Đi mua sắm',
-    ['今天是星期六，我和朋友去商店。', '我想买一个杯子和一些水果。', '苹果很好，一斤五块钱。', '我买了三斤苹果。', '朋友买了一件衣服。'],
-    ['Hôm nay là thứ Bảy, tôi cùng bạn đi cửa hàng.', 'Tôi muốn mua một cái cốc và một ít hoa quả.', 'Táo rất ngon, một cân năm tệ.', 'Tôi mua ba cân táo.', 'Bạn tôi mua một cái áo.'],
-    [['Một cân táo giá bao nhiêu?', ['5 tệ', '3 tệ', '15 tệ', '1 tệ']], ['Tôi mua mấy cân táo?', ['3 cân', '5 cân', '1 cân', '2 cân']], ['Bạn tôi mua gì?', ['Một cái áo', 'Một cái cốc', 'Táo', 'Sách']]]],
+  ["R3", "HSK 1", "Đi mua sắm", ["今天是星期六，我和朋友去商店。", "我想买一个杯子和一些水果。", "我问：“苹果多少钱？”", "他说：“一个五块钱，不贵。”", "我买了三个苹果，朋友买了一件衣服。"], ["Hôm nay là thứ Bảy, tôi cùng bạn đi cửa hàng.", "Tôi muốn mua một cái cốc và một ít hoa quả.", "Tôi hỏi: “Táo bao nhiêu tiền?”", "Người bán nói: “Một quả năm tệ, không đắt.”", "Tôi mua ba quả táo, bạn tôi mua một cái áo."], [["Một quả táo giá bao nhiêu?", ["5 tệ", "3 tệ", "15 tệ", "1 tệ"]], ["Tôi mua mấy quả táo?", ["3 quả", "5 quả", "1 quả", "2 quả"]], ["Bạn tôi mua gì?", ["Một cái áo", "Một cái cốc", "Hoa quả", "Sách"]]]],
   ['R4', 'HSK 1', 'Gọi điện thoại',
     ['明天我和朋友去看电影。', '我给他打电话：“你明天有时间吗？”', '他说：“有，我们几点见面？”', '我说：“下午三点，在电影院见。”', '他说：“好，明天见！”'],
     ['Ngày mai tôi và bạn đi xem phim.', 'Tôi gọi điện cho cậu ấy: “Ngày mai cậu có thời gian không?”', 'Cậu ấy nói: “Có, mấy giờ chúng ta gặp nhau?”', 'Tôi nói: “Ba giờ chiều, gặp ở rạp chiếu phim.”', 'Cậu ấy nói: “Được, mai gặp!”'],
     [['Họ gặp nhau lúc mấy giờ?', ['3 giờ chiều', '3 giờ sáng', '5 giờ chiều', '8 giờ tối']], ['Họ gặp nhau ở đâu?', ['Rạp chiếu phim', 'Trường học', 'Nhà tôi', 'Cửa hàng']], ['Họ định làm gì?', ['Xem phim', 'Ăn cơm', 'Học bài', 'Đi bệnh viện']]]],
-  ['R5', 'HSK 2', 'Thời tiết và bị ốm',
-    ['昨天天气很冷，我没有穿很多衣服。', '今天我感冒了，头很疼。', '妈妈让我去医院，医生说我要多休息。', '我吃了药，也喝了很多水。', '现在我好一点儿了。'],
-    ['Hôm qua trời rất lạnh, tôi không mặc nhiều áo.', 'Hôm nay tôi bị cảm, đau đầu.', 'Mẹ bảo tôi đi bệnh viện, bác sĩ nói tôi cần nghỉ ngơi nhiều.', 'Tôi uống thuốc và cũng uống nhiều nước.', 'Bây giờ tôi đã đỡ hơn một chút.'],
-    [['Hôm qua thời tiết thế nào?', ['Rất lạnh', 'Rất nóng', 'Mưa to', 'Rất đẹp']], ['Bác sĩ dặn điều gì?', ['Nghỉ ngơi nhiều', 'Ăn nhiều hơn', 'Đi học bình thường', 'Chạy bộ mỗi ngày']], ['Bây giờ tôi thế nào?', ['Đỡ hơn một chút', 'Đau hơn', 'Khỏi hẳn', 'Nặng hơn']]]],
-  ['R6', 'HSK 2', 'Bạn học mới',
-    ['我们班来了一个新同学，她叫王丽。', '她今年十九岁，很漂亮，也很爱笑。', '她会说汉语，也会唱一首汉语歌。', '下课以后，我们一起去吃饭。', '我觉得她是一个很好的朋友。'],
-    ['Lớp chúng tôi có một bạn học mới, bạn ấy tên là Vương Lệ.', 'Năm nay bạn ấy mười chín tuổi, rất xinh và cũng hay cười.', 'Bạn ấy biết nói tiếng Trung, cũng biết hát một bài hát tiếng Trung.', 'Tan học xong, chúng tôi cùng đi ăn cơm.', 'Tôi thấy bạn ấy là một người bạn rất tốt.'],
-    [['Bạn mới bao nhiêu tuổi?', ['19 tuổi', '20 tuổi', '18 tuổi', '17 tuổi']], ['Sau khi tan học họ làm gì?', ['Cùng đi ăn cơm', 'Về nhà', 'Đi xem phim', 'Học thêm']], ['Bạn mới biết làm gì?', ['Nói và hát tiếng Trung', 'Chỉ nói tiếng Anh', 'Nhảy múa', 'Vẽ tranh']]]],
-  ['R7', 'HSK 2', 'Đi tàu điện ngầm',
-    ['我家离公司不太远，我坐地铁上班。', '早上人很多，常常没有座位。', '我在地铁上听音乐或者看手机。', '半个小时以后就到公司了。', '下班的时候，我喜欢走路回家。'],
-    ['Nhà tôi cách công ty không xa lắm, tôi đi tàu điện ngầm đi làm.', 'Buổi sáng rất đông người, thường không có chỗ ngồi.', 'Trên tàu tôi nghe nhạc hoặc xem điện thoại.', 'Sau nửa tiếng thì tới công ty.', 'Lúc tan làm, tôi thích đi bộ về nhà.'],
-    [['Tôi đi làm bằng gì?', ['Tàu điện ngầm', 'Xe buýt', 'Xe máy', 'Đi bộ']], ['Đi mất bao lâu?', ['Nửa tiếng', '20 phút', '1 tiếng', '2 tiếng']], ['Lúc tan làm tôi thích làm gì?', ['Đi bộ về nhà', 'Đi tàu về nhà', 'Đi xe buýt', 'Ở lại công ty']]]],
-  ['R8', 'HSK 3', 'Học tiếng Trung',
-    ['我学汉语已经两年了。', '刚开始的时候，我觉得汉字很难。', '后来我每天听老师说，也每天练习写汉字。', '现在我不但能听懂简单的话，而且还能写句子。', '学习语言需要耐心，只要坚持，就会进步。'],
-    ['Tôi học tiếng Trung đã hai năm rồi.', 'Lúc mới bắt đầu, tôi thấy chữ Hán rất khó.', 'Sau này mỗi ngày tôi nghe thầy giáo nói, và mỗi ngày luyện viết chữ Hán.', 'Bây giờ tôi không chỉ nghe hiểu những câu đơn giản, mà còn viết được câu.', 'Học ngôn ngữ cần kiên nhẫn, chỉ cần kiên trì thì sẽ tiến bộ.'],
-    [['Tôi học tiếng Trung được bao lâu?', ['2 năm', '1 năm', '3 năm', '6 tháng']], ['Lúc đầu tôi thấy điều gì khó?', ['Chữ Hán', 'Ngữ pháp', 'Nghe', 'Nói']], ['Điều cần để tiến bộ là gì?', ['Kiên trì', 'May mắn', 'Thiên phú', 'Nhiều tiền']]]],
-  ['R9', 'HSK 3', 'Một chuyến du lịch',
-    ['去年暑假，我和家人去了上海。', '我们坐飞机去，只用了两个小时。', '在上海，我们参观了很多有名的地方。', '那里的菜很好吃，但是有点儿甜。', '虽然很累，但是我们玩得很开心。'],
-    ['Mùa hè năm ngoái, tôi cùng gia đình đi Thượng Hải.', 'Chúng tôi đi máy bay, chỉ mất hai tiếng.', 'Ở Thượng Hải, chúng tôi tham quan nhiều nơi nổi tiếng.', 'Đồ ăn ở đó rất ngon, nhưng hơi ngọt.', 'Tuy rất mệt nhưng chúng tôi chơi rất vui.'],
-    [['Họ đi Thượng Hải bằng gì?', ['Máy bay', 'Tàu hỏa', 'Xe khách', 'Ô tô riêng']], ['Đồ ăn ở đó thế nào?', ['Ngon nhưng hơi ngọt', 'Rất cay', 'Rất mặn', 'Không ngon']], ['Chuyến đi thế nào?', ['Mệt nhưng vui', 'Rất buồn', 'Rất nhàm chán', 'Không đi được']]]],
+  ["R5", "HSK 2", "Thời tiết và bị ốm", ["昨天天气很冷，我穿得不多。", "今天我头疼，身体也不舒服。", "妈妈让我去医院，医生说我生病了。", "我吃了药，喝了很多水，已经好一点儿了。", "因为身体不好，所以我今天在家休息。"], ["Hôm qua trời rất lạnh, tôi mặc không nhiều.", "Hôm nay tôi đau đầu, người cũng không khỏe.", "Mẹ bảo tôi đi bệnh viện, bác sĩ nói tôi bị bệnh.", "Tôi uống thuốc, uống nhiều nước, đã đỡ hơn một chút.", "Vì sức khỏe không tốt nên hôm nay tôi nghỉ ngơi ở nhà."], [["Hôm qua thời tiết thế nào?", ["Rất lạnh", "Rất nóng", "Có mưa", "Có tuyết"]], ["Hôm nay tôi bị đau ở đâu?", ["Đầu", "Chân", "Mắt", "Tay"]], ["Vì sao hôm nay tôi ở nhà?", ["Vì sức khỏe không tốt", "Vì trời mưa", "Vì không muốn đi học", "Vì phải đi làm"]]]],
+  ["R6", "HSK 2", "Bạn học mới", ["我们班来了一个新同学。", "她姓王，名字叫王丽。", "她今年十九岁，个子高高的，眼睛很大。", "她笑着说：“大家好！”", "下课了，我们一起去饭馆吃饭。"], ["Lớp chúng tôi có một bạn học mới.", "Bạn họ Vương, tên là Vương Lệ.", "Năm nay bạn 19 tuổi, dáng cao, mắt to.", "Bạn cười và nói: “Chào mọi người!”", "Tan học, chúng tôi cùng đi quán ăn."], [["Bạn học mới tên là gì?", ["Vương Lệ", "Lâm Phương", "Nguyễn Minh", "Lý Hoa"]], ["Bạn học mới bao nhiêu tuổi?", ["19 tuổi", "18 tuổi", "20 tuổi", "9 tuổi"]], ["Tan học mọi người làm gì?", ["Cùng đi quán ăn", "Về nhà", "Đi xem phim", "Đi thư viện"]]]],
+  ["R7", "HSK 2", "Đi làm bằng tàu điện ngầm", ["我家离公司不太远。", "我每天坐地铁去上班。", "地铁站就在家旁边，走路五分钟就到了。", "早上地铁上人很多，我经常站着。", "晚上我坐公交车回家，很快。"], ["Nhà tôi cách công ty không xa lắm.", "Mỗi ngày tôi đi làm bằng tàu điện ngầm.", "Ga tàu ngay cạnh nhà, đi bộ năm phút là tới.", "Buổi sáng trên tàu rất đông, tôi thường phải đứng.", "Buổi tối tôi đi xe buýt về nhà, rất nhanh."], [["Tôi đi làm bằng gì?", ["Tàu điện ngầm", "Xe buýt", "Xe đạp", "Ô tô"]], ["Từ nhà đến ga mất bao lâu?", ["Đi bộ 5 phút", "Đi bộ 15 phút", "Đi xe 5 phút", "Đi bộ 50 phút"]], ["Buổi tối tôi về nhà bằng gì?", ["Xe buýt", "Tàu điện ngầm", "Taxi", "Xe máy"]]]],
+  ["R8", "HSK 3", "Học tiếng Trung đã hai năm", ["我学汉语已经两年了。", "刚开始的时候，我觉得汉字很难。", "后来我每天听老师说，也认真练习写字。", "现在我能听懂简单的句子了。", "只要坚持练习，我一定会提高。"], ["Tôi học tiếng Trung đã hai năm.", "Lúc mới bắt đầu, tôi thấy chữ Hán rất khó.", "Sau đó mỗi ngày tôi nghe thầy cô nói và chăm chỉ luyện viết chữ.", "Bây giờ tôi nghe hiểu được những câu đơn giản.", "Chỉ cần kiên trì luyện tập, tôi nhất định sẽ tiến bộ."], [["Tôi học tiếng Trung bao lâu rồi?", ["Hai năm", "Hai tháng", "Một năm", "Năm năm"]], ["Lúc mới bắt đầu tôi thấy gì khó?", ["Chữ Hán", "Phát âm", "Ngữ pháp", "Thi cử"]], ["Muốn tiến bộ cần làm gì?", ["Kiên trì luyện tập", "Chỉ xem phim", "Nghỉ ngơi nhiều", "Đi du lịch"]]]],
+  ["R9", "HSK 3", "Kỳ nghỉ đi du lịch", ["放假的时候，我和家人坐飞机去旅游。", "飞机只用两个小时，我们很快就到了。", "我们去了很多好玩儿的地方，还买了很多礼物。", "那里的饭菜很好吃，但是有点儿甜。", "虽然有点儿累，但是大家都很开心。"], ["Kỳ nghỉ, tôi cùng gia đình đi du lịch bằng máy bay.", "Máy bay chỉ mất hai tiếng, chúng tôi đến rất nhanh.", "Chúng tôi đi nhiều nơi thú vị và còn mua nhiều quà.", "Đồ ăn ở đó rất ngon nhưng hơi ngọt.", "Tuy hơi mệt nhưng mọi người đều rất vui."], [["Chúng tôi đi bằng gì?", ["Máy bay", "Tàu hỏa", "Ô tô", "Tàu thủy"]], ["Đồ ăn ở đó thế nào?", ["Ngon nhưng hơi ngọt", "Rất cay", "Không ngon", "Quá mặn"]], ["Cuối chuyến đi mọi người thấy thế nào?", ["Hơi mệt nhưng vui", "Rất buồn", "Rất giận", "Chán"]]]],
   ['R10', 'HSK 3', 'Thuê nhà',
     ['我想在学校附近租一间房子。', '朋友告诉我，那里的房租比较便宜。', '我去看了房子，房间不大，不过很干净。', '房东说每个月一千五，我觉得可以。', '我决定下个星期搬进去。'],
     ['Tôi muốn thuê một căn phòng gần trường.', 'Bạn tôi nói, tiền thuê ở đó khá rẻ.', 'Tôi đi xem nhà, phòng không lớn, nhưng rất sạch.', 'Chủ nhà nói mỗi tháng một nghìn năm trăm, tôi thấy được.', 'Tôi quyết định tuần sau chuyển vào.'],
@@ -3106,7 +3085,7 @@ function xConfPage() {
 /* ---------- 3. Ôn nhanh 3 phút ---------- */
 function xStartFast() {
   const items = [], used = new Set(), add = q => { if (q && !used.has(q.kind + '|' + q.ref)) { used.add(q.kind + '|' + q.ref); items.push(q); } };
-  const t = today(), due = Object.values(S.srs).filter(c => c.due !== null && c.due <= t && DATA.idx.vocabByCode[c.id]);
+  const t = today(), due = dueKnownCards();
   shuffle(due).slice(0, 6).forEach(c => add(makeQ(shuffle(['mean', 'meanR', 'recog', 'listen'])[0], DATA.idx.vocabByCode[c.id])));
   errsList().sort((a, b) => b.n - a.n).filter(sp => !INPUT_KINDS.includes(sp.kind) && !TILE_KINDS.includes(sp.kind)).slice(0, 4).forEach(sp => add(qFromSpec(sp)));
   const G = xConfGroups(); for (let k = 0; k < 2 && G.length; k++) { const gi = Math.floor(Math.random() * G.length); add(xConfQ(gi, shuffle(G[gi].g)[0][0])); }
@@ -4270,6 +4249,7 @@ const swapSet = t => SWAP_SETS.find(a => a.includes(t)) || null;
 let _guardOff = false;
 function qStemTexts(q) { const a = [q.prompt, q.audio, q.han, q.sent && q.sent.zh, q.posHtml && String(q.posHtml).replace(/<[^>]*>/g, '')]; if (Array.isArray(q.audioSeq)) a.push(...q.audioSeq); return a.filter(x => typeof x === 'string' && x); }
 function stemKnown(q, M) {
+  if (q.ref != null && refNo(q.ref) > M) return false; /* từ/câu nguồn thuộc bài chưa học */
   const ch = knownChars(M);
   for (const t of qStemTexts(q)) for (const c of Array.from(t)) if (isHan(c) && !ch.has(c)) return false;
   if (q.kind === 'tpair' && q.han) for (const w of String(q.han).split(' / ')) { const e = DATA.idx.vocabByWord[w]; if (e && e.length && !e.some(v => noOf(v['Mã bài học']) <= M)) return false; }
@@ -4592,7 +4572,7 @@ function startLevelTest(lv, fresh) {
 function startDaily(fresh) {
   const items = [], used = new Set();
   errsList().sort((a, b) => b.n - a.n).slice(0, 5).forEach(sp => { const q = qFromSpec(sp); if (q && !used.has(q.kind + '|' + q.ref)) { used.add(q.kind + '|' + q.ref); items.push(q); } });
-  const t = today(), due = Object.values(S.srs).filter(c => c.due !== null && c.due <= t && DATA.idx.vocabByCode[c.id]);
+  const t = today(), due = dueKnownCards();
   const dcnt = {}; items.forEach(q => { dcnt[q.kind] = (dcnt[q.kind] || 0) + 1; });
   shuffle(due).slice(0, 9).forEach(c => { const q = xDueQ(DATA.idx.vocabByCode[c.id], dcnt, used); if (q) { used.add(q.kind + '|' + q.ref); items.push(q); } });
   const pool = poolOf(knownIds());
@@ -4656,9 +4636,13 @@ function answer(val) {
   if (ok && q.alts && q.alts.length && ((res && res.alt) || (TILE_KINDS.includes(q.kind) && !hwu && zhCanon(val) !== zhCanon(q.answer)))) quiz.ans[quiz.i].alt = 1;
   if (undo) quiz.ans[quiz.i].undo = undo;
   quiz.combo = ok ? (quiz.combo || 0) + 1 : 0;
-  bump('a'); if (ok) bump('ok'); bumpSkill(q.kind, ok); if (quiz.type === 'errors') bumpQ('err');
+  bump('a'); if (ok) bump('ok'); bumpSkill(q.kind, ok);
   if (!ok) srsBoost(q.ref);
-  const key = q.kind + '|' + q.ref;
+  const key = q.kind + '|' + q.ref, wasErr = !!S.errors[key];
+  /* nhiệm vụ tự tính theo việc đã làm, không cần bấm đúng nhiệm vụ */
+  if (quiz.type === 'errors' || (wasErr && ok)) bumpQ('err');            /* Sửa câu từng sai: đúng một câu trong sổ lỗi ở bất kỳ bài tập nào */
+  if (quiz.daily || quiz.fast || quiz.k === 'mix') bumpQ('mix');          /* Luyện tổng hợp */
+  if (ok && !q.srsKey) srsCredit(q);                                      /* Ôn thẻ đến hạn: trả lời đúng từ có thẻ đến hạn */
   if (!ok) { const e = S.errors[key] || { key, kind: q.kind, ref: q.ref, n: 0, streak: 0 }; e.n++; e.streak = 0; e.at = Date.now(); S.errors[key] = e; }
   else if (S.errors[key]) { S.errors[key].streak++; if (S.errors[key].streak >= 2 || quiz.type === 'errors') delete S.errors[key]; }
   if (q.srsKey) xSrsGrade(q, ok);
@@ -4854,10 +4838,16 @@ function practicePage() {
 
 /* ---------- Ôn: thẻ SM-2 + sổ lỗi + chữ viết sai ---------- */
 /* thẻ ôn / sổ lỗi chỉ tính mục thuộc bài đã học; mục cũ ở bài chưa học (tạo từ bản trước khi có cổng kiến thức) được ẩn, không xóa */
+const dueKnownCards = () => { const t = today(), KM = knownMax(); return Object.values(S.srs).filter(c => c.due !== null && c.due <= t && DATA.idx.vocabByCode[c.id] && noOf(DATA.idx.vocabByCode[c.id]['Mã bài học']) <= KM); };
 const refNo = ref => { try { const v = DATA.idx.vocabByCode[ref]; if (v) return noOf(v['Mã bài học']); const g = DATA.idx.grammarByCode[ref]; if (g) return noOf(g['Mã bài học']); if (/^[SGE]:/.test(String(ref))) { const sr = sentRef(ref); if (sr && sr.lid) return noOf(sr.lid); } } catch (e) { } return 0; };
 const errsList = () => { const M = knownMax(); return Object.values(S.errors || {}).filter(sp => refNo(sp.ref) <= M); };
 function addCard(k, id, d) { const key = `${k}:${id}:${d}`; if (S.srs[key]) return 0; S.srs[key] = { k, id, d, ef: 2.5, iv: 0, reps: 0, due: null, lapses: 0 }; return 1; }
 const srsItem = c => c.k === 'g' ? DATA.idx.grammarByCode[c.id] : DATA.idx.vocabByCode[c.id];
+function srsCredit(q) {
+  if (q.ref == null || !DATA.idx.vocabByCode[q.ref]) return;
+  const t = today();
+  for (const d of ['h', 'm']) { const key = `v:${q.ref}:${d}`, c = S.srs[key]; if (c && c.due !== null && c.due <= t) { S.srs[key] = sm2(c, q.hinted ? 3 : 4); bump('cards'); bumpQ('srs'); try { xSrsMark(c); } catch (e) { } break; } }
+}
 function srsLists(filter = 'all') {
   /* mỗi từ/điểm ngữ pháp chỉ tính MỘT thẻ mỗi ngày (thẻ đến hạn sớm nhất, nếu không có thì thẻ mới); từ đã ôn xong hôm nay thì không tính nữa */
   const t = today(), sd = S.srsToday && S.srsToday.d === dayKey() ? S.srsToday.w : {}, best = {}, KM = knownMax();
@@ -5003,7 +4993,7 @@ function questInfo(it) {
     return { ic: '错', title: `Sửa ${it.target} câu từng làm sai`, sub: none && p ? 'Sổ lỗi đã sạch 🎉' : `${cap(p, it.target)}/${it.target} câu · đúng 2 lần là xóa khỏi sổ`, done: p >= it.target || (none && p > 0), go: 'startErrors()' };
   }
   if (it.id === 'mix') {
-    const s = S.sess['d:' + dayKey()], c = s ? sessCounts(s) : null, p = c ? c.ok + c.bad : 0;
+    const s = S.sess['d:' + dayKey()], c = s ? sessCounts(s) : null, p = Math.max(c ? c.ok + c.bad : 0, dayQ('mix'));
     return { ic: '练', title: `Luyện tổng hợp ${it.target} câu`, sub: `${cap(p, it.target)}/${it.target} câu · trộn mọi dạng, ưu tiên câu hay sai`, done: p >= it.target, go: 'startDaily()' };
   }
   if (it.id === 'weak') {
