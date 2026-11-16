@@ -787,7 +787,7 @@ setTimeout(function(){var p=document.getElementById("splash");if(p)p.remove()},1
 <script id="mainjs" type="text/plain">/* ---- core.js ---- */
 /* ===== HSK Study Lab · core: dữ liệu, trạng thái, pinyin, tách từ, giọng đọc, khóa bài/chặng ===== */
 'use strict';
-const APP_VER = '5.5 (build_66)';
+const APP_VER = '5.6 (build_67)';
 const PASS = 85;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -3881,7 +3881,7 @@ const X_MAND_T = {
 };
 const X_MAND_SRC = { arrange: ['arrange', 'sg'], dict: ['dict', 's'], zvS: ['zv', 's'], zvV: ['zv', 'v'], meanR: ['meanR', 'v'], listen: ['listen', 'v'] };
 function xMand(items, spec, pool, N) {
-  const used = new Set(items.map(q => q.kind + '|' + q.ref)), add = [];
+  const used = new Set(), add = []; items.forEach(q => { const r = String(q.ref ?? q.han ?? q.prompt); used.add(q.kind + '|' + r); used.add(r); });
   const src = { v: pool.v, s: sentRefs(pool, 's'), sg: sentRefs(pool, 'sg') };
   Object.entries(spec).forEach(([id, n]) => {
     const have = items.filter(X_MAND_T[id]).length + add.filter(X_MAND_T[id]).length; if (have >= n) return;
@@ -4177,7 +4177,10 @@ function distract(x, field, n, skip) {
   }
   return out;
 }
-const sameMean = (a, b) => { const x = fold(a['Nghĩa tiếng Việt']), y = fold(b['Nghĩa tiếng Việt']); return x === y || x.split(/[,;]\s*/).some(p => p.length > 2 && y.split(/[,;]\s*/).includes(p)); };
+const MEAN_STOP = new Set('cai chiec mot nhung nay nao kia do cua va la co khong duoc trong de dang rat hon vao ra len xuong cho voi tu den khi neu thi nguoi viec cach noi sau truoc nhieu mon con the dung gi ai dau may bao'.split(' '));
+const _mkeys = new WeakMap();
+const meanKeys = a => { let k = _mkeys.get(a); if (!k) { k = new Set(fold(a['Nghĩa tiếng Việt']).split(/[^a-z0-9]+/).filter(w => w.length >= 3 && !MEAN_STOP.has(w))); _mkeys.set(a, k); } return k; };
+const sameMean = (a, b) => { const x = fold(a['Nghĩa tiếng Việt']), y = fold(b['Nghĩa tiếng Việt']); if (x === y || x.split(/[,;]\s*/).some(p => p.length > 2 && y.split(/[,;]\s*/).includes(p))) return true; const ka = meanKeys(a), kb = meanKeys(b); for (const w of ka) if (kb.has(w)) return true; return false; };
 const homophone = (a, b) => pyPlain(a['Pinyin']).replace(/\s/g, '') === pyPlain(b['Pinyin']).replace(/\s/g, '');
 function toneVariants(syls, n) {
   const ans = pyJoin(syls), out = new Set();
@@ -4208,6 +4211,46 @@ function sentRef(ref) {
 }
 const lvOfQ = q => lvNum(q.lv || '');
 
+
+/* ---------- câu nhiễu gần giống (Chọn câu dịch) ---------- */
+let _sidx = null;
+function sentIdx() {
+  if (_sidx) return _sidx; _sidx = [];
+  DATA.lessons.forEach(l => rows(l['Mã bài']).forEach(r => { const z = r['Câu tiếng Trung'], h = hanOnly(z); if (h.length >= 3) _sidx.push({ z, h, no: +l['Bài số'], set: new Set(Array.from(h)) }); }));
+  return _sidx;
+}
+function similarSents(s, n) {
+  const M = Math.max(knownMax(), noOf(s.lid)), h0 = hanOnly(s.zh), A = new Set(Array.from(h0)), sc = [];
+  for (const c of sentIdx()) {
+    if (c.no > M || c.h === h0) continue;
+    let inter = 0; c.set.forEach(ch => { if (A.has(ch)) inter++; });
+    const jac = inter / (A.size + c.set.size - inter), lr = Math.min(c.h.length, h0.length) / Math.max(c.h.length, h0.length);
+    if (jac > 0.8 || lr < 0.5) continue; /* quá giống = có thể cũng đúng nghĩa; quá lệch độ dài = lộ đáp án */
+    sc.push({ z: c.z, h: c.h, sc: jac + 0.4 * lr + Math.random() * 0.15 });
+  }
+  sc.sort((a, b) => b.sc - a.sc);
+  const out = [], hs = new Set();
+  for (const x of sc) { if (hs.has(x.h)) continue; hs.add(x.h); out.push(x.z); if (out.length >= n) break; }
+  return out;
+}
+/* ---------- nhóm từ cùng loại nghĩa để tạo câu sai hợp lý (Đúng/Sai) ---------- */
+const SWAP_SETS = [
+  ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
+  ['早上', '上午', '中午', '下午', '晚上'],
+  ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日', '星期天'],
+  ['爸爸', '妈妈', '哥哥', '姐姐', '弟弟', '妹妹', '爷爷', '奶奶', '叔叔', '阿姨', '儿子', '女儿'],
+  ['红', '黄', '蓝', '绿', '白', '黑'], ['红色', '黄色', '蓝色', '绿色', '白色', '黑色'],
+  ['春天', '夏天', '秋天', '冬天'], ['东', '南', '西', '北'],
+  ['前边', '后边', '左边', '右边', '上边', '下边', '里边', '外边'],
+  ['学校', '医院', '银行', '商店', '超市', '书店', '饭店', '公司', '公园', '图书馆', '火车站', '机场', '邮局', '教室', '宿舍', '餐厅', '饭馆'],
+  ['米饭', '面条', '饺子', '包子', '面包', '牛奶', '咖啡', '茶', '啤酒', '苹果', '香蕉', '鸡蛋', '蛋糕'],
+  ['老师', '学生', '医生', '护士', '经理', '司机', '服务员', '警察', '工人', '律师', '演员'],
+  ['中国', '越南', '美国', '日本', '韩国', '英国', '法国', '德国', '泰国'],
+  ['汉语', '英语', '日语', '法语', '中文'],
+  ['飞机', '火车', '汽车', '地铁', '出租车', '公共汽车', '自行车'],
+  ['大', '小'], ['多', '少'], ['高', '矮'], ['长', '短'], ['快', '慢'], ['新', '旧'], ['贵', '便宜'], ['远', '近'], ['冷', '热'], ['胖', '瘦'], ['难', '容易'], ['忙', '闲'], ['干净', '脏'], ['高兴', '难过']
+];
+const swapSet = t => SWAP_SETS.find(a => a.includes(t)) || null;
 
 /* ---------- chốt chặn: đề không được chứa chữ chưa học ---------- */
 let _guardOff = false;
@@ -4259,6 +4302,7 @@ function makeQRaw(kind, x) {
       for (const n of shuffle([1, 2])) {
         const s = v['Ví dụ ' + n]; if (!s) continue; const i = s.indexOf(w); if (i < 0 || hlen(w) > 4) continue;
         const blank = s.slice(0, i) + '＿＿' + s.slice(i + w.length);
+        if (blank.includes(w)) continue; /* đáp án còn xuất hiện trong câu → lộ đáp án */
         if (kind === 'cloze') return { ...base, ...info, prompt: blank, pz: 1, sub: v['Nghĩa ví dụ ' + n], hint: `${hlen(w)} chữ · gõ pinyin (số hoặc dấu) hoặc chữ Hán`, answer: w, sent: { zh: s, py: v['Pinyin ví dụ ' + n], vi: v['Nghĩa ví dụ ' + n] }, audioAfter: s };
         const ds = distract(v, 'Từ', 3, y => sameMean(y, v)); if (ds.length < 2) return null;
         return { ...base, ...info, prompt: blank, pz: 1, sub: v['Nghĩa ví dụ ' + n], options: opts(w, ds), optZh: 1, answer: w, sent: { zh: s, py: v['Pinyin ví dụ ' + n], vi: v['Nghĩa ví dụ ' + n] }, audioAfter: s };
@@ -4326,8 +4370,7 @@ function makeQRaw(kind, x) {
   }
   if (kind === 'zv') { const n = hanOnly(s.zh).length; if (n < 2 || n > 24 || !String(s.vi || '').trim()) return null; return { ...sb, prompt: s.zh, pz: 1, sub: 'Dịch cả câu sang tiếng Việt', hint: 'Gõ nghĩa tiếng Việt (có dấu hoặc không dấu đều được) · khác từ ngữ nhưng cùng ý thì bấm “Tôi đúng”', answer: s.vi }; }
   if (kind === 'translate') {
-    const sib = rows(s.lid).filter(r => r['Câu tiếng Trung'] !== s.zh).map(r => r['Câu tiếng Trung']);
-    const ds = shuffle(uniq(sib)).filter(z => hanOnly(z) !== hanOnly(s.zh)).slice(0, 3); if (ds.length < 2) return null;
+    const ds = similarSents(s, 3); if (ds.length < 2) return null;
     return { ...sb, prompt: s.vi, sub: 'Câu tiếng Trung nào đúng nghĩa?', options: opts(s.zh, ds), optZh: 1, answer: s.zh };
   }
   if (kind === 'measure') {
@@ -4353,15 +4396,19 @@ function makeQRaw(kind, x) {
     if (!s.who || !/[。！]$/.test(s.zh) || /[吗呢吧？?]/.test(s.zh) || hanOnly(s.zh).length < 5) return null;
     const truth = Math.random() < 0.5; let st = s.zh;
     if (!truth) {
-      const tk = segment(s.zh), pool = vocabUpTo(noOf(s.lid));
-      const cand = shuffle(tk.map((k, i) => ({ k, i })).filter(({ k }) => k.w && hlen(k.t) >= 1 && (DATA.idx.vocabByWord[k.t] || []).some(v => /^(danh từ|số từ|tính từ)/.test(String(v['Từ loại'])))));
+      const tk = segment(s.zh), L0 = noOf(s.lid), poolW = new Set(vocabUpTo(L0).map(v => v['Từ'])), o0 = new Set(tk.filter(y => y.w).map(y => y.t));
+      const isNum = t => /^[零一二三四五六七八九十百千万两几]+$/.test(t);
+      const prev = i => tk[i - 1] && tk[i - 1].t, next = i => tk[i + 1] && tk[i + 1].t;
+      const numBad = i => isNum(tk[i].t) && ((prev(i) && (isNum(prev(i)) || /[期周]$/.test(prev(i)))) || (next(i) && isNum(next(i))) || (prev(i) && prev(i) === next(i))); /* số ghép (二十), 星期X, V一V */
+      const adj = i => [prev(i), next(i)].some(t => t && swapSet(t) && swapSet(t) === swapSet(tk[i].t)); /* hàng xóm cùng nhóm → câu sai kỳ quặc */
+      const cand = shuffle(tk.map((k, i) => ({ k, i })).filter(({ k, i }) => k.w && swapSet(k.t) && !numBad(i) && !adj(i)));
       let ok = false;
       for (const { k, i } of cand) {
-        const vv = (DATA.idx.vocabByWord[k.t] || []).find(v => /^(danh từ|số từ|tính từ)/.test(String(v['Từ loại']))), ps = posOf(vv);
-        const rep = shuffle(pool).find(y => y['Từ'] !== k.t && posOf(y) === ps && hlen(y['Từ']) === hlen(k.t) && !s.zh.includes(y['Từ']) && !sameMean(y, vv));
-        if (!rep) continue;
-        st = tk.map((y, j) => j === i ? rep['Từ'] : y.t).join(''); ok = !rows(s.lid).some(r => r['Câu tiếng Trung'] === st);
-        if (ok) { const o0 = new Set(tk.filter(y => y.w).map(y => y.t)), L0 = noOf(s.lid); if (segment(st).some(y => y.w && !o0.has(y.t) && !(DATA.idx.vocabByWord[y.t] || []).some(v => noOf(v['Mã bài học']) <= L0))) ok = false; }
+        for (const rep of shuffle(swapSet(k.t).filter(z => z !== k.t && poolW.has(z) && !s.zh.includes(z)))) {
+          st = tk.map((y, j) => j === i ? rep : y.t).join('');
+          ok = !rows(s.lid).some(r => r['Câu tiếng Trung'] === st) && !segment(st).some(y => y.w && !o0.has(y.t) && !(DATA.idx.vocabByWord[y.t] || []).some(v => noOf(v['Mã bài học']) <= L0));
+          if (ok) break;
+        }
         if (ok) break;
       }
       if (!ok) return null;
@@ -4395,11 +4442,19 @@ function sentRefs(pool, which = 'sgv') {
   return out;
 }
 function build(kinds, items, n, toQ, used = new Set()) {
-  const out = [];
-  for (const it of shuffle(items)) {
-    if (out.length >= n) break;
-    for (const k of shuffle(kinds)) { const q = toQ(k, it); if (q && !used.has(k + '|' + q.ref)) { used.add(k + '|' + q.ref); out.push(q); break; } }
-  }
+  const out = [], rk = q => String(q.ref ?? q.han ?? q.prompt);
+  const pass = relax => {
+    for (const it of shuffle(items)) {
+      if (out.length >= n) break;
+      for (const k of shuffle(kinds)) {
+        const q = toQ(k, it); if (!q) continue;
+        if (relax ? used.has(k + '|' + rk(q)) : used.has(rk(q))) continue;
+        used.add(k + '|' + rk(q)); used.add(rk(q)); out.push(q); break;
+      }
+    }
+  };
+  pass(false); /* lượt 1: mỗi câu/từ chỉ hỏi một lần trong bộ */
+  if (out.length < n && !used.noRelax) pass(true); /* thiếu nội dung (bài quá ngắn) mới cho hỏi lại bằng dạng khác */
   return out;
 }
 const vQ = (k, x) => makeQ(k, x), sQ = (k, r) => makeQ(k, sentRef(r));
@@ -4481,7 +4536,7 @@ function buildGroup(k, scope) {
 }
 /* trộn đủ dạng; luôn có dạng tự gõ */
 function buildMix(pool, N, opt = {}) {
-  const items = [], used = new Set();
+  const items = [], used = new Set(); used.noRelax = true;
   const push = (kinds, src, n, toQ) => items.push(...build(kinds, src, Math.max(0, n), toQ, used));
   const nv = opt.nv ?? Math.round(N * 0.45);
   push(['py'], pool.v, opt.ninV ?? 1, vQ); push(['cloze'], pool.v, opt.ninV ?? 1, vQ);
@@ -4492,6 +4547,7 @@ function buildMix(pool, N, opt = {}) {
   push(['arrange', 'trans'], sG, opt.ng ?? 2, sQ);
   push(['trans', 'type'], sS, opt.ninS ?? 1, sQ);
   push(['translate', 'arrange', 'dict', 'tf', 'type'], sS, N - items.length, sQ);
+  used.noRelax = false;
   if (items.length < N) push(['mean', 'meanR', 'listen', 'recog', 'fill', 'tone', 'py'], pool.v, N - items.length, vQ);
   if (items.length < N) push(['arrange', 'translate', 'dict', 'particle', 'measure'], sAll, N - items.length, sQ);
   return shuffle(xMand(items.slice(0, N), xMandMix(N), pool, N));
@@ -4525,7 +4581,14 @@ function startDaily(fresh) {
   const dcnt = {}; items.forEach(q => { dcnt[q.kind] = (dcnt[q.kind] || 0) + 1; });
   shuffle(due).slice(0, 9).forEach(c => { const q = xDueQ(DATA.idx.vocabByCode[c.id], dcnt, used); if (q) { used.add(q.kind + '|' + q.ref); items.push(q); } });
   const pool = poolOf(knownIds());
-  items.push(...buildMix(pool, Math.max(4, 15 - items.length), { nv: 6, ninV: 1, ninS: 1 }).filter(q => !used.has(q.kind + '|' + q.ref)));
+  const rk = q => String(q.ref ?? q.han ?? q.prompt), seenRef = new Set(items.map(rk));
+  for (let t = 0; t < 5 && items.length < 15; t++) {
+    const strict = t < 4; /* 4 lượt đầu: không lặp câu/từ; lượt cuối cho phép để luôn đủ 15 câu */
+    buildMix(pool, Math.max(4, 15 - items.length + 3), { nv: 6, ninV: 1, ninS: 1 }).forEach(q => {
+      if (items.length >= 15 || used.has(q.kind + '|' + q.ref) || (strict && seenRef.has(rk(q)))) return;
+      used.add(q.kind + '|' + q.ref); seenRef.add(rk(q)); items.push(q);
+    });
+  }
   openSess({ key: 'd:' + dayKey(), type: 'practice', title: 'Ôn hôm nay · ' + dayKey().slice(8) + '/' + dayKey().slice(5, 7), daily: true }, () => xSpread(shuffle(items), 15), fresh);
 }
 function startTone(id, fresh) {
