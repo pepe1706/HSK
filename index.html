@@ -467,6 +467,7 @@ details.adv{margin:12px 0 10px}details.adv>summary{cursor:pointer;font-weight:90
 .prlivebox{margin:12px 0 4px;text-align:left}.prlive{min-height:34px;padding:6px 10px;border:1px dashed var(--line);border-radius:10px;background:rgba(255,255,255,.55);font-size:15px}.prlive .zh{font-size:22px;font-weight:500}
 .lnbt{display:flex;gap:8px;margin-top:6px}.lnbt .btn{flex:1;padding:8px 10px;font-size:14px;min-height:0}
 .prlive .prtmp{color:var(--muted,#8a8a8a);font-weight:400}
+.prin{width:100%;box-sizing:border-box;margin-top:4px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:rgba(255,255,255,.7);font-size:22px;color:inherit;font-family:inherit}.prin:focus{outline:none;border-color:#2f5f4f}.prpy{min-height:18px;margin:2px 2px 0}
 
 /* ===== Viết tay ===== */
 .hw-wrap{padding-bottom:8px}
@@ -750,6 +751,7 @@ html.dark .ln .lnmic{background:#12121299}
 html.dark .lnp.pg{background:#16231b}
 html.dark .lnp.pw{background:#2f2008}
 html.dark .prlive{background:#1212128c}
+html.dark .prin{background:#121212b2}
 html.dark .hw-item.good{border-color:#4b6453;background:#141f14}
 html.dark .hw-item.bad{border-color:#53362f}
 html.dark .hw-chip{background:#121212;background-image:linear-gradient(to right,transparent calc(50% - .5px),#39311c calc(50% - .5px),#39311c calc(50% + .5px),transparent calc(50% + .5px)),linear-gradient(to bottom,transparent calc(50% - .5px),#39311c calc(50% - .5px),#39311c calc(50% + .5px),transparent calc(50% + .5px))}
@@ -832,7 +834,7 @@ setTimeout(function(){var p=document.getElementById("splash");if(p)p.remove()},1
 <script id="mainjs" type="text/plain">/* ---- core.js ---- */
 /* ===== HSK Study Lab · core: dữ liệu, trạng thái, pinyin, tách từ, giọng đọc, khóa bài/chặng ===== */
 'use strict';
-const APP_VER = '6.4 (build_75c)';
+const APP_VER = '6.5 (build_75d)';
 const PASS = 85;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -5407,7 +5409,7 @@ function textTab(it) {
   const lv = lvNum(levelOf(lessonId));
   return `<div class="tools">${T('py', 'Pinyin', effPy())}${T('vi', 'Nghĩa', effVi())}${T('new', 'Tô từ mới', S.settings.markNew)}${T('tone', 'Màu thanh', S.settings.toneColor)}</div>
   <div class="modes">${M('normal', 'Thường')}${M('listen', 'Nghe · che chữ')}${M('mask', 'Che nghĩa')}</div>
-  <div class="hint2">${textMode.mode === 'listen' ? 'Bấm ▶ nghe cả bài với chữ bị che; nghe xong chữ tự hiện · ' : ''}Chạm câu để nghe · chạm từ gạch chân để xem từ${PR_SR() ? ' · 🎤 nói theo, máy chấm từng chữ' : ''}${S.settings.pyFade && lv >= 3 ? (lv === 3 ? ' · HSK 3: pinyin mờ dần' : ' · HSK 4: pinyin ẩn (bật lại bằng nút Pinyin)') : ''}</div>
+  <div class="hint2">${textMode.mode === 'listen' ? 'Bấm ▶ nghe cả bài với chữ bị che; nghe xong chữ tự hiện · ' : ''}Chạm câu để nghe · chạm từ gạch chân để xem từ · 🎤 nói theo (micro Gboard), máy chấm từng chữ${S.settings.pyFade && lv >= 3 ? (lv === 3 ? ' · HSK 3: pinyin mờ dần' : ' · HSK 4: pinyin ẩn (bật lại bằng nút Pinyin)') : ''}</div>
   <div class="lines ${linesCls()}" id="lines">${lines}</div>
   <div class="playbar" id="playbar"><button class="pb" onclick="playAll()" aria-label="Nghe cả bài">${textMode.all ? IC.stop : IC.play}</button><div style="flex:1" onclick="playAll()"><b id="pbt">${textMode.all ? `Đang đọc · câu ${textMode.playing + 1}/${it.s.length}` : `Nghe cả bài · ${it.s.length} câu`}</b><div class="bar"><i id="pbi" style="width:${textMode.playing >= 0 ? Math.round((textMode.playing + 1) / it.s.length * 100) : 0}%"></i></div></div><button class="spd" onclick="cycleRate()">${S.settings.rate}×</button></div>
   ${stepBox('text', 'bài khóa')}`;
@@ -5815,12 +5817,12 @@ function sitListHtml() {
 }
 
 /* ---- pron.js ---- */
-/* ===== build_74: Luyện phát âm (nhận giọng nói) =====
-   Dùng Web Speech API (SpeechRecognition, zh-CN) của Chrome. Trên Android cần mạng (giọng nói được nhận dạng ở máy chủ Google).
+/* ===== build_74/75d: Luyện phát âm (nói bằng micro Gboard → ô nhập chữ → chấm) =====
+   Người học nói bằng micro của bàn phím (nhận giọng nói gốc của điện thoại), app chấm chữ Hán trong ô.
    Chấm: lấy tối đa 5 cách nghe của máy, đổi ra pinyin, căn từng âm tiết với câu mẫu (quy hoạch động):
    đúng chữ hoặc đúng âm + thanh = đúng; đúng âm sai thanh = "sai thanh" (½ điểm); còn lại = sai. Đạt khi ≥ 80%.
    Lưu ý: máy nhận dạng hay "tự sửa" về từ có nghĩa, nên lỗi thanh điệu nhỏ có thể không bị phát hiện. */
-const PR_SR = () => window.SpeechRecognition || window.webkitSpeechRecognition || null;
+
 let pr = null;
 let _prc = null;
 /* chữ → các âm tiết có thể (từ pinyin của từ vựng + câu bài khóa, căn đúng số chữ) */
@@ -5876,153 +5878,87 @@ function prItems(scope) {
 function prStart(scope, title) {
   const it = prItems(scope);
   if (!it.length) return toast('Chưa có từ/câu để luyện phát âm ở phạm vi này.');
-  pr = { items: it, i: 0, res: {}, busy: false, title: title || 'Luyện phát âm', err: '' };
+  pr = { items: it, i: 0, res: {}, txt: '', busy: false, title: title || 'Luyện phát âm', err: '' };
   go('x_pron', { fresh: 1 });
 }
 function prStartOne(zh, py, vi) { pr = { items: [{ zh, py, vi, w: 0, ref: 'T:' + zh }], i: 0, res: {}, busy: false, title: 'Kiểm tra phát âm', err: '' }; go('x_pron', { fresh: 1 }); }
-function prStop() { if (prSess) prSess.abort(); prSess = null; if (pr) pr.busy = false; }
+function prStop() { lnRec = -1; if (pr) pr.busy = false; }
 function prLeave() { prStop(); pr = null; goBack('practice'); }
-function prGo(d) { prStop(); pr.i = Math.max(0, Math.min(pr.items.length - 1, pr.i + d)); pr.err = ''; render(); }
-function prListen() { prStop(); const it = pr.items[pr.i]; say(it.zh); }
-/* build_75b: nhận giọng nói dùng chung (trang Luyện phát âm + nút 🎤 cạnh từng câu bài khóa).
-   Micro mở liên tục, chữ nhận được hiện ngay (h.live); người học nói xong bấm "Kiểm tra" (s.stop) thì mới chấm (h.done).
-   Chrome tự tắt nhận dạng khi im lặng → tự mở lại cho tới khi bấm Kiểm tra (tối đa 60 giây). */
-const PR_FATAL = ['not-allowed', 'service-not-allowed', 'audio-capture', 'network', 'language-not-supported'];
-let prSess = null;
-function prSession(zh, py, h) {
-  const SR = PR_SR();
-  if (!SR) { h.done(null, 'nosup'); return null; }
-  if (navigator.onLine === false) { h.done(null, 'network'); return null; }
-  TTS.stop(); prStop();
-  const s = { prev: [], cur: [], stopped: false, finished: false, cancel: false, err: '', rec: null, t0: Date.now(), runs: 0, speech: false };
-  const all = () => [...s.prev, ...s.cur.filter(Boolean)];
-  const text = () => all().map(x => x.alts[0] || '').join('');
-  const tmp = () => s.cur.filter(x => x && !x.fin).map(x => x.alts[0] || '').join('');
-  const live = st => { const t = text(), m = tmp(); h.live(t.slice(0, t.length - m.length), st, m); };
-  const finish = () => {
-    if (s.finished) return; s.finished = true; clearTimeout(s.tm); if (prSess === s) prSess = null;
-    try { s.rec && s.rec.abort(); } catch (e) { }
-    if (s.cancel) return h.done(null, 'aborted');
-    const parts = all(), base = parts.map(x => x.alts[0] || ''), cands = new Set([base.join('')]);
-    parts.forEach((x, k) => x.alts.forEach(t => { const b = base.slice(); b[k] = t; cands.add(b.join('')); }));
-    if (!hanOnly(base.join('')).length && ![...cands].some(t => hanOnly(t).length)) return h.done(null, PR_FATAL.includes(s.err) ? s.err : s.speech ? 'no-text' : 'no-speech');
-    const A = prTarget(zh, py); let best = null;
-    cands.forEach(t => { const al = prAlign(A, prHeard(t)); if (!best || al.score > best.score) best = { ...al, heard: t }; });
-    h.done(best, '');
-  };
-  const run = () => {
-    const rec = new SR(); s.rec = rec; s.runs++; s.cur = [];
-    rec.lang = 'zh-CN'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 5; /* 75c: Android Chrome chỉ gửi chữ tạm (hiện dần) khi continuous=false */
-    rec.onaudiostart = () => live(s.speech ? 'speech' : 'mic');
-    rec.onspeechstart = () => { s.speech = true; live('speech'); };
-    rec.onresult = e => {
-      for (let k = e.resultIndex || 0; k < e.results.length; k++) { const r = e.results[k], alts = []; for (let a = 0; a < r.length; a++) alts.push(r[a].transcript); s.cur[k] = { alts, fin: r.isFinal !== false }; }
-      s.speech = true; live('speech');
-    };
-    rec.onerror = e => { s.err = e.error || 'err'; if (PR_FATAL.includes(s.err)) s.stopped = true; };
-    rec.onend = () => {
-      if (s.rec !== rec) return; s.prev.push(...s.cur.filter(Boolean)); s.cur = [];
-      if (s.finished) return;
-      if (s.stopped || Date.now() - s.t0 > 60000 || s.runs > 40) return finish();
-      setTimeout(() => { if (!s.stopped && !s.finished) { try { run(); } catch (e) { finish(); } } }, 40);
-    };
-    rec.start();
-  };
-  s.stop = () => { if (s.finished) return; s.stopped = true; try { s.rec && s.rec.stop(); } catch (e) { } clearTimeout(s.tm); s.tm = setTimeout(finish, 1500); };
-  s.abort = () => { s.cancel = true; s.stopped = true; finish(); };
-  prSess = s;
-  try { run(); } catch (e) { prSess = null; s.finished = true; h.done(null, 'err'); return null; }
-  return s;
+function prGo(d) { prStop(); pr.i = Math.max(0, Math.min(pr.items.length - 1, pr.i + d)); pr.err = ''; pr.txt = ''; render(); }
+function prListen() { const it = pr.items[pr.i]; say(it.zh); }
+/* build_75d: bỏ nhận giọng nói của trình duyệt (không ổn định trên Android/PWA). Người học bấm vào ô, bấm micro của bàn phím Gboard
+   (nhận giọng nói gốc của điện thoại, chữ hiện dần) rồi bấm "Kiểm tra". App chấm chữ Hán trong ô bằng prAlign như trước. */
+function prGrade(zh, py, txt) {
+  const h = String(txt || ''); if (!hanOnly(zh ? zhDigitsToHan(h) : h).length) return null;
+  const al = prAlign(prTarget(zh, py), prHeard(h)); return { ...al, heard: hanOnly(zhDigitsToHan(h)) };
 }
-function prLiveHtml(t, st, m) {
-  m = m || ''; const all = (t || '') + m;
-  return all ? `<b class="zh">${esc(t || '')}</b><b class="zh prtmp">${esc(m)}</b> <small class="muted">${esc(prPinyinOf(all))}</small>`
-    : `<span class="muted">${st === 'speech' ? '🔊 Đã nghe thấy tiếng, đang nhận chữ…' : st === 'mic' ? '🎙 Micro đã mở – hãy nói…' : 'Đang mở micro…'}</span>`;
+function prInHtml(id, oninput, onenter, val) {
+  return `<input class="prin zh" id="${id}" type="text" lang="zh-CN" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="Bấm vào đây, rồi bấm 🎤 trên bàn phím và nói…" value="${esc(val || '')}" oninput="${oninput}" onkeydown="if(event.key==='Enter'){event.preventDefault();${onenter}}" onclick="event.stopPropagation()">
+   <div class="small muted prpy" id="${id}p"></div>`;
 }
+function prPyShow(id, t) { const e = $('#' + id + 'p'); if (e) e.innerHTML = hanOnly(t || '') ? esc(prPinyinOf(t)) : ''; }
 function prSave(ref, best, ok) {
   bump('a'); if (ok) bump('ok');
   S.pron = S.pron || {}; const o = S.pron[ref] || { n: 0, best: 0 }; S.pron[ref] = { n: o.n + 1, best: Math.max(o.best, Math.round(best.score * 100)), at: Date.now() };
   save(); try { cheerAnswer && cheerAnswer(ok, 'pron'); } catch (e) { }
 }
-function prMic() {
-  if (!pr) return;
-  if (pr.busy) return prCheck();
-  const it = pr.items[pr.i], idx = pr.i; pr.err = ''; pr.live = ''; pr.lst = '';
-  const s = prSession(it.zh, it.py, {
-    live: (t, st, m) => { if (!pr) return; pr.live = t + (m || ''); if (st) pr.lst = st; const e = $('#prLive'); if (e) e.innerHTML = prLiveHtml(t, pr.lst, m); },
-    done: (best, err) => {
-      if (!pr) return; pr.busy = false; pr.live = '';
-      if (best) { const ok = best.score >= 0.8, old = pr.res[idx]; pr.res[idx] = { ...best, ok, tries: (old ? old.tries : 0) + 1, best: Math.max(best.score, old ? old.best : 0) }; prSave(it.ref, best, ok); }
-      else pr.err = err;
-      if (page === 'x_pron' && err !== 'aborted') render();
-    }
-  });
-  if (s) { pr.busy = true; render(); }
+function prCheck() {
+  if (!pr) return; const it = pr.items[pr.i], idx = pr.i, best = prGrade(it.zh, it.py, pr.txt);
+  if (!best) { pr.err = 'no-text'; return render(); }
+  pr.err = ''; const ok = best.score >= 0.8, old = pr.res[idx];
+  pr.res[idx] = { ...best, ok, tries: (old ? old.tries : 0) + 1, best: Math.max(best.score, old ? old.best : 0) };
+  prSave(it.ref, best, ok); pr.txt = ''; render();
 }
-function prCheck() { if (prSess) { prSess.stop(); const b = $('#prChk'); if (b) { b.disabled = true; b.textContent = 'Đang chấm…'; } } }
-/* nút 🎤 trong bài khóa: nói theo câu i; ô kết quả #lr<i> hiện chữ đang nói + nút Kiểm tra; chỉ cập nhật ô đó (không vẽ lại trang) */
+/* nút 🎤 trong bài khóa: mở ô nhập dưới câu i (focus ngay để bật bàn phím), chỉ cập nhật ô đó (không vẽ lại trang) */
 let lnRec = -1;
 function lnMic(i) {
-  if (lnRec === i) return lnCheck();
+  if (lnRec === i) { lnRec = -1; const o = $('#lr' + i), b = $('#lm' + i); if (o) o.innerHTML = ''; if (b) b.classList.remove('on'); return; }
   const r = rows(lessonId)[i]; if (!r) return;
   if (textMode.all) { textMode.all = false; setPlaying(-1); }
-  if (lnRec >= 0) prStop();
-  lnRec = i;
-  const s = prSession(r['Câu tiếng Trung'], r['Pinyin'], {
-    live: (t, st, m) => { const e = $('#lrl' + i); if (e) e.innerHTML = prLiveHtml(t, st, m); },
-    done: (best, err) => {
-      if (lnRec === i) lnRec = -1;
-      const b = $('#lm' + i), o = $('#lr' + i); if (b) b.classList.remove('on');
-      if (!o) return;
-      if (!best) { o.innerHTML = err === 'aborted' ? '' : `<div class="prerr">⚠️ ${esc(PR_ERR[err] || PR_ERR.err)}</div>`; return; }
-      const ok = best.score >= 0.8, A = prTarget(r['Câu tiếng Trung'], r['Pinyin']);
-      prSave('S:' + r['Mã câu'], best, ok);
-      o.innerHTML = `<div class="lnp ${ok ? 'pg' : 'pw'}"><span class="zh">${A.map((a, k) => `<span class="prc ${best.st[k]}"><b>${esc(a.c)}</b></span>`).join('')}</span>
-        <b class="lnps">${Math.round(best.score * 100)}% ${ok ? '✓' : ''}</b><div class="small muted">Bạn nói: <span class="zh">${esc(best.heard || '—')}</span>${ok ? '' : ' · 🟠 sai thanh · 🔴 chưa nghe ra – nghe mẫu rồi nói lại'}</div></div>`;
-    }
-  });
-  const b = $('#lm' + i), o = $('#lr' + i);
-  if (s) {
-    if (b) b.classList.add('on');
-    if (o) o.innerHTML = `<div class="lnp"><div class="tiny muted">Bạn đang nói:</div><div class="prlive" id="lrl${i}">${prLiveHtml('', '')}</div>
-      <div class="lnbt" id="lrb${i}"><button class="btn" onclick="lnCheck()">✓ Kiểm tra</button><button class="btn ghost" onclick="prStop()">Hủy</button></div></div>`;
+  if (lnRec >= 0) { const o0 = $('#lr' + lnRec), b0 = $('#lm' + lnRec); if (o0) o0.innerHTML = ''; if (b0) b0.classList.remove('on'); }
+  lnRec = i; const b = $('#lm' + i), o = $('#lr' + i); if (b) b.classList.add('on');
+  if (o) {
+    o.innerHTML = `<div class="lnp"><div class="tiny muted">Bạn nói (dùng 🎤 của bàn phím):</div>${prInHtml('lri' + i, `prPyShow('lri${i}',this.value)`, 'lnCheck()', '')}
+      <div class="lnbt" id="lrb${i}"><button class="btn" onclick="lnCheck()">✓ Kiểm tra</button><button class="btn ghost" onclick="lnMic(${i})">Hủy</button></div></div>`;
+    const e = $('#lri' + i); if (e) try { e.focus(); } catch (x) { }
   }
 }
-function lnCheck() { const i = lnRec; if (prSess) prSess.stop(); const e = $('#lrb' + i); if (e) e.innerHTML = '<span class="muted small">Đang chấm…</span>'; }
-const lnMicBtn = i => PR_SR() ? `<button class="lnmic" id="lm${i}" onclick="event.stopPropagation();lnMic(${i})" aria-label="Nói theo câu ${i + 1}" title="Nói theo câu này">🎤</button>` : '';
+function lnCheck() {
+  const i = lnRec; if (i < 0) return; const r = rows(lessonId)[i], e = $('#lri' + i), o = $('#lr' + i), b = $('#lm' + i); if (!r || !o) return;
+  const best = prGrade(r['Câu tiếng Trung'], r['Pinyin'], e ? e.value : '');
+  if (!best) { const x = $('#lrb' + i); if (x && !x.querySelector('.prerr')) x.insertAdjacentHTML('beforebegin', `<div class="prerr">⚠️ ${esc(PR_ERR['no-text'])}</div>`); return; }
+  lnRec = -1; if (b) b.classList.remove('on');
+  const ok = best.score >= 0.8, A = prTarget(r['Câu tiếng Trung'], r['Pinyin']);
+  prSave('S:' + r['Mã câu'], best, ok);
+  o.innerHTML = `<div class="lnp ${ok ? 'pg' : 'pw'}"><span class="zh">${A.map((a, k) => `<span class="prc ${best.st[k]}"><b>${esc(a.c)}</b></span>`).join('')}</span>
+    <b class="lnps">${Math.round(best.score * 100)}% ${ok ? '✓' : ''}</b><div class="small muted">Bạn nói: <span class="zh">${esc(best.heard || '—')}</span>${ok ? '' : ' · 🟠 sai thanh · 🔴 sai/thiếu chữ – nghe mẫu rồi nói lại'}</div></div>`;
+}
+const lnMicBtn = i => `<button class="lnmic" id="lm${i}" onclick="event.stopPropagation();lnMic(${i})" aria-label="Nói theo câu ${i + 1}" title="Nói theo câu này (dùng micro bàn phím)">🎤</button>`;
 const PR_ERR = {
-  nosup: 'Trình duyệt này chưa hỗ trợ nhận giọng nói. Hãy mở app bằng Chrome trên Android (bản GitHub Pages).',
-  network: 'Cần có mạng: Chrome gửi giọng nói tới máy chủ Google để nhận dạng.',
-  'not-allowed': 'App chưa được dùng micro. Chrome → ⋮ → Cài đặt → Cài đặt trang web → Micrô → cho phép trang này, rồi thử lại.',
-  'service-not-allowed': 'Chrome chặn nhận giọng nói. Kiểm tra quyền micro và ứng dụng Google (Dịch vụ lời nói) trên máy.',
-  'no-speech': 'Micro chưa thu được tiếng nói nào (ô “Bạn đang nói” không hiện chữ). Kiểm tra: Cài đặt Android → Ứng dụng → Chrome → Quyền → Micrô = Cho phép; ứng dụng khác không dùng micro; rồi nói to, rõ, gần máy hơn.',
-  'no-text': 'Máy nghe thấy tiếng nhưng chưa nhận ra chữ Hán nào. Nói chậm, rõ từng chữ; nếu vẫn không được: Cài đặt → Google → Nhận dạng giọng nói (Dịch vụ lời nói của Google) → thêm Tiếng Trung (giản thể).',
-  'audio-capture': 'Không mở được micro. Đóng app khác đang dùng micro rồi thử lại.',
-  'language-not-supported': 'Máy chưa có nhận dạng tiếng Trung. Cài "Tiếng Trung (giản thể)" trong Dịch vụ lời nói của Google.',
-  aborted: '', err: 'Có lỗi khi nhận giọng nói, hãy thử lại.'
+  'no-text': 'Chưa có chữ Hán trong ô. Bấm vào ô, bấm biểu tượng 🎤 trên bàn phím Gboard rồi nói tiếng Trung (nếu Gboard nghe sai ngôn ngữ: giữ phím cách để đổi sang 中文).',
+  err: 'Có lỗi, hãy thử lại.'
 };
 function prPage() {
   if (!pr) { setTimeout(() => goBack('practice'), 0); return ''; }
   const it = pr.items[pr.i], r = pr.res[pr.i], n = pr.items.length, A = prTarget(it.zh, it.py);
   const chars = A.map((a, i) => `<span class="prc ${r ? r.st[i] : ''}"><small>${pinyinHTML(markSyl(a.b, a.t))}</small><b>${esc(a.c)}</b></span>`).join('');
-  const dots = pr.items.map((x, i) => { const q = pr.res[i]; return `<button class="${q ? (q.ok ? 'pg' : 'pw') : ''} ${i === pr.i ? 'pcur' : ''}" onclick="prStop();pr.i=${i};pr.err='';render()">${i + 1}</button>`; }).join('');
+  const dots = pr.items.map((x, i) => { const q = pr.res[i]; return `<button class="${q ? (q.ok ? 'pg' : 'pw') : ''} ${i === pr.i ? 'pcur' : ''}" onclick="prStop();pr.i=${i};pr.err='';pr.txt='';render()">${i + 1}</button>`; }).join('');
   const done = Object.values(pr.res), good = done.filter(x => x.ok).length;
-  const msg = pr.err && PR_ERR[pr.err] !== '' ? `<div class="prerr">⚠️ ${esc(PR_ERR[pr.err] || PR_ERR.err)}</div>` : '';
+  const msg = pr.err ? `<div class="prerr">⚠️ ${esc(PR_ERR[pr.err] || PR_ERR.err)}</div>` : '';
   const fb = r ? `<div class="prfb ${r.ok ? 'pg' : 'pw'}"><b>${r.ok ? '✓ Tốt lắm!' : r.score >= 0.5 ? 'Gần đúng rồi' : 'Chưa đúng'} · ${Math.round(r.score * 100)}%</b>
-     <div class="small">Máy nghe được: <span class="zh">${esc(r.heard || '—')}</span> <span class="muted">${esc(prPinyinOf(r.heard))}</span></div>
-     ${r.st.includes('tone') ? '<div class="small">🟠 Chữ màu cam: đúng âm nhưng sai thanh.</div>' : ''}${r.st.includes('bad') ? '<div class="small">🔴 Chữ màu đỏ: máy chưa nghe ra – nghe mẫu rồi nói lại.</div>' : ''}</div>` : '';
+     <div class="small">Bạn nói: <span class="zh">${esc(r.heard || '—')}</span> <span class="muted">${esc(prPinyinOf(r.heard))}</span></div>
+     ${r.st.includes('tone') ? '<div class="small">🟠 Chữ màu cam: đúng âm nhưng sai thanh.</div>' : ''}${r.st.includes('bad') ? '<div class="small">🔴 Chữ màu đỏ: sai hoặc thiếu – nghe mẫu rồi nói lại.</div>' : ''}</div>` : '';
   return headBand('说', pr.title, `${pr.i + 1}/${n} · đạt ${good}/${n}`, 'prLeave()') + `<div class="page">
    <div class="prdots">${dots}</div>
    <section class="card prcard"><div class="prline zh">${chars}</div><div class="muted center small">${esc(it.vi || '')}</div>
-    ${pr.busy ? `<div class="prlivebox"><div class="tiny muted">Bạn đang nói:</div><div class="prlive" id="prLive">${prLiveHtml(pr.live, pr.lst)}</div></div>
-     <div class="prbtns"><button class="btn ghost" onclick="prStop();render()">Hủy</button><button class="btn prmic" id="prChk" onclick="prCheck()">✓ Kiểm tra</button></div>`
-    : `<div class="prbtns"><button class="btn ghost" onclick="prListen()">🔊 Nghe mẫu</button><button class="btn prmic" onclick="prMic()">🎤 Bấm rồi nói</button></div>`}
+    <div class="prlivebox"><div class="tiny muted">Bạn nói (bấm ô rồi bấm 🎤 trên bàn phím):</div>${prInHtml('prIn', "pr.txt=this.value;prPyShow('prIn',this.value)", 'prCheck()', pr.txt)}</div>
+    <div class="prbtns"><button class="btn ghost" onclick="prListen()">🔊 Nghe mẫu</button><button class="btn prmic" id="prChk" onclick="prCheck()">✓ Kiểm tra</button></div>
     ${msg}${fb}</section>
    <div class="grid2"><button class="btn ghost" ${pr.i ? '' : 'disabled'} onclick="prGo(-1)">‹ Trước</button><button class="btn" onclick="${pr.i < n - 1 ? 'prGo(1)' : 'prLeave()'}">${pr.i < n - 1 ? 'Tiếp ›' : 'Xong'}</button></div>
-   <p class="muted tiny" style="margin:10px 2px">Bấm 🎤 rồi nói, chữ bạn nói hiện ngay trong ô; nói xong bấm ✓ Kiểm tra để chấm. Máy nhận giọng nói (Google) chấm gần đúng: chữ sai rõ sẽ bị phát hiện, còn lỗi thanh nhỏ đôi khi bị máy tự sửa. Cần Chrome + mạng. Đạt khi ≥ 80%.</p></div>`;
+   <p class="muted tiny" style="margin:10px 2px">Cách dùng: bấm vào ô, bấm biểu tượng 🎤 trên bàn phím Gboard và nói tiếng Trung — chữ hiện dần như khi gõ bằng giọng nói. Nói xong bấm ✓ Kiểm tra để chấm. Chấm theo chữ Hán nhận được: chữ sai/thiếu bị phát hiện, lỗi thanh nhỏ đôi khi bị Gboard tự sửa. Đạt khi ≥ 80%.</p></div>`;
 }
 X_PAGES.x_pron = prPage; X_NAV_ON.x_pron = 'practice';
-function prEntry() { return xRow('说', 'Luyện phát âm', 'Nghe mẫu rồi nói vào micro, máy chấm từng chữ (cần mạng)', `prStart(practiceScope,'Luyện phát âm')`); }
+function prEntry() { return xRow('说', 'Luyện phát âm', 'Nghe mẫu rồi nói bằng micro Gboard, máy chấm từng chữ', `prStart(practiceScope,'Luyện phát âm')`); }
 
 /* ---- init.js ---- */
 /* ===== khởi động ===== */
