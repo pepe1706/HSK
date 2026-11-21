@@ -468,6 +468,8 @@ details.adv{margin:12px 0 10px}details.adv>summary{cursor:pointer;font-weight:90
 .lnbt{display:flex;gap:8px;margin-top:6px}.lnbt .btn{flex:1;padding:8px 10px;font-size:14px;min-height:0}
 .prlive .prtmp{color:var(--muted,#8a8a8a);font-weight:400}
 .prin{width:100%;box-sizing:border-box;margin-top:4px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:rgba(255,255,255,.7);font-size:22px;color:inherit;font-family:inherit}.prin:focus{outline:none;border-color:#2f5f4f}.prpy{min-height:18px;margin:2px 2px 0}
+.prtop{display:flex;justify-content:flex-end;margin:-4px -4px 2px}.prpybtn{padding:4px 10px;font-size:13px;min-height:0}
+.prnopy .prline small,.prnopy .prpy,.prnopy .prfb .muted{visibility:hidden}
 
 /* ===== Viết tay ===== */
 .hw-wrap{padding-bottom:8px}
@@ -834,7 +836,7 @@ setTimeout(function(){var p=document.getElementById("splash");if(p)p.remove()},1
 <script id="mainjs" type="text/plain">/* ---- core.js ---- */
 /* ===== HSK Study Lab · core: dữ liệu, trạng thái, pinyin, tách từ, giọng đọc, khóa bài/chặng ===== */
 'use strict';
-const APP_VER = '6.5 (build_75d)';
+const APP_VER = '6.5 (build_75e)';
 const PASS = 85;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -5893,9 +5895,10 @@ function prGrade(zh, py, txt) {
   const al = prAlign(prTarget(zh, py), prHeard(h)); return { ...al, heard: hanOnly(zhDigitsToHan(h)) };
 }
 function prInHtml(id, oninput, onenter, val) {
-  return `<input class="prin zh" id="${id}" type="text" lang="zh-CN" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="Bấm vào đây, rồi bấm 🎤 trên bàn phím và nói…" value="${esc(val || '')}" oninput="${oninput}" onkeydown="if(event.key==='Enter'){event.preventDefault();${onenter}}" onclick="event.stopPropagation()">
+  return `<input class="prin zh" id="${id}" type="text" lang="zh-CN" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="Bấm vào đây rồi nói…" value="${esc(val || '')}" oninput="${oninput}" onkeydown="if(event.key==='Enter'){event.preventDefault();${onenter}}" onclick="event.stopPropagation()">
    <div class="small muted prpy" id="${id}p"></div>`;
 }
+function prTogPy() { S.settings.prNoPy = !S.settings.prNoPy; save(); render(); }
 function prPyShow(id, t) { const e = $('#' + id + 'p'); if (e) e.innerHTML = hanOnly(t || '') ? esc(prPinyinOf(t)) : ''; }
 function prSave(ref, best, ok) {
   bump('a'); if (ok) bump('ok');
@@ -5950,7 +5953,7 @@ function prPage() {
      ${r.st.includes('tone') ? '<div class="small">🟠 Chữ màu cam: đúng âm nhưng sai thanh.</div>' : ''}${r.st.includes('bad') ? '<div class="small">🔴 Chữ màu đỏ: sai hoặc thiếu – nghe mẫu rồi nói lại.</div>' : ''}</div>` : '';
   return headBand('说', pr.title, `${pr.i + 1}/${n} · đạt ${good}/${n}`, 'prLeave()') + `<div class="page">
    <div class="prdots">${dots}</div>
-   <section class="card prcard"><div class="prline zh">${chars}</div><div class="muted center small">${esc(it.vi || '')}</div>
+   <section class="card prcard ${S.settings.prNoPy ? 'prnopy' : ''}"><div class="prtop"><button class="btn ghost small prpybtn" id="prPyBtn" onclick="prTogPy()">${S.settings.prNoPy ? 'Bật pinyin' : 'Tắt pinyin'}</button></div><div class="prline zh">${chars}</div><div class="muted center small">${esc(it.vi || '')}</div>
     <div class="prlivebox"><div class="tiny muted">Bạn nói (bấm ô rồi bấm 🎤 trên bàn phím):</div>${prInHtml('prIn', "pr.txt=this.value;prPyShow('prIn',this.value)", 'prCheck()', pr.txt)}</div>
     <div class="prbtns"><button class="btn ghost" onclick="prListen()">🔊 Nghe mẫu</button><button class="btn prmic" id="prChk" onclick="prCheck()">✓ Kiểm tra</button></div>
     ${msg}${fb}</section>
